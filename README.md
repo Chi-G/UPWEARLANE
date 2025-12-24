@@ -1,6 +1,6 @@
 # UPWEARLANE
 
-A Laravel application with Inertia.js and React.
+A Laravel shop application with Inertia.js and React.
 
 ## Getting Started
 
