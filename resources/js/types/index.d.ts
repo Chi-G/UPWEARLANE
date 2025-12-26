@@ -65,12 +65,7 @@ export interface Product {
 }
 
 export interface ProductCatalogInteractiveProps {
-// ... existing code ...
-export interface NewsletterData {
-    title: string;
-    description: string;
-    benefits: string[];
-    subscriberCount: string;
+    initialProducts: Product[];
 }
 
 export interface HeroStats {
@@ -113,8 +108,6 @@ export interface PageData {
     advertisements: Advertisement[];
     newsletter: NewsletterData;
     footer: FooterData;
-}
-initialProducts: Product[];
 }
 
 export interface Review {
@@ -187,7 +180,6 @@ export interface Currency {
     name: string;
     region: string;
 }
-
 
 export interface CatalogFilters {
     categories: string[];
@@ -265,7 +257,9 @@ export interface ShoppingCartInteractiveProps {
 }
 
 export interface PromoCodeSectionProps {
-    onApplyPromo: (code: string | null) => { success: boolean; message?: string } | void;
+    onApplyPromo: (
+        code: string | null,
+    ) => { success: boolean; message?: string } | void;
     appliedPromo?: PromoCode | null;
 }
 export interface ProductInfoProps {

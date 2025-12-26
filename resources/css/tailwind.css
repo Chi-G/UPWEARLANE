@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @source '../views';
 @source '../../resources/js/**/*.{js,jsx,ts,tsx}';
@@ -14,87 +14,87 @@
 
 @theme {
     /* Primary Colors */
-    --color-primary: #D4AF37;
+    --color-primary: #d4af37;
     /* Matured gold */
-    --color-primary-foreground: #1A1A1A;
+    --color-primary-foreground: #1a1a1a;
     /* Deep charcoal */
 
     /* Secondary Colors */
-    --color-secondary: #1A1A1A;
+    --color-secondary: #1a1a1a;
     /* Deep charcoal */
-    --color-secondary-foreground: #FFFFFF; 
+    --color-secondary-foreground: #ffffff;
     /* White */
 
     /* Accent Colors */
-    --color-accent: #F5F5DC;
+    --color-accent: #f5f5dc;
     /* Warm cream */
-    --color-accent-foreground: #2D2D2D;
+    --color-accent-foreground: #2d2d2d;
     /* Dark gray */
 
     /* Background Colors */
-    --color-background: #FFFFFF;
+    --color-background: #ffffff;
     /* Pure white */
-    --color-foreground: #1A1A1A;
+    --color-foreground: #1a1a1a;
     /* Deep charcoal */
 
     /* Surface Colors */
-    --color-surface: #FAFAFA;
+    --color-surface: #fafafa;
     /* Subtle off-white */
-    --color-surface-foreground: #2D2D2D;
+    --color-surface-foreground: #2d2d2d;
     /* Dark gray */
 
     /* Card Colors */
-    --color-card: #FAFAFA;
+    --color-card: #fafafa;
     /* Subtle off-white */
-    --color-card-foreground: #2D2D2D;
+    --color-card-foreground: #2d2d2d;
     /* Dark gray */
 
     /* Popover Colors */
-    --color-popover: #FFFFFF;
+    --color-popover: #ffffff;
     /* Pure white */
-    --color-popover-foreground: #1A1A1A;
+    --color-popover-foreground: #1a1a1a;
     /* Deep charcoal */
 
     /* Muted Colors */
-    --color-muted: #F5F5F5;
+    --color-muted: #f5f5f5;
     /* Light gray */
-    --color-muted-foreground: #4D4D4D;
+    --color-muted-foreground: #4d4d4d;
     /* Medium gray */
 
     /* Border & Input */
     --color-border: rgba(212, 175, 55, 0.2);
     /* Gold with opacity */
-    --color-input: #FFFFFF;
+    --color-input: #ffffff;
     /* Pure white */
-    --color-ring: #D4AF37;
+    --color-ring: #d4af37;
     /* Matured gold */
 
     /* Destructive/Error Colors */
-    --color-destructive: #E74C3C;
+    --color-destructive: #e74c3c;
     /* Clear red */
-    --color-destructive-foreground: #FFFFFF;
+    --color-destructive-foreground: #ffffff;
     /* White */
-    --color-error: #E74C3C;
+    --color-error: #e74c3c;
     /* Clear red */
-    --color-error-foreground: #FFFFFF;
+    --color-error-foreground: #ffffff;
     /* White */
 
     /* Success Colors */
-    --color-success: #2ECC71;
+    --color-success: #2ecc71;
     /* Vibrant green */
-    --color-success-foreground: #FFFFFF;
+    --color-success-foreground: #ffffff;
     /* White */
 
     /* Warning Colors */
-    --color-warning: #F39C12;
+    --color-warning: #f39c12;
     /* Rich orange */
-    --color-warning-foreground: #FFFFFF;
+    --color-warning-foreground: #ffffff;
     /* White */
 
     /* Text Colors */
-    --color-text-primary: #1A1A1A;
+    --color-text-primary: #1a1a1a;
     /* Deep charcoal */
-    --color-text-secondary: #4D4D4D;
+    --color-text-secondary: #4d4d4d;
     /* Medium gray */
 
     /* Shadow Colors */
@@ -103,33 +103,33 @@
     --shadow-gold-heavy: rgba(212, 175, 55, 0.35);
 
     /* Dark Mode Surfaces */
-    --color-dark-surface-1: #0D0D0D;
+    --color-dark-surface-1: #0d0d0d;
     /* Darkest */
-    --color-dark-surface-2: #1A1A1A;
+    --color-dark-surface-2: #1a1a1a;
     /* Medium dark */
-    --color-dark-surface-3: #2D2D2D;
+    --color-dark-surface-3: #2d2d2d;
     /* Lighter dark */
 }
 
 @layer base {
     .dark {
-        --color-primary-foreground: #0D0D0D;
-        --color-secondary: #2D2D2D;
+        --color-primary-foreground: #0d0d0d;
+        --color-secondary: #2d2d2d;
         --color-secondary-foreground: rgba(255, 255, 255, 0.9);
-        --color-accent: #3D3D3D;
-        --color-accent-foreground: #D4AF37;
-        --color-background: #0D0D0D;
+        --color-accent: #3d3d3d;
+        --color-accent-foreground: #d4af37;
+        --color-background: #0d0d0d;
         --color-foreground: rgba(255, 255, 255, 0.9);
-        --color-surface: #1A1A1A;
+        --color-surface: #1a1a1a;
         --color-surface-foreground: rgba(255, 255, 255, 0.9);
-        --color-card: #1A1A1A;
+        --color-card: #1a1a1a;
         --color-card-foreground: rgba(255, 255, 255, 0.9);
-        --color-popover: #2D2D2D;
+        --color-popover: #2d2d2d;
         --color-popover-foreground: rgba(255, 255, 255, 0.9);
-        --color-muted: #2D2D2D;
+        --color-muted: #2d2d2d;
         --color-muted-foreground: rgba(255, 255, 255, 0.6);
         --color-border: rgba(212, 175, 55, 0.3);
-        --color-input: #1A1A1A;
+        --color-input: #1a1a1a;
         --color-text-primary: rgba(255, 255, 255, 0.9);
         --color-text-secondary: rgba(255, 255, 255, 0.6);
     }
@@ -188,7 +188,9 @@
 
     .data-text {
         font-family: 'JetBrains Mono', monospace;
-        font-feature-settings: 'tnum' on, 'lnum' on;
+        font-feature-settings:
+            'tnum' on,
+            'lnum' on;
     }
 
     @media (max-width: 768px) {
@@ -238,15 +240,15 @@
 }
 
 @utility press-effect {
-    @apply active:scale-[0.97] transition-smooth;
+    @apply transition-smooth active:scale-[0.97];
 }
 
 @utility hover-lift {
-    @apply hover:-translate-y-[1px] transition-smooth;
+    @apply transition-smooth hover:-translate-y-[1px];
 }
 
 @utility focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    @apply focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
 }
 
 @utility backdrop-dark {

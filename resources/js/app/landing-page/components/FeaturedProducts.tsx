@@ -1,170 +1,228 @@
-import { Link } from '@inertiajs/react';
-import AppImage from '@/components/ui/AppImage';
 import Icon from '@/components/ui/AppIcon';
+import AppImage from '@/components/ui/AppImage';
+import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 import { Product } from '@/types';
 
-export default function FeaturedProducts({ products }: { products: Product[] }) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+export default function FeaturedProducts({
+    products,
+}: {
+    products: Product[];
+}) {
+    const [selectedCategory] = useState<string>('All');
 
-  const filteredProducts = selectedCategory === 'All' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
+    const filteredProducts =
+        selectedCategory === 'All'
+            ? products
+            : products.filter(
+                  (product) => product.category === selectedCategory,
+              );
 
-  return (
-    <section className="py-12 md:py-16 lg:py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-foreground mb-4">
-            Featured Products
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover our handpicked selection of cutting-edge wearable technology and high-tech fashion essentials
-          </p>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-          {filteredProducts?.map((product) => (
-            <div
-              key={product?.id}
-              className="group bg-card border border-border rounded-xl overflow-hidden shadow-gold hover:shadow-gold-md transition-smooth hover-lift sm:h-full flex flex-col"
-            >
-              {/* Product Image */}
-              <div className="relative aspect-[3/4] overflow-hidden">
-                <AppImage
-                  src={product?.image}
-                  alt={product?.alt}
-                  width={400}
-                  height={400}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                {product?.isNew && (
-                  <div className="absolute top-3 left-3 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium">
-                    New
-                  </div>
-                )}
-                {product?.discount && (
-                  <div className="absolute top-3 right-3 bg-destructive text-destructive-foreground px-2 py-1 rounded-md text-xs font-medium">
-                    -{product?.discount}%
-                  </div>
-                )}
-                
-                {/* Quick Actions */}
-                <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-smooth flex items-center justify-center">
-                  <Link
-                    href={`/product-detail?id=${product?.id}`}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium transition-smooth press-effect"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-4 md:p-6 lg:flex-1 flex flex-col">
-                <div className="lg:flex-1 flex flex-col space-y-3">
-                  <div>
-                    <h3 className="font-heading text-lg md:text-xl font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-smooth">
-                      {product?.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                      {product?.description}
+    return (
+        <section className="bg-background py-12 md:py-16 lg:py-20">
+            <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+                {/* Section Header */}
+                <div className="mb-12 text-center lg:mb-16">
+                    <h2 className="font-heading text-foreground mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
+                        Featured Products
+                    </h2>
+                    <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
+                        Discover our handpicked selection of cutting-edge
+                        wearable technology and high-tech fashion essentials
                     </p>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center">
-                      {[...Array(5)]?.map((_, i) => (
-                        <Icon
-                          key={i}
-                          name="StarIcon"
-                          size={16}
-                          variant={i < Math.floor(product?.rating) ? 'solid' : 'outline'}
-                          className={i < Math.floor(product?.rating) ? 'text-primary' : 'text-muted-foreground'}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      ({product?.reviewCount})
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      {product?.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${product?.originalPrice}
-                        </span>
-                      )}
-                      <span className="text-xl font-heading font-bold text-foreground">
-                        ${product?.price}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Colors */}
-                  {product?.colors && product?.colors?.length > 0 && (
-                    <div className="flex items-center space-x-2 lg:mt-auto pt-3">
-                      <span className="text-sm text-muted-foreground">Colors:</span>
-                      <div className="flex space-x-1">
-                        {product?.colors?.slice(0, 4)?.map((color: string, index: number) => (
-                          <div
-                            key={index}
-                            className="w-4 h-4 rounded-full border border-border"
-                            style={{ backgroundColor: color }}
-                            title={color}
-                          />
-                        ))}
-                        {product?.colors?.length > 4 && (
-                          <span className="text-xs text-muted-foreground">
-                            +{product?.colors?.length - 4}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
-        {/* View All Button */}
-        <div className="text-center mt-12">
-          <Link
-            href="/product-catalog"
-            className="inline-flex items-center px-8 py-3 bg-surface hover:bg-accent text-foreground border border-border font-medium rounded-lg transition-smooth press-effect"
-          >
-            <span>View All Products</span>
-            <Icon name="ArrowRightIcon" size={20} className="ml-2" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+                {/* Products Grid */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
+                    {filteredProducts?.map((product) => (
+                        <div
+                            key={product?.id}
+                            className="bg-card border-border shadow-gold hover:shadow-gold-md transition-smooth hover-lift group flex flex-col overflow-hidden rounded-xl border sm:h-full"
+                        >
+                            {/* Product Image */}
+                            <div className="relative aspect-[3/4] overflow-hidden">
+                                <AppImage
+                                    src={product?.image}
+                                    alt={product?.alt}
+                                    width={400}
+                                    height={400}
+                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                {product?.isNew && (
+                                    <div className="bg-primary text-primary-foreground absolute left-3 top-3 rounded-md px-2 py-1 text-xs font-medium">
+                                        New
+                                    </div>
+                                )}
+                                {product?.discount && (
+                                    <div className="bg-destructive text-destructive-foreground absolute right-3 top-3 rounded-md px-2 py-1 text-xs font-medium">
+                                        -{product?.discount}%
+                                    </div>
+                                )}
+
+                                {/* Quick Actions */}
+                                <div className="bg-background/80 transition-smooth absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                    <Link
+                                        href={`/product-detail?id=${product?.id}`}
+                                        className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect rounded-lg px-6 py-2 font-medium"
+                                    >
+                                        View Details
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Product Info */}
+                            <div className="flex flex-col p-4 md:p-6 lg:flex-1">
+                                <div className="flex flex-col space-y-3 lg:flex-1">
+                                    <div>
+                                        <h3 className="font-heading text-foreground group-hover:text-primary transition-smooth line-clamp-2 text-lg font-semibold md:text-xl">
+                                            {product?.name}
+                                        </h3>
+                                        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                                            {product?.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Rating */}
+                                    <div className="flex items-center space-x-2">
+                                        <div className="flex items-center">
+                                            {[...Array(5)]?.map((_, i) => (
+                                                <Icon
+                                                    key={i}
+                                                    name="StarIcon"
+                                                    size={16}
+                                                    variant={
+                                                        i <
+                                                        Math.floor(
+                                                            product?.rating,
+                                                        )
+                                                            ? 'solid'
+                                                            : 'outline'
+                                                    }
+                                                    className={
+                                                        i <
+                                                        Math.floor(
+                                                            product?.rating,
+                                                        )
+                                                            ? 'text-primary'
+                                                            : 'text-muted-foreground'
+                                                    }
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-muted-foreground text-sm">
+                                            ({product?.reviewCount})
+                                        </span>
+                                    </div>
+
+                                    {/* Price */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-2">
+                                            {product?.originalPrice && (
+                                                <span className="text-muted-foreground text-sm line-through">
+                                                    ${product?.originalPrice}
+                                                </span>
+                                            )}
+                                            <span className="font-heading text-foreground text-xl font-bold">
+                                                ${product?.price}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Colors */}
+                                    {product?.colors &&
+                                        product?.colors?.length > 0 && (
+                                            <div className="flex items-center space-x-2 pt-3 lg:mt-auto">
+                                                <span className="text-muted-foreground text-sm">
+                                                    Colors:
+                                                </span>
+                                                <div className="flex space-x-1">
+                                                    {product?.colors
+                                                        ?.slice(0, 4)
+                                                        ?.map(
+                                                            (
+                                                                color,
+                                                                index: number,
+                                                            ) => {
+                                                                const bgColor =
+                                                                    typeof color ===
+                                                                    'string'
+                                                                        ? color
+                                                                        : color?.hex;
+                                                                const colorName =
+                                                                    typeof color ===
+                                                                    'string'
+                                                                        ? color
+                                                                        : color?.name;
+                                                                return (
+                                                                    <div
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="border-border h-4 w-4 rounded-full border"
+                                                                        style={{
+                                                                            backgroundColor:
+                                                                                bgColor,
+                                                                        }}
+                                                                        title={
+                                                                            colorName
+                                                                        }
+                                                                    />
+                                                                );
+                                                            },
+                                                        )}
+                                                    {product?.colors?.length >
+                                                        4 && (
+                                                        <span className="text-muted-foreground text-xs">
+                                                            +
+                                                            {product?.colors
+                                                                ?.length - 4}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* View All Button */}
+                <div className="mt-12 text-center">
+                    <Link
+                        href="/product-catalog"
+                        className="bg-surface hover:bg-accent text-foreground border-border transition-smooth press-effect inline-flex items-center rounded-lg border px-8 py-3 font-medium"
+                    >
+                        <span>View All Products</span>
+                        <Icon
+                            name="ArrowRightIcon"
+                            size={20}
+                            className="ml-2"
+                        />
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
 }
 
 FeaturedProducts.propTypes = {
-  products: PropTypes?.arrayOf(
-    PropTypes?.shape({
-      id: PropTypes?.number?.isRequired,
-      name: PropTypes?.string?.isRequired,
-      description: PropTypes?.string?.isRequired,
-      price: PropTypes?.string?.isRequired,
-      originalPrice: PropTypes?.string,
-      image: PropTypes?.string?.isRequired,
-      imageAlt: PropTypes?.string?.isRequired,
-      rating: PropTypes?.number?.isRequired,
-      reviewCount: PropTypes?.number?.isRequired,
-      isNew: PropTypes?.bool,
-      discount: PropTypes?.number,
-      colors: PropTypes?.arrayOf(PropTypes?.string),
-    })
-  )?.isRequired,
+    products: PropTypes?.arrayOf(
+        PropTypes?.shape({
+            id: PropTypes?.number?.isRequired,
+            name: PropTypes?.string?.isRequired,
+            description: PropTypes?.string?.isRequired,
+            price: PropTypes?.string?.isRequired,
+            originalPrice: PropTypes?.string,
+            image: PropTypes?.string?.isRequired,
+            imageAlt: PropTypes?.string?.isRequired,
+            rating: PropTypes?.number?.isRequired,
+            reviewCount: PropTypes?.number?.isRequired,
+            isNew: PropTypes?.bool,
+            discount: PropTypes?.number,
+            colors: PropTypes?.arrayOf(PropTypes?.string),
+        }),
+    )?.isRequired,
 };
