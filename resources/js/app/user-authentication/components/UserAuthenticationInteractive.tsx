@@ -8,10 +8,7 @@ import PropTypes from 'prop-types';
 
 export default function UserAuthenticationInteractive({ benefits }: { benefits: any[] }) {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [formData, setFormData] = useState<any>({
-    email: '',
-    password: '',
-  });
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>('');
 

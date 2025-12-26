@@ -34,7 +34,7 @@ const CRYPTO_OPTIONS = [
   { id: 'eth', name: 'Ethereum', symbol: 'ETH', icon: 'Ξ' },
 ];
 
-export default function PaymentForm({ onPaymentComplete, onBack, totalAmount }: PaymentFormProps) {
+export default function PaymentForm({ onPaymentComplete, onBack }: PaymentFormProps) {
   const [selectedMethod, setSelectedMethod] = useState('card');
   const [selectedCrypto, setSelectedCrypto] = useState('btc');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -58,29 +58,32 @@ export default function PaymentForm({ onPaymentComplete, onBack, totalAmount }: 
       formattedValue = value?.replace(/\D/g, '')?.slice(0, 4);
     }
 
-    setCardData((prev) => ({ ...prev, [name]: formattedValue }));
+    setCardData((prev) => ({ ...prev, [name]: formattedValue || '' }));
   };
 
   const validateCard = () => {
     const newErrors: Record<string, string> = {};
 
     if (selectedMethod === 'card') {
-      if (cardData?.number?.replace(/\s/g, '')?.length < 15) {
+      const number = cardData?.number || '';
+      if (number.replace(/\s/g, '').length < 15) {
         newErrors.number = 'Invalid card number';
       }
-      if (cardData?.name?.trim()?.length < 3) {
+      if ((cardData?.name || '').trim().length < 3) {
         newErrors.name = 'Cardholder name is required';
       }
-      if (!/^\d{2}\/\d{2}$/?.test(cardData?.expiry)) {
+      const expiry = cardData?.expiry || '';
+      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
         newErrors.expiry = 'Invalid expiry date';
       }
-      if (cardData?.cvv?.length < 3) {
+      const cvv = cardData?.cvv || '';
+      if (cvv.length < 3) {
         newErrors.cvv = 'Invalid CVV';
       }
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors)?.length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,13 +99,13 @@ export default function PaymentForm({ onPaymentComplete, onBack, totalAmount }: 
       const paymentData = {
         method: selectedMethod,
         ...(selectedMethod === 'card' && {
-          last4: cardData?.number?.slice(-4),
+          last4: (cardData?.number || '').slice(-4),
           cardType: 'Visa',
         }),
         ...(selectedMethod === 'crypto' && {
           cryptocurrency: selectedCrypto,
         }),
-        timestamp: new Date()?.toISOString(),
+        timestamp: new Date().toISOString(),
       };
 
       onPaymentComplete(paymentData);

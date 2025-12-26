@@ -4,7 +4,9 @@ import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-export default function FeaturedProducts({ products }: { products: any[] }) {
+import { Product } from '@/types';
+
+export default function FeaturedProducts({ products }: { products: Product[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const filteredProducts = selectedCategory === 'All' 
@@ -26,7 +28,7 @@ export default function FeaturedProducts({ products }: { products: any[] }) {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-          {filteredProducts?.map((product: any) => (
+          {filteredProducts?.map((product) => (
             <div
               key={product?.id}
               className="group bg-card border border-border rounded-xl overflow-hidden shadow-gold hover:shadow-gold-md transition-smooth hover-lift sm:h-full flex flex-col"
@@ -35,7 +37,7 @@ export default function FeaturedProducts({ products }: { products: any[] }) {
               <div className="relative aspect-[3/4] overflow-hidden">
                 <AppImage
                   src={product?.image}
-                  alt={product?.imageAlt}
+                  alt={product?.alt}
                   width={400}
                   height={400}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

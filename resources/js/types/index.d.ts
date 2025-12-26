@@ -57,10 +57,64 @@ export interface Product {
     description: string;
     colors?: string[] | { name: string; hex: string }[];
     brand?: string;
+    soldCount?: number;
+    isNew?: boolean;
+    launchDate?: string;
+    preOrder?: boolean;
+    features?: string[];
 }
 
 export interface ProductCatalogInteractiveProps {
-    initialProducts: Product[];
+// ... existing code ...
+export interface NewsletterData {
+    title: string;
+    description: string;
+    benefits: string[];
+    subscriberCount: string;
+}
+
+export interface HeroStats {
+    value: string;
+    label: string;
+}
+
+export interface HeroData {
+    title: string;
+    subtitle: string;
+    backgroundImage: string;
+    backgroundImageAlt: string;
+    heroImage: string;
+    heroImageAlt: string;
+    badge: string;
+    stats: HeroStats[];
+}
+
+export interface Deal {
+    id: number;
+    title: string;
+    description: string;
+    originalPrice: string;
+    discountedPrice: string;
+    discount: number;
+    image: string;
+    imageAlt: string;
+    type: string;
+    endDate: string;
+    features: string[];
+    productId: number;
+}
+
+export interface PageData {
+    hero: HeroData;
+    featuredProducts: Product[];
+    bestsellers: Product[];
+    newArrivals: Product[];
+    promotionalDeals: Deal[];
+    advertisements: Advertisement[];
+    newsletter: NewsletterData;
+    footer: FooterData;
+}
+initialProducts: Product[];
 }
 
 export interface Review {
@@ -223,7 +277,6 @@ export interface ProductImageGalleryProps {
         url: string;
         alt: string;
     }[];
-    productName: string;
 }
 export interface CustomerReviewsProps {
     reviews: Review[];
@@ -248,4 +301,38 @@ export interface PaymentFormProps {
 export interface ShippingFormProps {
     onShippingComplete: (shippingData: ShippingAddress) => void;
     initialData?: ShippingAddress;
+}
+
+export interface Advertisement {
+    id: number;
+    title: string;
+    description: string;
+    backgroundImage: string;
+    backgroundImageAlt: string;
+    productImage?: string;
+    productImageAlt?: string;
+    badge?: string;
+    offer?: string;
+    originalPrice?: string;
+    ctaText: string;
+    ctaLink: string;
+    secondaryCtaText?: string;
+    secondaryCtaLink?: string;
+}
+
+export interface FooterData {
+    companyDescription: string;
+    socialLinks: { name: string; url: string; icon: string }[];
+    quickLinks: { name: string; url: string }[];
+    categories: { name: string; url: string }[];
+    contact: { address: string; phone: string; email: string };
+    trustBadges: string[];
+    legalLinks: { name: string; url: string }[];
+}
+
+export interface NewsletterData {
+    title: string;
+    description: string;
+    benefits: string[];
+    subscriberCount: string;
 }

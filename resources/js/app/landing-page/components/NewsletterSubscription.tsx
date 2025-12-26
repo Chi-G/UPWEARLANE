@@ -4,7 +4,9 @@ import { useState } from 'react';
 import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 
-export default function NewsletterSubscription({ newsletterData }) {
+import { NewsletterData } from '@/types';
+
+export default function NewsletterSubscription({ newsletterData }: { newsletterData: NewsletterData }) {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +38,7 @@ export default function NewsletterSubscription({ newsletterData }) {
 
       setIsSubscribed(true);
       setEmail('');
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);

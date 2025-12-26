@@ -14,7 +14,9 @@ import NewsletterSubscription from './NewsletterSubscription';
 import Footer from './Footer';
 import PropTypes from 'prop-types';
 
-export default function LandingPageInteractive({ pageData }: { pageData: any }) {
+import { PageData } from '@/types';
+
+export default function LandingPageInteractive({ pageData }: { pageData: PageData }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {

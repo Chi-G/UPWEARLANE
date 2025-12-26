@@ -38,7 +38,7 @@ function Icon({
     const iconSet = variant === 'solid' ? HeroIconsSolid : HeroIcons;
     
     // Support for common social brands via Lucide
-    const brands: Record<string, any> = {
+    const brands: Record<string, React.ElementType> = {
         Facebook,
         Twitter,
         Instagram,
@@ -48,7 +48,7 @@ function Icon({
         Chrome
     };
 
-    const IconComponent = (iconSet as Record<string, any>)[name] || brands[name];
+    const IconComponent = (iconSet as Record<string, React.ElementType>)[name] || brands[name];
 
     if (!IconComponent) {
         return (

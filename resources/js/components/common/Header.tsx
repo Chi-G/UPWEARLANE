@@ -106,7 +106,7 @@ export default function Header() {
                 className="touch-target flex items-center justify-center text-foreground hover:text-primary transition-smooth"
                 aria-label="Account"
               >
-                <Icon name={"UserIcon" as any} size={24} />
+                <Icon name="UserIcon" size={24} />
               </button>
               <ShoppingCartIndicator />
             </div>
@@ -120,7 +120,7 @@ export default function Header() {
                 aria-label="Toggle menu"
                 aria-expanded={isMobileMenuOpen}
               >
-                <Icon name={(isMobileMenuOpen ? 'XMarkIcon' : 'Bars3Icon') as any} size={24} />
+                <Icon name={isMobileMenuOpen ? 'XMarkIcon' : 'Bars3Icon'} size={24} />
               </button>
             </div>
           </div>

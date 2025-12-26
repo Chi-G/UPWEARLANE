@@ -2,7 +2,9 @@ import { Link } from '@inertiajs/react';
 import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 
-export default function Footer({ footerData }: { footerData: any }) {
+import { FooterData } from '@/types';
+
+export default function Footer({ footerData }: { footerData: FooterData }) {
   const currentYear = new Date()?.getFullYear();
 
   return (

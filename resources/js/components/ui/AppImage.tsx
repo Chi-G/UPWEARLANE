@@ -22,12 +22,7 @@ function AppImage({
     width,
     height,
     className = '',
-    priority = false, // Kept for prop compatibility but unused
-    quality = 75, // Kept for prop compatibility but unused
-    placeholder = 'empty', // Kept for prop compatibility but unused
-    blurDataURL, // Kept for prop compatibility but unused
     fill = false,
-    sizes,
     onClick,
     fallbackSrc = '/assets/images/no_image.png',
     ...props

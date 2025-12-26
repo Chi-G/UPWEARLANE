@@ -3,7 +3,9 @@ import AppImage from '@/components/ui/AppImage';
 import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 
-export default function HeroBanner({ heroData }: { heroData: any }) {
+import { HeroData } from '@/types';
+
+export default function HeroBanner({ heroData }: { heroData: HeroData }) {
   return (
     <section className="relative min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-surface to-accent">
       {/* Background Image */}

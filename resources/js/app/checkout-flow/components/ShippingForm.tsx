@@ -11,24 +11,18 @@ const COUNTRIES = [
 
 export default function ShippingForm({ onShippingComplete, initialData }: ShippingFormProps) {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'NG',
+    fullName: initialData?.fullName || '',
+    email: initialData?.email || '',
+    phone: initialData?.phone || '',
+    address: initialData?.address || '',
+    city: initialData?.city || '',
+    state: initialData?.state || '',
+    postalCode: initialData?.postalCode || '',
+    country: initialData?.country || 'NG',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
 
   const validateField = (name: keyof ShippingAddress, value: string) => {
     switch (name) {

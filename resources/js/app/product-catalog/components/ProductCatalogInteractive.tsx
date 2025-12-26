@@ -8,12 +8,12 @@ import { Product, ProductCatalogInteractiveProps, CatalogFilters } from '@/types
 export default function ProductCatalogInteractive({ initialProducts }: ProductCatalogInteractiveProps) {
   const [viewMode, setViewMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('catalog_view_mode') || 'grid';
+      return localStorage.getItem('catalog_view_mode') || 'grid'; 
     }
     return 'grid';
   });
   const [sortBy, setSortBy] = useState('relevance');
-  
+
   const [filters, setFilters] = useState<CatalogFilters>({
     categories: [],
     priceRange: null,
@@ -24,15 +24,25 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
   const [products, setProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
+  const updateFilters = (newFilters: CatalogFilters) => {
     setIsLoading(true);
+    setFilters(newFilters);
+  };
+
+  const updateSort = (newSort: string) => {
+    setIsLoading(true);
+    setSortBy(newSort);
+  };
+
+  useEffect(() => {
+    // setIsLoading(true) is now handled by change handlers
     const timer = setTimeout(() => {
       let filtered = [...initialProducts];
 
       // Apply category filter
       if (filters?.categories?.length > 0) {
         filtered = filtered?.filter(product =>
-          filters?.categories?.some(cat => 
+          filters?.categories?.some(cat =>
             product?.category?.toLowerCase()?.includes(cat?.replace('-', ' '))
           )
         );
@@ -136,6 +146,7 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
   };
 
   const handleClearFilters = () => {
+    setIsLoading(true);
     setFilters({
       categories: [],
       priceRange: null,
@@ -144,10 +155,10 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
     });
   };
 
-  const activeFilterCount = 
-    filters?.categories?.length + 
-    filters?.colors?.length + 
-    filters?.brands?.length + 
+  const activeFilterCount =
+    filters?.categories?.length +
+    filters?.colors?.length +
+    filters?.brands?.length +
     (filters?.priceRange ? 1 : 0);
 
   return (
@@ -190,7 +201,7 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
             {/* Sort Dropdown */}
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e?.target?.value)}
+              onChange={(e) => updateSort(e?.target?.value)}
               className="flex-1 sm:flex-initial h-12 px-4 bg-surface border border-border rounded-lg text-foreground text-sm md:text-base focus-ring transition-smooth"
             >
               <option value="relevance">Sort by Relevance</option>
@@ -228,7 +239,7 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
         <div className="flex gap-8">
           <FilterSidebar
             filters={filters}
-            onFilterChange={setFilters}
+            onFilterChange={updateFilters}
             onClearFilters={handleClearFilters}
             isMobileOpen={isFilterOpen}
             onMobileClose={() => setIsFilterOpen(false)}

@@ -1,16 +1,24 @@
+import { useState } from 'react';
 import { Link } from '@inertiajs/react';
-import PropTypes from 'prop-types';
+
 import Icon from '@/components/ui/AppIcon';
 import { OrderDetails, OrderConfirmationProps } from '@/types';
 
 
 export default function OrderConfirmation({ orderDetails }: OrderConfirmationProps) {
-  const orderNumber = `UWL${Date.now()?.toString()?.slice(-8)}`;
-  const estimatedDelivery = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)?.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+  const [confirmationData] = useState(() => {
+    const timestamp = Date.now();
+    return {
+      orderNumber: `UWL${timestamp.toString().slice(-8)}`,
+      estimatedDelivery: new Date(timestamp + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    };
   });
+
+  const { orderNumber, estimatedDelivery } = confirmationData;
 
   return (
     <div className="max-w-2xl mx-auto text-center space-y-8">
@@ -109,30 +117,3 @@ export default function OrderConfirmation({ orderDetails }: OrderConfirmationPro
     </div>
   );
 }
-
-OrderConfirmation.propTypes = {
-  orderDetails: PropTypes?.shape({
-    shipping: PropTypes?.shape({
-      carrier: PropTypes?.string,
-      deliveryTime: PropTypes?.string,
-      cost: PropTypes?.number,
-    }),
-    shippingAddress: PropTypes?.shape({
-      fullName: PropTypes?.string,
-      email: PropTypes?.string,
-      phone: PropTypes?.string,
-      address: PropTypes?.string,
-      city: PropTypes?.string,
-      state: PropTypes?.string,
-      postalCode: PropTypes?.string,
-      country: PropTypes?.string,
-    }),
-    payment: PropTypes?.shape({
-      method: PropTypes?.string,
-      last4: PropTypes?.string,
-      cardType: PropTypes?.string,
-      cryptocurrency: PropTypes?.string,
-      timestamp: PropTypes?.string,
-    }),
-  })?.isRequired,
-};

@@ -67,38 +67,43 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
 
 
 export default function ShippingOptions({ shippingAddress, onShippingSelect, onBack }: ShippingOptionsProps) {
-  const [selectedCarrier, setSelectedCarrier] = useState<string | null>(null);
-  const [currency, setCurrency] = useState({ code: 'USD', symbol: '$' });
-  const [availableCarriers, setAvailableCarriers] = useState<ShippingCarrier[]>([]);
+  const availableCarriers = SHIPPING_CARRIERS.filter((carrier) =>
+    carrier.countries.includes(shippingAddress?.country || '')
+  );
+
+  const [selectedCarrier, setSelectedCarrier] = useState<string | null>(() => {
+    return availableCarriers.length > 0 ? availableCarriers[0].id : null;
+  });
+
+  const [currency, setCurrency] = useState(() => {
+    if (typeof window !== 'undefined') {
+        const savedCode = (localStorage.getItem('selected_currency') || 'USD') as 'USD' | 'GBP' | 'CAD' | 'NGN';
+        const currencies = {
+            USD: { code: 'USD', symbol: '$' },
+            GBP: { code: 'GBP', symbol: '£' },
+            CAD: { code: 'CAD', symbol: 'C$' },
+            NGN: { code: 'NGN', symbol: '₦' }
+        };
+        return currencies[savedCode] || currencies.USD;
+        }
+        return { code: 'USD', symbol: '$' };
+  });
 
   useEffect(() => {
-    const loadCurrency = () => {
-      const savedCode = (localStorage.getItem('selected_currency') || 'USD') as 'USD' | 'GBP' | 'CAD' | 'NGN';
-      const currencies = {
-        USD: { code: 'USD', symbol: '$' },
-        GBP: { code: 'GBP', symbol: '£' },
-        CAD: { code: 'CAD', symbol: 'C$' },
-        NGN: { code: 'NGN', symbol: '₦' }
-      };
-      setCurrency(currencies[savedCode] || currencies.USD);
+    const handleCurrencyChange = () => {
+        const savedCode = (localStorage.getItem('selected_currency') || 'USD') as 'USD' | 'GBP' | 'CAD' | 'NGN';
+        const currencies = {
+            USD: { code: 'USD', symbol: '$' },
+            GBP: { code: 'GBP', symbol: '£' },
+            CAD: { code: 'CAD', symbol: 'C$' },
+            NGN: { code: 'NGN', symbol: '₦' }
+        };
+        setCurrency(currencies[savedCode] || currencies.USD);
     };
-
-    loadCurrency();
-    window.addEventListener('currency-changed', loadCurrency);
-    return () => window.removeEventListener('currency-changed', loadCurrency);
+    
+    window.addEventListener('currency-changed', handleCurrencyChange);
+    return () => window.removeEventListener('currency-changed', handleCurrencyChange);
   }, []);
-
-  useEffect(() => {
-    if (shippingAddress?.country) {
-      const filtered = SHIPPING_CARRIERS?.filter((carrier) =>
-      carrier?.countries?.includes(shippingAddress?.country)
-      );
-      setAvailableCarriers(filtered);
-      if (filtered?.length > 0) {
-        setSelectedCarrier(filtered?.[0]?.id);
-      }
-    }
-  }, [shippingAddress]);
 
   const handleContinue = () => {
     const carrier = availableCarriers?.find((c) => c?.id === selectedCarrier);

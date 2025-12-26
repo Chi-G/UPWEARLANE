@@ -4,7 +4,9 @@ import AppImage from '@/components/ui/AppImage';
 import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 
-export default function AdvertisementBanner({ advertisements }: { advertisements: any[] }) {
+import { Advertisement } from '@/types';
+
+export default function AdvertisementBanner({ advertisements }: { advertisements: Advertisement[] }) {
   const [currentAd, setCurrentAd] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState(true);
 

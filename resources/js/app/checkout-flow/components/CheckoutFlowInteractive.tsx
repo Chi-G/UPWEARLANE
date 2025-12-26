@@ -16,22 +16,23 @@ const CHECKOUT_STEPS = [
 
 export default function CheckoutFlowInteractive() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('checkout_shipping_address');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (error) {
+          console.error('Error parsing saved address:', error);
+          return null;
+        }
+      }
+    }
+    return null;
+  });
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod | null>(null);
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const [shippingCost, setShippingCost] = useState(0);
-  const [currency, setCurrency] = useState<Currency>({ code: 'USD', symbol: '$' });
-
-  useEffect(() => {
-    const savedAddress = localStorage.getItem('checkout_shipping_address');
-    if (savedAddress) {
-      try {
-        setShippingAddress(JSON.parse(savedAddress));
-      } catch (error) {
-        console.error('Error loading saved address:', error);
-      }
-    }
-  }, []);
 
   const handleShippingComplete = (data: ShippingAddress) => {
     setShippingAddress(data);
@@ -66,9 +67,7 @@ export default function CheckoutFlowInteractive() {
     setCurrentStep(1);
   };
 
-  const handleCurrencyUpdate = (newCurrency: Currency) => {
-    setCurrency(newCurrency);
-  };
+
 
   const orderDetails: OrderDetails = {
     shippingAddress,
@@ -87,13 +86,14 @@ export default function CheckoutFlowInteractive() {
               {currentStep === 0 && (
                 <ShippingForm
                   onShippingComplete={handleShippingComplete}
-                  initialData={shippingAddress}
+                  initialData={shippingAddress || undefined}
                 />
               )}
 
               {currentStep === 1 && (
                 <ShippingOptions
-                  shippingAddress={shippingAddress}
+                  key={shippingAddress?.country}
+                  shippingAddress={shippingAddress!} 
                   onShippingSelect={handleShippingSelect}
                   onBack={handleBackToShipping}
                 />
@@ -116,7 +116,6 @@ export default function CheckoutFlowInteractive() {
               <div className="sticky top-24">
                 <OrderSummary
                   shippingCost={shippingCost}
-                  onCurrencyUpdate={handleCurrencyUpdate}
                 />
               </div>
             </div>

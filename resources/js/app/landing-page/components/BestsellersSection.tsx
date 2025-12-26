@@ -4,7 +4,9 @@ import AppImage from '@/components/ui/AppImage';
 import Icon from '@/components/ui/AppIcon';
 import PropTypes from 'prop-types';
 
-export default function BestsellersSection({ bestsellers }: { bestsellers: any[] }) {
+import { Product } from '@/types';
+
+export default function BestsellersSection({ bestsellers }: { bestsellers: Product[] }) {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [items, setItems] = useState<any[]>([]);
@@ -64,7 +66,7 @@ export default function BestsellersSection({ bestsellers }: { bestsellers: any[]
               <div className="relative aspect-[3/4] overflow-hidden">
                 <AppImage
                   src={product?.image}
-                  alt={product?.imageAlt}
+                  alt={product?.alt}
                   width={400}
                   height={400}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
