@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 import Icon from '@/components/ui/AppIcon';
 import ProductCard from './ProductCard';
 import FilterSidebar from './FilterSidebar';
 import { Product, ProductCatalogInteractiveProps, CatalogFilters } from '@/types';
 
 export default function ProductCatalogInteractive({ initialProducts }: ProductCatalogInteractiveProps) {
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('catalog_view_mode') || 'grid';
+    }
+    return 'grid';
+  });
   const [sortBy, setSortBy] = useState('relevance');
   
-
   const [filters, setFilters] = useState<CatalogFilters>({
     categories: [],
     priceRange: null,
@@ -19,13 +23,6 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [products, setProducts] = useState(initialProducts);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const savedViewMode = localStorage.getItem('catalog_view_mode');
-    if (savedViewMode) {
-      setViewMode(savedViewMode);
-    }
-  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -285,30 +282,3 @@ export default function ProductCatalogInteractive({ initialProducts }: ProductCa
   );
 }
 
-ProductCatalogInteractive.propTypes = {
-  initialProducts: PropTypes?.arrayOf(
-    PropTypes?.shape({
-      id: PropTypes?.number?.isRequired,
-      name: PropTypes?.string?.isRequired,
-      category: PropTypes?.string?.isRequired,
-      price: PropTypes?.string?.isRequired,
-      originalPrice: PropTypes?.string,
-      discount: PropTypes?.number,
-      rating: PropTypes?.number?.isRequired,
-      reviews: PropTypes?.number?.isRequired,
-      image: PropTypes?.string?.isRequired,
-      alt: PropTypes?.string?.isRequired,
-      description: PropTypes?.string?.isRequired,
-      colors: PropTypes?.arrayOf(
-        PropTypes?.oneOfType([
-          PropTypes?.string,
-          PropTypes?.shape({
-            name: PropTypes?.string?.isRequired,
-            hex: PropTypes?.string?.isRequired,
-          })
-        ])
-      ),
-      brand: PropTypes?.string,
-    })
-  )?.isRequired,
-};

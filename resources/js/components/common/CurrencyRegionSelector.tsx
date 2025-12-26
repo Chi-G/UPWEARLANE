@@ -1,12 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from '@/components/ui/AppIcon';
 
-interface Currency {
-  code: string;
-  symbol: string; 
-  name: string;
-  region: string;
-}
+import { Currency } from '@/types';
 
 const CURRENCIES: Currency[] = [
   { code: 'USD', symbol: '$', name: 'US Dollar', region: 'USA' },
@@ -17,18 +12,16 @@ const CURRENCIES: Currency[] = [
 
 export default function CurrencyRegionSelector() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(CURRENCIES[0]);
-  const dropdownRef = useRef<HTMLDivElement>(null);
- 
-  useEffect(() => {
-    const savedCurrency = localStorage.getItem('selected_currency');
-    if (savedCurrency) {
-      const currency = CURRENCIES?.find((c) => c?.code === savedCurrency);
-      if (currency) {
-        setSelectedCurrency(currency);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('selected_currency');
+      if (saved) {
+        return CURRENCIES.find((c) => c.code === saved) || CURRENCIES[0];
       }
     }
-  }, []);
+    return CURRENCIES[0];
+  });
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

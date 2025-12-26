@@ -130,6 +130,8 @@ export type CurrencyCode = 'USD' | 'GBP' | 'CAD' | 'NGN';
 export interface Currency {
     code: CurrencyCode;
     symbol: string;
+    name: string;
+    region: string;
 }
 
 
