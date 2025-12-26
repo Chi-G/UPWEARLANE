@@ -1,4 +1,4 @@
-name: Hostinger Deploy
+name: Hostinger Deploy Workflow
 
 on:
   push:
