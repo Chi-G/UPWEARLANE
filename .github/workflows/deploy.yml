@@ -38,7 +38,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p 65002 147.93.73.29 >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT }} ${{ secrets.HOSTINGER_SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
         run: |
@@ -48,9 +48,9 @@ jobs:
             --exclude='node_modules/' \
             --exclude='tests/' \
             --exclude='.env' \
-            -e "ssh -p 65002" \
-            ./ u157985566@147.93.73.29:/home/u157985566/domains/upwearlane.com/
+            -e "ssh -p ${{ secrets.HOSTINGER_SSH_PORT }}" \
+            ./ ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:/home/${{ secrets.HOSTINGER_SSH_USER }}/domains/upwearlane.com/
             
       - name: Run Post-Deploy Commands
         run: |
-          ssh -p 65002 u157985566@147.93.73.29 "cd /home/u157985566/domains/upwearlane.com && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache"
+          ssh -p ${{ secrets.HOSTINGER_SSH_PORT }} ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }} "cd /home/${{ secrets.HOSTINGER_SSH_USER }}/domains/upwearlane.com && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache"
