@@ -31,7 +31,6 @@ export default function Header() {
     { label: 'Shop', path: '/product-catalog', icon: 'ShoppingBagIcon' },
     { label: 'Support', path: '/support', icon: 'LifebuoyIcon' },
     { label: 'Cart', path: '/shopping-cart', icon: 'ShoppingCartIcon', showOnDesktop: false },
-    { label: 'Account', path: '/user-authentication', icon: 'UserIcon', showOnDesktop: false },
   ];
 
   const handleAuthClick = () => {

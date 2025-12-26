@@ -97,7 +97,7 @@ export default function ChatBot() {
               className={`max-w-[80%] rounded-2xl p-3 text-sm ${
                 msg.sender === 'user' 
                   ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                  : 'bg-white border border-border rounded-tl-none shadow-sm'
+                  : 'bg-surface border border-border rounded-tl-none shadow-sm'
               }`}
             >
               {msg.text}
@@ -109,7 +109,7 @@ export default function ChatBot() {
         ))}
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-white border border-border rounded-2xl p-3 rounded-tl-none shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-3 rounded-tl-none shadow-sm">
               <div className="flex gap-1">
                 <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -120,7 +120,7 @@ export default function ChatBot() {
         )}
       </CardContent>
 
-      <CardFooter className="p-3 border-t bg-white gap-2">
+      <CardFooter className="p-3 border-t bg-card gap-2">
         <Input 
           className="flex-1"
           placeholder="Ask a question..."

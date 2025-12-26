@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import '../../css/app.css';
+import '../../css/tailwind.css';
 import RocketScripts from '@/components/common/RocketScripts';
 
 export const viewport = {

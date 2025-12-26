@@ -80,7 +80,7 @@ export default function CurrencyRegionSelector() {
         />
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-popover border border-border rounded-lg shadow-gold-md overflow-hidden z-50 animate-fade-in">
+        <div className="absolute right-0 w-64 bottom-full mb-2 md:top-full md:mt-2 md:bottom-auto md:mb-0 bg-popover border border-border rounded-lg shadow-gold-md overflow-hidden z-50 animate-fade-in">
           <div className="p-2">
             <div className="px-3 py-2 text-xs font-caption font-medium text-muted-foreground uppercase tracking-wider">
               Select Currency & Region
