@@ -1,4 +1,4 @@
-import '../css/app.css';
+import '../css/tailwind.css';
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -10,15 +10,18 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) =>
-        resolvePageComponent(
-            `./pages/${name}.tsx`,
-            import.meta.glob('./pages/**/*.tsx'),
-        ),
+    resolve: (name) => {
+        const pages = import.meta.glob(['./pages/**/*.tsx', './app/**/*.tsx']);
+        let path = `./pages/${name}.tsx`;
+        if (!pages[path]) {
+            path = `./app/${name}.tsx`;
+        }
+        return resolvePageComponent(path, pages);
+    },
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(
+        root.render( 
             <StrictMode>
                 <App {...props} />
             </StrictMode>,

@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import 'tailwindcss';
+@import "tw-animate-css";
+
+@source '../views';
+@source '../../resources/js/**/*.{js,jsx,ts,tsx}';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    /* Primary Colors */
+    --color-primary: #D4AF37;
+    /* Matured gold */
+    --color-primary-foreground: #1A1A1A;
+    /* Deep charcoal */
+
+    /* Secondary Colors */
+    --color-secondary: #1A1A1A;
+    /* Deep charcoal */
+    --color-secondary-foreground: #FFFFFF; 
+    /* White */
+
+    /* Accent Colors */
+    --color-accent: #F5F5DC;
+    /* Warm cream */
+    --color-accent-foreground: #2D2D2D;
+    /* Dark gray */
+
+    /* Background Colors */
+    --color-background: #FFFFFF;
+    /* Pure white */
+    --color-foreground: #1A1A1A;
+    /* Deep charcoal */
+
+    /* Surface Colors */
+    --color-surface: #FAFAFA;
+    /* Subtle off-white */
+    --color-surface-foreground: #2D2D2D;
+    /* Dark gray */
+
+    /* Card Colors */
+    --color-card: #FAFAFA;
+    /* Subtle off-white */
+    --color-card-foreground: #2D2D2D;
+    /* Dark gray */
+
+    /* Popover Colors */
+    --color-popover: #FFFFFF;
+    /* Pure white */
+    --color-popover-foreground: #1A1A1A;
+    /* Deep charcoal */
+
+    /* Muted Colors */
+    --color-muted: #F5F5F5;
+    /* Light gray */
+    --color-muted-foreground: #4D4D4D;
+    /* Medium gray */
+
+    /* Border & Input */
+    --color-border: rgba(212, 175, 55, 0.2);
+    /* Gold with opacity */
+    --color-input: #FFFFFF;
+    /* Pure white */
+    --color-ring: #D4AF37;
+    /* Matured gold */
+
+    /* Destructive/Error Colors */
+    --color-destructive: #E74C3C;
+    /* Clear red */
+    --color-destructive-foreground: #FFFFFF;
+    /* White */
+    --color-error: #E74C3C;
+    /* Clear red */
+    --color-error-foreground: #FFFFFF;
+    /* White */
+
+    /* Success Colors */
+    --color-success: #2ECC71;
+    /* Vibrant green */
+    --color-success-foreground: #FFFFFF;
+    /* White */
+
+    /* Warning Colors */
+    --color-warning: #F39C12;
+    /* Rich orange */
+    --color-warning-foreground: #FFFFFF;
+    /* White */
+
+    /* Text Colors */
+    --color-text-primary: #1A1A1A;
+    /* Deep charcoal */
+    --color-text-secondary: #4D4D4D;
+    /* Medium gray */
+
+    /* Shadow Colors */
+    --shadow-gold-light: rgba(212, 175, 55, 0.15);
+    --shadow-gold-medium: rgba(212, 175, 55, 0.25);
+    --shadow-gold-heavy: rgba(212, 175, 55, 0.35);
+
+    /* Dark Mode Surfaces */
+    --color-dark-surface-1: #0D0D0D;
+    /* Darkest */
+    --color-dark-surface-2: #1A1A1A;
+    /* Medium dark */
+    --color-dark-surface-3: #2D2D2D;
+    /* Lighter dark */
+}
+
+@layer base {
+    .dark {
+        --color-primary-foreground: #0D0D0D;
+        --color-secondary: #2D2D2D;
+        --color-secondary-foreground: rgba(255, 255, 255, 0.9);
+        --color-accent: #3D3D3D;
+        --color-accent-foreground: #D4AF37;
+        --color-background: #0D0D0D;
+        --color-foreground: rgba(255, 255, 255, 0.9);
+        --color-surface: #1A1A1A;
+        --color-surface-foreground: rgba(255, 255, 255, 0.9);
+        --color-card: #1A1A1A;
+        --color-card-foreground: rgba(255, 255, 255, 0.9);
+        --color-popover: #2D2D2D;
+        --color-popover-foreground: rgba(255, 255, 255, 0.9);
+        --color-muted: #2D2D2D;
+        --color-muted-foreground: rgba(255, 255, 255, 0.6);
+        --color-border: rgba(212, 175, 55, 0.3);
+        --color-input: #1A1A1A;
+        --color-text-primary: rgba(255, 255, 255, 0.9);
+        --color-text-secondary: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Source Sans 3', sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Playfair Display', serif;
+    }
+
+    h1 {
+        @apply text-5xl leading-tight;
+        font-weight: 700;
+    }
+
+    h2 {
+        @apply text-4xl leading-tight;
+        font-weight: 600;
+    }
+
+    h3 {
+        @apply text-3xl leading-snug;
+        font-weight: 600;
+    }
+
+    h4 {
+        @apply text-2xl leading-snug;
+        font-weight: 500;
+    }
+
+    h5 {
+        @apply text-xl leading-normal;
+        font-weight: 500;
+    }
+
+    caption,
+    .caption {
+        font-family: 'IBM Plex Sans', sans-serif;
+        @apply text-sm leading-relaxed;
+        letter-spacing: 0.025em;
+    }
+
+    .data-text {
+        font-family: 'JetBrains Mono', monospace;
+        font-feature-settings: 'tnum' on, 'lnum' on;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            font-size: 15px;
+        }
+    }
+}
+
+@utility text-balance {
+    text-wrap: balance;
+}
+
+@utility smooth-scroll {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+@utility transition-smooth {
+    transition-property: all;
+    transition-duration: 250ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@utility shadow-gold-sm {
+    box-shadow: 0 2px 4px var(--shadow-gold-light);
+}
+
+@utility shadow-gold {
+    box-shadow: 0 4px 6px var(--shadow-gold-light);
+}
+
+@utility shadow-gold-md {
+    box-shadow: 0 6px 12px var(--shadow-gold-medium);
+}
+
+@utility shadow-gold-lg {
+    box-shadow: 0 12px 24px var(--shadow-gold-medium);
+}
+
+@utility shadow-gold-xl {
+    box-shadow: 0 20px 40px var(--shadow-gold-heavy);
+}
+
+@utility shadow-gold-2xl {
+    box-shadow: 0 25px 50px -12px var(--shadow-gold-heavy);
+}
+
+@utility press-effect {
+    @apply active:scale-[0.97] transition-smooth;
+}
+
+@utility hover-lift {
+    @apply hover:-translate-y-[1px] transition-smooth;
+}
+
+@utility focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+}
+
+@utility backdrop-dark {
+    background-color: rgba(26, 26, 26, 0.95);
+}
+
+@utility max-measure {
+    max-width: 70ch;
+}
+
+@utility touch-target {
+    min-width: 44px;
+    min-height: 44px;
+}

@@ -41,3 +41,209 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: string | number;
+    originalPrice?: string | number;
+    discount?: number;
+    rating: number;
+    reviews?: number;
+    reviewCount?: number;
+    image: string;
+    alt: string;
+    description: string;
+    colors?: string[] | { name: string; hex: string }[];
+    brand?: string;
+}
+
+export interface ProductCatalogInteractiveProps {
+    initialProducts: Product[];
+}
+
+export interface Review {
+    id: number;
+    userName: string;
+    userImage: string;
+    userImageAlt: string;
+    rating: number;
+    title: string;
+    comment: string;
+    date: string;
+    verified: boolean;
+    helpfulCount: number;
+}
+
+export interface ProductDetail extends Product {
+    price: number;
+    originalPrice?: number;
+    reviewCount: number;
+    isNew?: boolean;
+    inStock: boolean;
+    images: { url: string; alt: string }[];
+    colors: { name: string; hex: string }[];
+    sizes: string[];
+    features: string[];
+    specifications: Record<string, string>;
+}
+
+export interface ProductDetailProps {
+    product: ProductDetail;
+    reviews: Review[];
+    relatedProducts: Product[];
+}
+export interface ShippingAddress {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}
+
+export interface ShippingMethod {
+    carrier: string;
+    deliveryTime: string;
+    cost: number;
+}
+
+export interface PaymentInfo {
+    method: string;
+    last4?: string;
+    cardType?: string;
+    cryptocurrency?: string;
+    timestamp: string;
+}
+
+export interface OrderDetails {
+    shippingAddress: ShippingAddress | null;
+    shipping: ShippingMethod | null;
+    payment: PaymentInfo | null;
+}
+
+export type CurrencyCode = 'USD' | 'GBP' | 'CAD' | 'NGN';
+
+export interface Currency {
+    code: CurrencyCode;
+    symbol: string;
+}
+
+
+export interface CatalogFilters {
+    categories: string[];
+    priceRange: string | null;
+    colors: string[];
+    brands: string[];
+}
+
+export interface FilterSidebarProps {
+    filters: CatalogFilters;
+    onFilterChange: (filters: CatalogFilters) => void;
+    onClearFilters: () => void;
+    isMobileOpen: boolean;
+    onMobileClose: () => void;
+}
+export interface SocialAuthButtonsProps {
+    onGoogleAuth: () => void;
+    isLoading: boolean;
+}
+
+export interface Benefit {
+    id: number;
+    title: string;
+    description: string;
+}
+
+export interface BenefitsListProps {
+    benefits: Benefit[];
+}
+
+export interface AuthenticationFormData {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    acceptTerms: boolean;
+}
+
+export interface AuthenticationFormProps {
+    isSignUp: boolean;
+    onSubmit: (data: AuthenticationFormData) => void;
+    isLoading: boolean;
+}
+export interface CartItem {
+    id: string;
+    name: string;
+    category: string;
+    price: number;
+    quantity: number;
+    image: string;
+    alt: string;
+    variations?: {
+        color?: string;
+        size?: string;
+    };
+    stock?: number;
+}
+
+export interface CartItemCardProps {
+    item: CartItem;
+    onUpdateQuantity: (id: string, quantity: number) => Promise<void> | void;
+    onRemove: (id: string) => void;
+}
+
+export interface PromoCode {
+    code: string;
+    description: string;
+    type: 'percentage' | 'fixed' | 'shipping';
+    value: number;
+    minOrder: number;
+}
+
+export interface ShoppingCartInteractiveProps {
+    initialCartData: CartItem[];
+}
+
+export interface PromoCodeSectionProps {
+    onApplyPromo: (code: string | null) => { success: boolean; message?: string } | void;
+    appliedPromo?: PromoCode | null;
+}
+export interface ProductInfoProps {
+    product: ProductDetail;
+}
+
+export interface ProductImageGalleryProps {
+    images: {
+        url: string;
+        alt: string;
+    }[];
+    productName: string;
+}
+export interface CustomerReviewsProps {
+    reviews: Review[];
+    productId: number;
+}
+
+export interface OrderConfirmationProps {
+    orderDetails: OrderDetails;
+}
+
+export interface OrderSummaryProps {
+    shippingCost: number;
+    onCurrencyUpdate?: (currency: Currency) => void;
+}
+
+export interface PaymentFormProps {
+    onPaymentComplete: (paymentData: PaymentInfo) => void;
+    onBack: () => void;
+    totalAmount: number;
+}
+
+export interface ShippingFormProps {
+    onShippingComplete: (shippingData: ShippingAddress) => void;
+    initialData?: ShippingAddress;
+}
