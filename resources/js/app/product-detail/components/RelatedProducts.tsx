@@ -3,8 +3,9 @@ import AppImage from '@/components/ui/AppImage';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
+import { Product } from '@/types';
 
-export default function RelatedProducts({ products }: { products: any[] }) {
+export default function RelatedProducts({ products }: { products: Product[] }) {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: 'left' | 'right') => {
@@ -45,7 +46,7 @@ export default function RelatedProducts({ products }: { products: any[] }) {
                 className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:gap-6"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {products?.map((product: any) => (
+                {products?.map((product: Product) => (
                     <Link
                         key={product?.id}
                         href="/product-detail"

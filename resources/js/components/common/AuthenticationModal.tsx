@@ -39,7 +39,7 @@ export default function AuthenticationModal({
 
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
-            if (e?.key === 'Escape' && isOpen) {
+            if (e.key === 'Escape' && isOpen) {
                 onClose();
             }
         };
@@ -50,20 +50,20 @@ export default function AuthenticationModal({
 
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (
-            modalRef?.current &&
-            !modalRef?.current?.contains(e?.target as Node)
+            modalRef.current &&
+            !modalRef.current.contains(e.target as Node)
         ) {
             onClose();
         }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e?.target;
+        const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e?.preventDefault();
+        e.preventDefault();
         setIsLoading(true);
 
         setTimeout(() => {

@@ -3,7 +3,7 @@ import CurrencyRegionSelector from '@/components/common/CurrencyRegionSelector';
 import Icon from '@/components/ui/AppIcon';
 import { Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import ShoppingCartIndicator from './ShoopingCartIndicator';
+import ShoppingCartIndicator from './ShoppingCartIndicator';
 
 export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

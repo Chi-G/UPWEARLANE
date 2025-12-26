@@ -11,11 +11,11 @@ export default function ShoppingCartIndicator() {
             try {
                 const cartStr = localStorage.getItem('shopping_cart');
                 const cart = cartStr ? JSON.parse(cartStr) : [];
-                const totalItems = cart?.reduce(
-                    (sum: number, item: any) => sum + (item?.quantity || 1),
-                    0,
-                );
-                setCartCount(totalItems);
+                const totalItems = cart?.reduce((sum: number, item: unknown) => {
+                    const qty = (item as { quantity?: number })?.quantity ?? 1;
+                    return sum + Number(qty || 0);
+                }, 0);
+                setCartCount(Number(totalItems || 0));
             } catch (error) {
                 console.error('Error loading cart:', error);
                 setCartCount(0);

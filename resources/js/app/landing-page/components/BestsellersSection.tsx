@@ -11,24 +11,22 @@ export default function BestsellersSection({
 }: {
     bestsellers: Product[];
 }) {
-    const [cartItems, setCartItems] = useState<any[]>([]);
-    const [filter, setFilter] = useState<string>('all');
-    const [items, setItems] = useState<any[]>([]);
+    const [cartItems, setCartItems] = useState<number[]>([]);
 
-    const handleAddToCart = (product: any) => {
+    const handleAddToCart = (product: Product) => {
         try {
             const existingCart = JSON.parse(
                 localStorage.getItem('shopping_cart') || '[]',
-            );
+            ) as Array<{ id: number; quantity?: number }>;
             const existingItem = existingCart?.find(
-                (item: any) => item?.id === product?.id,
+                (item) => item?.id === product?.id,
             );
 
             let updatedCart;
             if (existingItem) {
-                updatedCart = existingCart?.map((item: any) =>
+                updatedCart = existingCart?.map((item) =>
                     item?.id === product?.id
-                        ? { ...item, quantity: item?.quantity + 1 }
+                        ? { ...item, quantity: (item?.quantity || 0) + 1 }
                         : item,
                 );
             } else {

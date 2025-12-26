@@ -27,14 +27,14 @@ export default function NotFound() {
                         onClick={() => window.history.back()}
                         className="bg-surface hover:bg-accent text-foreground border-border transition-smooth flex w-full items-center justify-center gap-2 rounded-lg border px-8 py-3 font-medium sm:w-auto"
                     >
-                        <Icon name={'ArrowLeftIcon' as any} size={20} />
+                        <Icon name={'ArrowLeftIcon'} size={20} />
                         Go Back
                     </button>
                     <button
                         onClick={() => router.visit('/')}
                         className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-gold transition-smooth flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3 font-medium sm:w-auto"
                     >
-                        <Icon name={'HomeIcon' as any} size={20} />
+                        <Icon name={'HomeIcon'} size={20} />
                         Back to Home
                     </button>
                 </div>

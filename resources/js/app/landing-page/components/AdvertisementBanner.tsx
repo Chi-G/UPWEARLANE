@@ -42,7 +42,7 @@ export default function AdvertisementBanner({
                 <div className="bg-card border-border shadow-gold-lg relative h-[400px] overflow-hidden rounded-2xl border lg:h-[450px]">
                     {/* Advertisement Content */}
                     <div className="relative h-full">
-                        {advertisements?.map((ad: any, index: number) => (
+                        {advertisements?.map((ad: Advertisement, index: number) => (
                             <div
                                 key={ad?.id}
                                 className={`absolute inset-0 h-full transition-opacity duration-1000 ${
@@ -152,7 +152,7 @@ export default function AdvertisementBanner({
                             {/* Dots Indicator */}
                             <div className="flex items-center space-x-2">
                                 {advertisements?.map(
-                                    (_: any, index: number) => (
+                                    (_: Advertisement, index: number) => (
                                         <button
                                             key={index}
                                             onClick={() => goToAd(index)}

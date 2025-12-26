@@ -6,17 +6,19 @@ import BenefitsList from './BenefitsList';
 import SecurityBadges from './SecurityBadges';
 import SocialAuthButtons from './SocialAuthButtons';
 
+import { Benefit, AuthenticationFormData } from '@/types';
+
 export default function UserAuthenticationInteractive({
     benefits,
 }: {
-    benefits: any[];
+    benefits: Benefit[];
 }) {
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>('');
 
-    const handleFormSubmit = (formData: any) => {
+    const handleFormSubmit = (formData: AuthenticationFormData) => {
         setIsLoading(true);
         setSuccessMessage('');
 
@@ -103,11 +105,7 @@ export default function UserAuthenticationInteractive({
                                         ? 'Create Account'
                                         : 'Welcome Back'}
                                 </h1>
-                                {/* The following line was part of the instruction, but it's syntactically incorrect and out of place here.
-                    It seems to be a fragment from a different component (e.g., a carousel).
-                    To maintain syntactic correctness, it's commented out or removed.
-                    newArrivals?.slice(slideIndex * itemsPerView?.desktop, (slideIndex + 1) * itemsPerView?.desktop)?.map((product: any) => (
-                */}
+                                
                                 <p className="text-muted-foreground text-sm md:text-base">
                                     {isSignUp
                                         ? 'Join UpWearLane for exclusive tech fashion deals'

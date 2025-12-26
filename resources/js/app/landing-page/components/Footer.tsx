@@ -50,7 +50,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                                 {footerData?.companyDescription}
                             </p>
                             <div className="flex items-center space-x-4">
-                                {footerData?.socialLinks?.map((social: any) => (
+                                {footerData?.socialLinks?.map((social) => (
                                     <a
                                         key={social?.name}
                                         href={social?.url}
@@ -71,7 +71,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                                 Quick Links
                             </h4>
                             <ul className="space-y-3">
-                                {footerData?.quickLinks?.map((link: any) => (
+                                {footerData?.quickLinks?.map((link) => (
                                     <li key={link?.name}>
                                         <Link
                                             href={link?.url}
@@ -91,7 +91,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                             </h4>
                             <ul className="space-y-3">
                                 {footerData?.categories?.map(
-                                    (category: any) => (
+                                    (category) => (
                                         <li key={category?.name}>
                                             <Link
                                                 href={category?.url}
@@ -156,7 +156,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                                 </h5>
                                 <div className="flex items-center space-x-3">
                                     {footerData?.trustBadges?.map(
-                                        (badge: any, index: number) => (
+                                        (badge: string, index: number) => (
                                             <div
                                                 key={index}
                                                 className="bg-secondary-foreground/10 rounded-md px-2 py-1"
@@ -180,7 +180,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                             © {currentYear} UpWearLane. All rights reserved.
                         </div>
                         <div className="flex items-center space-x-6">
-                            {footerData?.legalLinks?.map((link: any) => (
+                            {footerData?.legalLinks?.map((link) => (
                                 <Link
                                     key={link?.name}
                                     href={link?.url}

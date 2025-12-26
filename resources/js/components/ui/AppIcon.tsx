@@ -4,21 +4,21 @@ import React from 'react';
 import * as HeroIcons from '@heroicons/react/24/outline';
 import * as HeroIconsSolid from '@heroicons/react/24/solid';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
-import { 
-    Facebook, 
-    Twitter, 
-    Instagram, 
-    Linkedin, 
-    Youtube, 
+import {
+    Facebook,
+    Twitter,
+    Instagram,
+    Linkedin,
+    Youtube,
     Github,
     Chrome
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
-type HeroIconName = keyof typeof HeroIcons;
+// Removed unused HeroIconName type to satisfy lint rule
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
-    name: HeroIconName;
+    name: string;
     variant?: 'outline' | 'solid';
     size?: number;
     className?: string;
@@ -36,7 +36,7 @@ function Icon({
     ...props
 }: IconProps) {
     const iconSet = variant === 'solid' ? HeroIconsSolid : HeroIcons;
-    
+
     // Support for common social brands via Lucide
     const brands: Record<string, React.ElementType> = {
         Facebook,

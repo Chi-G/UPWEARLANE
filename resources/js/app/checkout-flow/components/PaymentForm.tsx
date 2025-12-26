@@ -50,7 +50,7 @@ export default function PaymentForm({
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e?.target;
+        const { name, value } = e.target;
         let formattedValue = value;
 
         if (name === 'number') {
@@ -152,15 +152,15 @@ export default function PaymentForm({
                             name="payment-method"
                             value={method?.id}
                             checked={selectedMethod === method?.id}
-                            onChange={(e) =>
-                                setSelectedMethod(e?.target?.value)
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setSelectedMethod(e.target.value)
                             }
                             className="text-primary focus:ring-primary h-5 w-5 focus:ring-offset-0"
                         />
                         <div className="ml-3 flex-1">
                             <div className="flex items-center space-x-2">
                                 <Icon
-                                    name={method?.icon as any}
+                                    name={method?.icon}
                                     size={20}
                                     className="text-foreground"
                                 />
@@ -317,8 +317,8 @@ export default function PaymentForm({
                                     name="crypto"
                                     value={crypto?.id}
                                     checked={selectedCrypto === crypto?.id}
-                                    onChange={(e) =>
-                                        setSelectedCrypto(e?.target?.value)
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        setSelectedCrypto(e.target.value)
                                     }
                                     className="text-primary focus:ring-primary h-5 w-5 focus:ring-offset-0"
                                 />

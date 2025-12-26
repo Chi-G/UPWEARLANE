@@ -106,7 +106,7 @@ export default function NewArrivalsCarousel({
                                             (slideIndex + 1) *
                                                 itemsPerView?.desktop,
                                         )
-                                        ?.map((product: any) => (
+                                        ?.map((product: Product) => (
                                             <div
                                                 key={product?.id}
                                                 className="bg-card border-border shadow-gold hover:shadow-gold-md transition-smooth hover-lift group flex h-full flex-col overflow-hidden rounded-xl border"

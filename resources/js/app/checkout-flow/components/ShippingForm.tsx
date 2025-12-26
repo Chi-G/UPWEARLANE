@@ -30,27 +30,27 @@ export default function ShippingForm({
     const validateField = (name: keyof ShippingAddress, value: string) => {
         switch (name) {
             case 'fullName':
-                return value?.trim()?.length < 2
+                return value.trim().length < 2
                     ? 'Full name must be at least 2 characters'
                     : '';
             case 'email':
-                return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/?.test(value)
+                return !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
                     ? 'Invalid email address'
                     : '';
             case 'phone':
-                return value?.trim()?.length < 10 ? 'Invalid phone number' : '';
+                return value.trim().length < 10 ? 'Invalid phone number' : '';
             case 'address':
-                return value?.trim()?.length < 5
+                return value.trim().length < 5
                     ? 'Address must be at least 5 characters'
                     : '';
             case 'city':
-                return value?.trim()?.length < 2 ? 'City is required' : '';
+                return value.trim().length < 2 ? 'City is required' : '';
             case 'state':
-                return value?.trim()?.length < 2
+                return value.trim().length < 2
                     ? 'State/Province is required'
                     : '';
             case 'postalCode':
-                return value?.trim()?.length < 3 ? 'Invalid postal code' : '';
+                return value.trim().length < 3 ? 'Invalid postal code' : '';
             default:
                 return '';
         }
@@ -59,7 +59,7 @@ export default function ShippingForm({
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
-        const { name, value } = e?.target;
+        const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
 
         if (touched?.[name]) {
@@ -71,7 +71,7 @@ export default function ShippingForm({
     const handleBlur = (
         e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
-        const { name, value } = e?.target;
+        const { name, value } = e.target;
         setTouched((prev) => ({ ...prev, [name]: true }));
         const error = validateField(name as keyof ShippingAddress, value);
         setErrors((prev) => ({ ...prev, [name]: error }));
@@ -102,9 +102,7 @@ export default function ShippingForm({
         }
     };
 
-    const selectedCountry = COUNTRIES?.find(
-        (c) => c?.code === formData?.country,
-    );
+    // `selectedCountry` removed because it wasn't used. Keep formData.country for selection.
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">

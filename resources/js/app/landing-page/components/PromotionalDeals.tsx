@@ -70,9 +70,9 @@ export default function PromotionalDeals({ deals }: { deals: Deal[] }) {
 
     const handleAddToCart = (deal: Deal) => {
         try {
-            const existingCart: any[] = JSON.parse(
+            const existingCart = JSON.parse(
                 localStorage.getItem('shopping_cart') || '[]',
-            );
+            ) as Array<{ id: number; quantity?: number }>;
             const cartItem = {
                 id: deal?.id,
                 name: deal?.title,
@@ -84,15 +84,13 @@ export default function PromotionalDeals({ deals }: { deals: Deal[] }) {
                 isDeal: true,
             };
 
-            const existingItem = existingCart?.find(
-                (item: any) => item?.id === deal?.id,
-            );
+            const existingItem = existingCart?.find((item) => item?.id === deal?.id);
             let updatedCart;
 
             if (existingItem) {
-                updatedCart = existingCart?.map((item: any) =>
+                updatedCart = existingCart?.map((item) =>
                     item?.id === deal?.id
-                        ? { ...item, quantity: item?.quantity + 1 }
+                        ? { ...item, quantity: (item?.quantity || 0) + 1 }
                         : item,
                 );
             } else {
@@ -245,11 +243,7 @@ export default function PromotionalDeals({ deals }: { deals: Deal[] }) {
 
                                         {/* Features */}
                                         <div className="space-y-2">
-                                            {deal?.features?.map(
-                                                (
-                                                    feature: any,
-                                                    index: number,
-                                                ) => (
+                                            {deal?.features?.map((feature: string, index: number) => (
                                                     <div
                                                         key={index}
                                                         className="flex items-center space-x-2"

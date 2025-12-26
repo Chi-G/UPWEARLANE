@@ -59,7 +59,7 @@ export default function HeroBanner({ heroData }: { heroData: HeroData }) {
                         {/* Stats */}
                         <div className="border-border grid grid-cols-3 gap-4 border-t pt-8">
                             {heroData?.stats?.map(
-                                (stat: any, index: number) => (
+                                (stat: { value: string; label: string }, index: number) => (
                                     <div
                                         key={index}
                                         className="text-center lg:text-left"
