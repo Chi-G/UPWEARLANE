@@ -12,7 +12,7 @@ export default function ProductCatalogPage() {
         {
             id: 1,
             name: 'Smart Fabric Performance Jacket',
-            category: 'Apparel',
+            category: 'Clothing',
             price: '$189.99',
             originalPrice: '$249.99',
             discount: 24,
@@ -28,7 +28,7 @@ export default function ProductCatalogPage() {
         {
             id: 2,
             name: 'LED Fiber Optic Evening Gown',
-            category: 'Apparel',
+            category: 'Clothing',
             price: '$349.99',
             originalPrice: '$499.99',
             discount: 30,
@@ -44,7 +44,7 @@ export default function ProductCatalogPage() {
         {
             id: 3,
             name: 'Biometric Fitness Tracking Shirt',
-            category: 'Tech Wear',
+            category: 'Fitness',
             price: '$129.99',
             rating: 4.7,
             reviews: 203,
@@ -88,7 +88,7 @@ export default function ProductCatalogPage() {
         {
             id: 6,
             name: 'Climate-Adaptive Running Shorts',
-            category: 'Apparel',
+            category: 'Clothing',
             price: '$79.99',
             originalPrice: '$99.99',
             discount: 20,
@@ -104,7 +104,7 @@ export default function ProductCatalogPage() {
         {
             id: 7,
             name: 'Smart Glasses with AR Display',
-            category: 'Accessories',
+            category: 'AR/VR',
             price: '$299.99',
             rating: 4.7,
             reviews: 112,
@@ -118,7 +118,7 @@ export default function ProductCatalogPage() {
         {
             id: 8,
             name: 'Posture-Correcting Smart Vest',
-            category: 'Tech Wear',
+            category: 'Fitness',
             price: '$149.99',
             originalPrice: '$189.99',
             discount: 21,
@@ -148,7 +148,7 @@ export default function ProductCatalogPage() {
         {
             id: 10,
             name: 'Thermal Regulation Leggings',
-            category: 'Apparel',
+            category: 'Clothing',
             price: '$119.99',
             originalPrice: '$149.99',
             discount: 20,
@@ -178,7 +178,7 @@ export default function ProductCatalogPage() {
         {
             id: 12,
             name: 'Muscle Recovery Compression Sleeves',
-            category: 'Tech Wear',
+            category: 'Fitness',
             price: '$79.99',
             originalPrice: '$99.99',
             discount: 20,

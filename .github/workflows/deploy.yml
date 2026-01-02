@@ -9,8 +9,8 @@ jobs:
   tests:
     name: Run Tests
     runs-on: ubuntu-latest
-    
-    steps:
+
+    steps: 
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -60,7 +60,7 @@ jobs:
     name: Build Frontend Assets
     runs-on: ubuntu-latest
     continue-on-error: true
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -139,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [tests, build-assets]
     if: success() || failure() # Deploy even if tests fail
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -175,7 +175,7 @@ jobs:
             echo "ℹ️ No package-lock.json found, using npm install"
             npm install --prefer-offline --no-audit
           fi
-          
+
           # skipping build as artifacts are downloaded
           # if grep -q "\"build\"" package.json || grep -q "\"prod\"" package.json; then
           #   echo "🔨 Building assets for production..."
@@ -209,38 +209,38 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            
+
             echo "🚀 Starting deployment..."
-            
+
             cd domains/upwearlane.com
-            
+
             # Ensure we're on the correct branch
             git fetch origin
             git checkout main
             git reset --hard origin/main
-            
+
             echo "📦 Installing Composer dependencies..."
             composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-            
+
             echo "🔧 Running Laravel setup commands..."
-            
+
             # Run migrations
             php artisan migrate --force
-            
+
             # Clear and cache configuration
             php artisan config:clear
             php artisan config:cache
-            
+
             # Clear and cache routes
             php artisan route:clear
             php artisan route:cache
-            
+
             # Clear and cache views
             php artisan view:clear
             php artisan view:cache
-            
+
             echo "✅ Deployment completed successfully!"
-            
+
             # Show deployment info
             echo ""
             echo "📊 Deployment Information:"

@@ -129,6 +129,13 @@ export default function Header() {
                         <div className="flex items-center space-x-3 lg:hidden">
                             <ShoppingCartIndicator />
                             <button
+                                onClick={handleAuthClick}
+                                className="touch-target text-foreground hover:text-primary transition-smooth flex items-center justify-center"
+                                aria-label="Account"
+                            >
+                                <Icon name="UserIcon" size={24} />
+                            </button>
+                            <button
                                 onClick={() =>
                                     setIsMobileMenuOpen(!isMobileMenuOpen)
                                 }

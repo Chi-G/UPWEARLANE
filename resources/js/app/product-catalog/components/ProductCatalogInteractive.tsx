@@ -20,12 +20,27 @@ export default function ProductCatalogInteractive({
     });
     const [sortBy, setSortBy] = useState('relevance');
 
-    const [filters, setFilters] = useState<CatalogFilters>({
-        categories: [],
-        priceRange: null,
-        colors: [],
-        brands: [],
+    const [filters, setFilters] = useState<CatalogFilters>(() => {
+        let initialCategories: string[] = [];
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const categoryParam = params.get('category');
+            if (categoryParam) {
+                // Formatting: 'smart-watches' -> 'Smart Watches' if needed, but the filter logic does lowercase check.
+                // The filter logic checks: product.category.toLowerCase().includes(cat.replace('-', ' '))
+                // So passing 'smart-watches' directly works if the logic handles it.
+                // Let's pass the slug directly as that's what we used in the link.
+                initialCategories = [categoryParam];
+            }
+        }
+        return {
+            categories: initialCategories,
+            priceRange: null,
+            colors: [],
+            brands: [],
+        };
     });
+
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [products, setProducts] = useState(initialProducts);
     // Show loading animation on initial mount for 2s
@@ -52,7 +67,7 @@ export default function ProductCatalogInteractive({
                     filters?.categories?.some((cat) =>
                         product?.category
                             ?.toLowerCase()
-                            ?.includes(cat?.replace('-', ' ')),
+                            ?.includes(cat?.replace(/-/g, ' ')),
                     ),
                 );
             }
@@ -140,7 +155,7 @@ export default function ProductCatalogInteractive({
 
             setProducts(filtered);
             setIsLoading(false);
-        }, 2000);
+        }, 500); // Reduced delay for snappier feel
 
         return () => clearTimeout(timer);
     }, [filters, sortBy, initialProducts]);
@@ -178,6 +193,12 @@ export default function ProductCatalogInteractive({
 
     const handleClearFilters = () => {
         setIsLoading(true);
+        // Clear URL params
+        if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('category');
+            window.history.pushState({}, '', url);
+        }
         setFilters({
             categories: [],
             priceRange: null,
@@ -326,7 +347,7 @@ export default function ProductCatalogInteractive({
                             <div
                                 className={
                                     viewMode === 'grid'
-                                        ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-2 xl:grid-cols-3'
+                                        ? 'grid grid-cols-4 gap-2 sm:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4'
                                         : 'space-y-4 md:space-y-6'
                                 }
                             >

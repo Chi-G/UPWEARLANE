@@ -5,14 +5,14 @@ import Icon from '@/components/ui/AppIcon';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import AdvertisementBanner from './AdvertisementBanner';
+// import AdvertisementBanner from './AdvertisementBanner';
 import BestsellersSection from './BestsellersSection';
 import FeaturedProducts from './FeaturedProducts';
 import Footer from './Footer';
 import HeroBanner from './HeroBanner';
 import NewArrivalsCarousel from './NewArrivalsCarousel';
-import NewsletterSubscription from './NewsletterSubscription';
-import PromotionalDeals from './PromotionalDeals';
+// import NewsletterSubscription from './NewsletterSubscription';
+// import PromotionalDeals from './PromotionalDeals';
 
 import { PageData } from '@/types';
 
@@ -51,12 +51,12 @@ export default function LandingPageInteractive({
                 <HeroBanner heroData={pageData?.hero} />
                 <FeaturedProducts products={pageData?.featuredProducts} />
                 <BestsellersSection bestsellers={pageData?.bestsellers} />
-                <AdvertisementBanner
+                {/* <AdvertisementBanner
                     advertisements={pageData?.advertisements}
-                />
+                /> */}
                 <NewArrivalsCarousel newArrivals={pageData?.newArrivals} />
-                <PromotionalDeals deals={pageData?.promotionalDeals} />
-                <NewsletterSubscription newsletterData={pageData?.newsletter} />
+                {/* <PromotionalDeals deals={pageData?.promotionalDeals} /> */}
+                {/* <NewsletterSubscription newsletterData={pageData?.newsletter} /> */}
             </main>
             <Footer footerData={pageData?.footer} />
 

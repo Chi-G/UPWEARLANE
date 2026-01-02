@@ -300,11 +300,11 @@ export default function FilterSidebar({
             {isMobileOpen && (
                 <>
                     <div
-                        className="z-drawer-backdrop backdrop-dark fixed inset-0 lg:hidden"
+                        className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
                         onClick={onMobileClose}
                         aria-hidden="true"
                     />
-                    <div className="z-drawer fixed bottom-0 left-0 top-0 w-80 max-w-[85vw] lg:hidden">
+                    <div className="fixed bottom-0 left-0 top-0 z-50 w-80 max-w-[85vw] shadow-2xl lg:hidden">
                         {sidebarContent}
                     </div>
                 </>

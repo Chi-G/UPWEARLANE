@@ -35,7 +35,7 @@ export default function FeaturedProducts({
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
                     {filteredProducts?.map((product) => (
                         <div
                             key={product?.id}
@@ -217,7 +217,8 @@ FeaturedProducts.propTypes = {
             price: PropTypes?.string?.isRequired,
             originalPrice: PropTypes?.string,
             image: PropTypes?.string?.isRequired,
-            imageAlt: PropTypes?.string?.isRequired,
+            alt: PropTypes?.string?.isRequired,
+            category: PropTypes?.string?.isRequired,
             rating: PropTypes?.number?.isRequired,
             reviewCount: PropTypes?.number?.isRequired,
             isNew: PropTypes?.bool,

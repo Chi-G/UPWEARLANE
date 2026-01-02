@@ -84,29 +84,13 @@ export interface HeroData {
     stats: HeroStats[];
 }
 
-export interface Deal {
-    id: number;
-    title: string;
-    description: string;
-    originalPrice: string;
-    discountedPrice: string;
-    discount: number;
-    image: string;
-    imageAlt: string;
-    type: string;
-    endDate: string;
-    features: string[];
-    productId: number;
-}
+
 
 export interface PageData {
     hero: HeroData;
     featuredProducts: Product[];
     bestsellers: Product[];
     newArrivals: Product[];
-    promotionalDeals: Deal[];
-    advertisements: Advertisement[];
-    newsletter: NewsletterData;
     footer: FooterData;
 }
 
@@ -297,22 +281,7 @@ export interface ShippingFormProps {
     initialData?: ShippingAddress;
 }
 
-export interface Advertisement {
-    id: number;
-    title: string;
-    description: string;
-    backgroundImage: string;
-    backgroundImageAlt: string;
-    productImage?: string;
-    productImageAlt?: string;
-    badge?: string;
-    offer?: string;
-    originalPrice?: string;
-    ctaText: string;
-    ctaLink: string;
-    secondaryCtaText?: string;
-    secondaryCtaLink?: string;
-}
+
 
 export interface FooterData {
     companyDescription: string;
@@ -324,9 +293,4 @@ export interface FooterData {
     legalLinks: { name: string; url: string }[];
 }
 
-export interface NewsletterData {
-    title: string;
-    description: string;
-    benefits: string[];
-    subscriberCount: string;
-}
+

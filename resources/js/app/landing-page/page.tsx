@@ -35,8 +35,9 @@ export default function LandingPage() {
                 price: '299.99',
                 originalPrice: '399.99',
                 image: '/images/products/featured/featured-product-1.png',
-                imageAlt:
+                alt:
                     'Sleek black smart fitness tracker with digital display showing health metrics on modern wrist',
+                category: 'Fitness Trackers',
                 rating: 4.8,
                 reviewCount: 1247,
                 isNew: true,
@@ -50,8 +51,9 @@ export default function LandingPage() {
                     'Temperature-controlled jacket with smartphone app integration',
                 price: '449.99',
                 image: '/images/products/featured/featured-product-2.png',
-                imageAlt:
+                alt:
                     'Modern black heated jacket with subtle tech elements and smartphone connectivity features',
+                category: 'Smart Clothing',
                 rating: 4.6,
                 reviewCount: 892,
                 colors: ['#000000', '#2C3E50', '#8B4513'],
@@ -64,8 +66,9 @@ export default function LandingPage() {
                 price: '199.99',
                 originalPrice: '249.99',
                 image: '/images/products/featured/featured-product-3.png',
-                imageAlt:
+                alt:
                     'High-tech sneakers with LED light strips and futuristic design elements in white and blue',
+                category: 'Smart Clothing',
                 rating: 4.4,
                 reviewCount: 634,
                 discount: 20,
@@ -78,8 +81,9 @@ export default function LandingPage() {
                     'Moisture-wicking fabric with integrated fitness sensors',
                 price: '89.99',
                 image: '/images/products/featured/featured-product-4.png',
-                imageAlt:
+                alt:
                     'Athletic man wearing high-tech gray t-shirt with subtle sensor integration during workout',
+                category: 'Smart Clothing',
                 rating: 4.7,
                 reviewCount: 423,
                 isNew: true,
@@ -96,8 +100,9 @@ export default function LandingPage() {
                 price: '179.99',
                 originalPrice: '219.99',
                 image: '/images/products/bestsellers/bestseller-1.png',
-                imageAlt:
+                alt:
                     'Professional black tech backpack with wireless charging capabilities and modern design elements',
+                category: 'Tech Accessories',
                 rating: 4.9,
                 reviewCount: 2156,
                 soldCount: 5420,
@@ -110,8 +115,9 @@ export default function LandingPage() {
                     'Discreet health monitoring in a sleek titanium ring design',
                 price: '349.99',
                 image: '/images/products/bestsellers/bestseller-2.png',
-                imageAlt:
+                alt:
                     'Elegant titanium smart ring with health sensors on professional hand showing fitness data',
+                category: 'Fitness Trackers',
                 rating: 4.6,
                 reviewCount: 1834,
                 soldCount: 3210,
@@ -124,8 +130,9 @@ export default function LandingPage() {
                 price: '899.99',
                 originalPrice: '1199.99',
                 image: '/images/products/bestsellers/bestseller-3.png',
-                imageAlt:
+                alt:
                     'Futuristic AR smart glasses with transparent display and sleek frame design worn by tech professional',
+                category: 'AR/VR Gear',
                 rating: 4.3,
                 reviewCount: 967,
                 soldCount: 1890,
@@ -138,8 +145,9 @@ export default function LandingPage() {
                     'Latest smartwatch with health monitoring and 5G connectivity',
                 price: '599.99',
                 image: '/images/products/bestsellers/bestseller-4.png',
-                imageAlt:
+                alt:
                     'Premium smartwatch with large display showing health metrics and notifications on modern wrist',
+                category: 'Smart Watches',
                 rating: 4.8,
                 reviewCount: 3421,
                 soldCount: 8750,
@@ -154,8 +162,10 @@ export default function LandingPage() {
                     'RFID-blocking wallet with fingerprint unlock technology',
                 price: '129.99',
                 image: '/images/products/newarrivals/newarrival-1.png',
-                imageAlt:
+                alt:
                     'High-tech leather wallet with biometric scanner and RFID protection technology',
+                category: 'Tech Accessories',
+                rating: 0,
                 launchDate: 'Dec 2024',
                 features: [
                     'Fingerprint Lock',
@@ -171,8 +181,10 @@ export default function LandingPage() {
                     'Stylish cap with integrated solar panels for device charging',
                 price: '79.99',
                 image: '/images/products/newarrivals/newarrival-2.png',
-                imageAlt:
+                alt:
                     'Modern baseball cap with discrete solar panels and USB charging port for outdoor activities',
+                category: 'Tech Accessories',
+                rating: 0,
                 launchDate: 'Jan 2025',
                 features: ['Solar Panels', 'USB Output', 'Weather Resistant'],
                 preOrder: true,
@@ -184,8 +196,10 @@ export default function LandingPage() {
                     'Intelligent fabric that monitors and corrects posture in real-time',
                 price: '159.99',
                 image: '/images/products/newarrivals/newarrival-3.png',
-                imageAlt:
+                alt:
                     'Professional wearing smart posture-correcting shirt with subtle sensor technology integration',
+                category: 'Smart Clothing',
+                rating: 0,
                 launchDate: 'Dec 2024',
                 features: [
                     'Posture Monitoring',
@@ -201,8 +215,10 @@ export default function LandingPage() {
                     'Revolutionary timepiece with 3D holographic projection display',
                 price: '1299.99',
                 image: '/images/products/newarrivals/newarrival-4.png',
-                imageAlt:
+                alt:
                     'Futuristic watch projecting holographic display with 3D interface and advanced technology',
+                category: 'Smart Watches',
+                rating: 0,
                 launchDate: 'Feb 2025',
                 features: ['3D Hologram', 'Gesture Control', 'AI Assistant'],
                 preOrder: true,
@@ -214,8 +230,10 @@ export default function LandingPage() {
                     'Smart socks with heating and cooling technology for optimal comfort',
                 price: '49.99',
                 image: '/images/products/newarrivals/newarrival-5.png',
-                imageAlt:
+                alt:
                     'High-tech athletic socks with temperature control fibers and smartphone app connectivity',
+                category: 'Smart Clothing',
+                rating: 0,
                 launchDate: 'Dec 2024',
                 features: ['Temp Control', 'Moisture Wicking', 'Long Battery'],
                 preOrder: false,
@@ -227,8 +245,10 @@ export default function LandingPage() {
                     'Elegant jewelry with built-in AI voice assistant and health monitoring',
                 price: '249.99',
                 image: '/images/products/newarrivals/newarrival-6.png',
-                imageAlt:
+                alt:
                     'Sophisticated smart earrings with voice assistant technology and health monitoring sensors',
+                category: 'Tech Accessories',
+                rating: 0,
                 launchDate: 'Jan 2025',
                 features: ['Voice AI', 'Health Sensors', 'Wireless Charging'],
                 preOrder: true,
@@ -240,8 +260,10 @@ export default function LandingPage() {
                     'Next-gen augmented reality glasses with neural interface and 8K transparent display',
                 price: '1499.99',
                 image: '/images/products/newarrivals/newarrival-7.png',
-                imageAlt:
+                alt:
                     'Futuristic sleek AR glasses with blue UI overlay in tech fashion studio',
+                category: 'AR/VR Gear',
+                rating: 0,
                 launchDate: 'Mar 2025',
                 features: ['Neural Interface', '8K Display', 'AR Navigation'],
                 preOrder: true,
@@ -253,8 +275,10 @@ export default function LandingPage() {
                     'Professional haptic feedback gloves for precise digital interaction and tactile immersion',
                 price: '549.99',
                 image: '/images/products/newarrivals/newarrival-8.png',
-                imageAlt:
+                alt:
                     'High-tech dark gray haptic gloves with glowing fiber-optic sensors',
+                category: 'Tech Accessories',
+                rating: 0,
                 launchDate: 'Feb 2025',
                 features: [
                     'Pressure Sensing',
@@ -264,109 +288,6 @@ export default function LandingPage() {
                 preOrder: false,
             },
         ],
-
-        promotionalDeals: [
-            {
-                id: 15,
-                title: 'Tech Fashion Bundle',
-                description:
-                    'Complete smart wardrobe starter pack with smartwatch, fitness tracker, and smart clothing essentials for the modern tech enthusiast.',
-                originalPrice: '899.99',
-                discountedPrice: '599.99',
-                discount: 33,
-                image: '/images/products/promotional-deals/promotional-deal-1.png',
-                imageAlt:
-                    'Collection of tech fashion items including smartwatch, fitness tracker, and smart clothing displayed on modern surface',
-                type: 'Bundle Deal',
-                endDate: '2024-12-31T23:59:59',
-                features: [
-                    'Smart Watch Series X included',
-                    'Fitness tracking shirt',
-                    'Wireless charging accessories',
-                    'Free premium app subscription',
-                    'Extended 2-year warranty',
-                ],
-
-                productId: 1,
-            },
-            {
-                id: 16,
-                title: 'Holiday Mega Sale',
-                description:
-                    'Exclusive holiday discounts on premium wearable technology and smart fashion accessories. Limited time offer with free global shipping.',
-                originalPrice: '1299.99',
-                discountedPrice: '779.99',
-                discount: 40,
-                image: '/images/products/promotional-deals/promotional-deal-2.png',
-                imageAlt:
-                    'Holiday sale display featuring premium tech fashion items with festive lighting and discount tags',
-                type: 'Flash Sale',
-                endDate: '2024-12-25T23:59:59',
-                features: [
-                    'Up to 40% off selected items',
-                    'Free express shipping worldwide',
-                    'Gift wrapping included',
-                    '30-day return guarantee',
-                    'Exclusive member pricing',
-                ],
-
-                productId: 2,
-            },
-        ],
-
-        advertisements: [
-            {
-                id: 17,
-                title: 'Revolutionary AR Fashion Experience',
-                description:
-                    'Try on our latest tech fashion collection virtually with our new AR fitting room technology. See how you look before you buy!',
-                backgroundImage: 'images/products/adverts/advert-1.png',
-                backgroundImageAlt:
-                    'Futuristic AR fashion store with virtual try-on technology and holographic displays',
-                productImage: 'images/products/adverts/advert-2.png',
-                productImageAlt:
-                    'AR smart glasses displaying virtual fashion overlay and fitting technology',
-                badge: 'New Technology',
-                offer: 'Try AR Fitting',
-                ctaText: 'Experience AR Now',
-                ctaLink: '/product-catalog?feature=ar-fitting',
-                secondaryCtaText: 'Learn More',
-                secondaryCtaLink: '/product-catalog',
-            },
-            {
-                id: 18,
-                title: 'Smart Fabric Innovation',
-                description:
-                    'Discover our breakthrough in smart fabric technology that adapts to your body temperature and activity level automatically.',
-                backgroundImage: 'images/products/adverts/advert-3.png',
-                backgroundImageAlt:
-                    'Close-up of smart fabric fibers with integrated sensors and temperature control technology',
-                productImage: 'images/products/adverts/advert-3.png',
-                productImageAlt:
-                    'Smart fabric t-shirt with visible sensor integration and temperature regulation features',
-                badge: 'Innovation',
-                offer: 'From $89.99',
-                originalPrice: '$129.99',
-                ctaText: 'Shop Smart Fabrics',
-                ctaLink: '/product-catalog?category=smart-fabrics',
-                secondaryCtaText: 'View Technology',
-                secondaryCtaLink: '/product-catalog',
-            },
-        ],
-
-        newsletter: {
-            title: 'Stay Ahead of Tech Fashion',
-            description:
-                'Be the first to know about new arrivals, exclusive deals, and breakthrough innovations in wearable technology.',
-            benefits: [
-                'Early access to new product launches',
-                'Exclusive member-only discounts up to 30%',
-                'Tech fashion trend insights and styling tips',
-                'Priority customer support and warranty extensions',
-            ],
-
-            subscriberCount: '25,000',
-        },
 
         footer: {
             companyDescription:

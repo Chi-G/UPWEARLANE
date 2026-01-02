@@ -96,10 +96,10 @@ export default function NewArrivalsCarousel({
                     >
                         {Array.from({ length: totalSlides })?.map(
                             (_, slideIndex: number) => (
-                                <div
-                                    key={slideIndex}
-                                    className="grid w-full flex-shrink-0 grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
-                                >
+                                    <div
+                                        key={slideIndex}
+                                        className="grid w-full flex-shrink-0 grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
+                                    >
                                     {newArrivals
                                         ?.slice(
                                             slideIndex * itemsPerView?.desktop,
@@ -179,14 +179,15 @@ export default function NewArrivalsCarousel({
                                                                         </span>
                                                                     ),
                                                                 )}
-                                                            {product?.features
-                                                                ?.length >
-                                                                2 && (
+                                                            {product?.features &&
+                                                                product.features
+                                                                    .length >
+                                                                    2 && (
                                                                 <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs">
                                                                     +
                                                                     {product
-                                                                        ?.features
-                                                                        ?.length -
+                                                                        .features
+                                                                        .length -
                                                                         2}
                                                                 </span>
                                                             )}
@@ -273,7 +274,8 @@ NewArrivalsCarousel.propTypes = {
             description: PropTypes?.string?.isRequired,
             price: PropTypes?.string?.isRequired,
             image: PropTypes?.string?.isRequired,
-            imageAlt: PropTypes?.string?.isRequired,
+            alt: PropTypes?.string?.isRequired,
+            category: PropTypes?.string?.isRequired,
             launchDate: PropTypes?.string?.isRequired,
             features: PropTypes?.arrayOf(PropTypes?.string)?.isRequired,
             preOrder: PropTypes?.bool,

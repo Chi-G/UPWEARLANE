@@ -19,7 +19,7 @@ Route::get('/support', function () {
 })->name('support');
 
 Route::get('/product-catalog', function () {
-    return Inertia::render('product-catalog/page');
+    return Inertia::render('product-catalog/page'); 
 })->name('product-catalog');
 
 Route::get('/product-detail', function () {
