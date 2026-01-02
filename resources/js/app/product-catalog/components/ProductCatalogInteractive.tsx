@@ -42,6 +42,7 @@ export default function ProductCatalogInteractive({
     });
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const [products, setProducts] = useState(initialProducts);
     // Show loading animation on initial mount for 2s
     const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +61,14 @@ export default function ProductCatalogInteractive({
         // setIsLoading(true) is now handled by change handlers
         const timer = setTimeout(() => {
             let filtered = [...initialProducts];
+
+            // Apply search query filter
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter((product) =>
+                    product.name.toLowerCase().includes(query)
+                );
+            }
 
             // Apply category filter
             if (filters?.categories?.length > 0) {
@@ -158,7 +167,7 @@ export default function ProductCatalogInteractive({
         }, 500); // Reduced delay for snappier feel
 
         return () => clearTimeout(timer);
-    }, [filters, sortBy, initialProducts]);
+    }, [filters, sortBy, initialProducts, searchQuery]);
 
     const handleViewModeChange = (mode: string) => {
         setViewMode(mode);
@@ -199,6 +208,7 @@ export default function ProductCatalogInteractive({
             url.searchParams.delete('category');
             window.history.pushState({}, '', url);
         }
+        setSearchQuery('');
         setFilters({
             categories: [],
             priceRange: null,
@@ -217,9 +227,18 @@ export default function ProductCatalogInteractive({
         <div className="bg-background min-h-screen pt-20">
             <div className="mx-auto px-4 py-8 sm:px-6 md:py-12 lg:px-8">
                 {/* Page Header */}
-                <div className="mb-8 md:mb-12">
+                <div className="mb-8 hidden md:mb-12 md:block">
                     <h1 className="font-heading text-foreground mb-3 text-3xl font-bold md:mb-4 md:text-4xl lg:text-5xl">
-                        Product Catalog
+                        {filters?.categories?.length === 1
+                            ? filters.categories[0]
+                                  .split('-')
+                                  .map(
+                                      (word) =>
+                                          word.charAt(0).toUpperCase() +
+                                          word.slice(1),
+                                  )
+                                  .join(' ')
+                            : 'Product Catalog'}
                     </h1>
                     <p className="text-muted-foreground max-measure text-base md:text-lg">
                         Discover our collection of high-tech fashion and
@@ -229,6 +248,25 @@ export default function ProductCatalogInteractive({
 
                 {/* Toolbar */}
                 <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center md:mb-8">
+                    {/* Mobile Search Bar */}
+                    <div className="w-full sm:hidden">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setIsLoading(true);
+                                }}
+                                className="bg-surface border-border text-foreground focus-ring transition-smooth h-12 w-full rounded-lg border pl-10 pr-4"
+                            />
+                            <div className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+                                <Icon name="MagnifyingGlassIcon" size={20} />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="flex w-full items-center gap-3 sm:w-auto">
                         <button
                             onClick={() => setIsFilterOpen(true)}
