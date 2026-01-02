@@ -248,16 +248,25 @@ export default function ProductCatalogInteractive({
 
                 {/* Toolbar */}
                 <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center md:mb-8">
-                    {/* Mobile Search Bar */}
-                    <div className="w-full sm:hidden">
+                    {/* Search Bar */}
+                    <div className="w-full sm:w-72">
                         <div className="relative">
                             <input
                                 type="text"
                                 placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={(e) => {
-                                    setSearchQuery(e.target.value);
+                                    const value = e.target.value;
+                                    setSearchQuery(value);
                                     setIsLoading(true);
+
+                                    // Clear category filters on search to allow global search
+                                    if (value) {
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            categories: [],
+                                        }));
+                                    }
                                 }}
                                 className="bg-surface border-border text-foreground focus-ring transition-smooth h-12 w-full rounded-lg border pl-10 pr-4"
                             />
