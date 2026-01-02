@@ -94,6 +94,23 @@ export default function HeroBanner() {
                     {/* Category Grid */}
                     <div className="mt-8">
                         <div className="grid grid-cols-5 gap-2 md:gap-4 lg:gap-6">
+                            {/* Post Ad Button */}
+                            <Link
+                                href="/post-ad"
+                                className="bg-primary hover:bg-primary/90 hover:shadow-gold-md transition-smooth group flex flex-col items-center justify-center space-y-2 rounded-xl border border-transparent p-2 py-4 shadow-lg md:p-6"
+                            >
+                                <div className="bg-primary-foreground/10 text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full md:h-14 md:w-14">
+                                    <Icon
+                                        name="PlusIcon"
+                                        size={20}
+                                        className="md:h-6 md:w-6"
+                                    />
+                                </div>
+                                <span className="text-primary-foreground text-xs font-medium md:text-sm">
+                                    Post Ad
+                                </span>
+                            </Link>
+
                             {CATEGORIES.map((cat) => (
                                 <Link
                                     key={cat.slug}
