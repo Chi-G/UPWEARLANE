@@ -15,37 +15,6 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
                         {/* Company Info */}
                         <div className="space-y-6">
-                            <div className="flex items-center space-x-2">
-                                <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-                                    <svg
-                                        viewBox="0 0 40 40"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-6 w-6"
-                                    >
-                                        <path
-                                            d="M20 5L25 15H15L20 5Z"
-                                            fill="currentColor"
-                                            className="text-primary-foreground"
-                                        />
-                                        <path
-                                            d="M10 18L20 35L30 18H10Z"
-                                            fill="currentColor"
-                                            className="text-primary-foreground"
-                                        />
-                                        <circle
-                                            cx="20"
-                                            cy="20"
-                                            r="3"
-                                            fill="currentColor"
-                                            className="text-primary-foreground"
-                                        />
-                                    </svg>
-                                </div>
-                                <span className="font-heading text-xl font-semibold">
-                                    UpWearLane
-                                </span>
-                            </div>
                             <p className="text-secondary-foreground/80 leading-relaxed">
                                 {footerData?.companyDescription}
                             </p>
