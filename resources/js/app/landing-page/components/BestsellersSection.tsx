@@ -65,7 +65,7 @@ export default function BestsellersSection({
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
                     {bestsellers?.map((product) => (
                         <div
                             key={product?.id}
@@ -82,11 +82,11 @@ export default function BestsellersSection({
                                 />
 
                                 {/* Bestseller Badge */}
-                                <div className="bg-primary text-primary-foreground absolute left-3 top-3 rounded-md px-2 py-1 text-xs font-medium">
+                                <div className="bg-primary text-primary-foreground absolute left-3 top-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
                                     <Icon
                                         name="FireIcon"
-                                        size={14}
-                                        className="mr-1 inline"
+                                        size={12}
+                                        className="mr-0.5 inline md:mr-1 md:size-[14px]"
                                     />
                                     Bestseller
                                 </div>
@@ -119,31 +119,31 @@ export default function BestsellersSection({
                             </div>
 
                             {/* Product Info */}
-                            <div className="flex flex-1 flex-col p-4 md:p-6">
-                                <div className="flex flex-1 flex-col space-y-3">
+                            <div className="flex flex-1 flex-col space-y-1.5 p-2 md:space-y-3 md:p-6">
+                                <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
                                     <div>
                                         <Link
                                             href={`/product-detail?id=${product?.id}`}
                                             className="group-hover:text-primary transition-smooth block"
                                         >
-                                            <h3 className="font-heading text-foreground line-clamp-2 text-lg font-semibold md:text-xl">
+                                            <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
                                                 {product?.name}
                                             </h3>
                                         </Link>
-                                        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                                        <p className="text-muted-foreground mt-0.5 line-clamp-1 text-[10px] md:mt-1 md:line-clamp-2 md:text-sm">
                                             {product?.description}
                                         </p>
                                     </div>
 
                                     {/* Rating & Sales */}
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-1">
                                             <div className="flex items-center">
                                                 {[...Array(5)]?.map((_, i) => (
                                                     <Icon
                                                         key={i}
                                                         name="StarIcon"
-                                                        size={14}
+                                                        size={10}
                                                         variant={
                                                             i <
                                                             Math.floor(
@@ -174,19 +174,19 @@ export default function BestsellersSection({
 
                                     {/* Price */}
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex flex-col md:flex-row md:items-center md:space-x-2">
                                             {product?.originalPrice && (
-                                                <span className="text-muted-foreground text-sm line-through">
+                                                <span className="text-muted-foreground text-[10px] line-through md:text-sm">
                                                     ${product?.originalPrice}
                                                 </span>
                                             )}
-                                            <span className="font-heading text-foreground text-xl font-bold">
+                                            <span className="font-heading text-foreground text-sm font-bold md:text-xl">
                                                 ${product?.price}
                                             </span>
                                         </div>
                                         {product?.discount && (
-                                            <span className="text-destructive text-sm font-medium">
-                                                Save {product?.discount}%
+                                            <span className="text-destructive text-[10px] font-medium md:text-sm">
+                                                {product?.discount}%
                                             </span>
                                         )}
                                     </div>
@@ -197,7 +197,7 @@ export default function BestsellersSection({
                                         disabled={cartItems?.includes(
                                             product?.id,
                                         )}
-                                        className={`transition-smooth press-effect mt-auto w-full rounded-lg px-4 py-2.5 font-medium ${
+                                        className={`transition-smooth press-effect mt-auto w-full rounded-lg px-2 py-1.5 text-xs font-medium md:px-4 md:py-2.5 md:text-base ${
                                             cartItems?.includes(product?.id)
                                                 ? 'bg-success text-success-foreground'
                                                 : 'bg-primary hover:bg-primary/90 text-primary-foreground'
