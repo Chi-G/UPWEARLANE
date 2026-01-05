@@ -9,6 +9,7 @@ export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -17,6 +18,24 @@ export default function Header() {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        // Check initial theme
+        const checkTheme = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
+        
+        checkTheme();
+
+        // Watch for theme changes
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+
+        return () => observer.disconnect();
     }, []);
 
     useEffect(() => {
@@ -64,7 +83,7 @@ export default function Header() {
                             className="hover-lift flex items-center space-x-2"
                         >
                             <div className="flex h-12 w-12 items-center justify-center rounded-lg overflow-hidden">
-                                <img src="/logo.png" alt="UpWearLane" className="h-18 w-18 object-cover" />
+                                <img src={isDarkMode ? "/logo.png" : "/logo1.png"} alt="UpWearLane" className="h-18 w-18 object-cover" />
                             </div>
                             <span className="font-heading text-foreground hidden text-xl font-semibold sm:block">
                                 UpWearLane
@@ -152,7 +171,7 @@ export default function Header() {
                     <div className="border-border flex items-center justify-between border-b p-6">
                         <div className="flex items-center space-x-2">
                             <div className="flex h-12 w-12 items-center justify-center rounded-lg overflow-hidden">
-                                <img src="/logo.png" alt="UpWearLane" className="size-full object-cover contrast-125 drop-shadow-sm" />
+                                <img src={isDarkMode ? "/logo.png" : "/logo1.png"} alt="UpWearLane" className="size-full object-cover contrast-125 drop-shadow-sm" />
                             </div>
                             <span className="font-heading text-foreground text-xl font-semibold">
                                 UpWearLane
