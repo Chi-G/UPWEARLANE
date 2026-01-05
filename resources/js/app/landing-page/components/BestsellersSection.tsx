@@ -136,7 +136,7 @@ export default function BestsellersSection({
                                     </div>
 
                                     {/* Rating & Sales */}
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col items-start space-y-1 md:flex-row md:items-center md:justify-between md:space-y-0">
                                         <div className="flex items-center space-x-1">
                                             <div className="flex items-center">
                                                 {[...Array(5)]?.map((_, i) => (
