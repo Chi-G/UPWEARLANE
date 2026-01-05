@@ -394,7 +394,7 @@ export default function ProductCatalogInteractive({
                             <div
                                 className={
                                     viewMode === 'grid'
-                                        ? 'grid grid-cols-4 gap-2 sm:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4'
+                                        ? 'grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4'
                                         : 'space-y-4 md:space-y-6'
                                 }
                             >

@@ -206,12 +206,12 @@ export default function ProductCard({
                     />
                 </button>
             </div>
-            <div className="space-y-3 p-4 md:p-6">
+                <div className="space-y-2 p-3 md:space-y-3 md:p-6">
                 <div>
-                    <p className="text-muted-foreground mb-1 text-xs md:text-sm">
+                    <p className="text-muted-foreground mb-1 text-[10px] md:text-sm">
                         {product?.category}
                     </p>
-                    <h3 className="font-heading text-foreground group-hover:text-primary transition-smooth line-clamp-2 text-base font-semibold md:text-lg lg:text-xl">
+                    <h3 className="font-heading text-foreground group-hover:text-primary transition-smooth line-clamp-2 text-sm font-semibold md:text-lg lg:text-xl">
                         {product?.name}
                     </h3>
                 </div>
@@ -222,7 +222,7 @@ export default function ProductCard({
                             <Icon
                                 key={i}
                                 name="StarIcon"
-                                size={14}
+                                size={12}
                                 variant={
                                     i < Math.floor(product?.rating)
                                         ? 'solid'
@@ -257,7 +257,7 @@ export default function ProductCard({
                                 return (
                                     <div
                                         key={index}
-                                        className="border-border h-5 w-5 rounded-full border-2"
+                                        className="border-border h-4 w-4 rounded-full border-2 md:h-5 md:w-5"
                                         style={{ backgroundColor: bgColor }}
                                         title={colorName}
                                     />
@@ -272,12 +272,12 @@ export default function ProductCard({
                 )}
 
                 <div className="border-border flex items-center justify-between border-t pt-3">
-                    <div className="flex items-baseline gap-2">
-                        <span className="font-data text-foreground whitespace-nowrap text-xl font-semibold md:text-2xl">
+                    <div className="flex items-baseline gap-1.5 md:gap-2">
+                        <span className="font-data text-foreground whitespace-nowrap text-lg font-semibold md:text-2xl">
                             {product?.price}
                         </span>
                         {product?.originalPrice && (
-                            <span className="font-data text-muted-foreground whitespace-nowrap text-sm line-through">
+                            <span className="font-data text-muted-foreground whitespace-nowrap text-xs line-through">
                                 {product?.originalPrice}
                             </span>
                         )}
