@@ -35,7 +35,7 @@ export default function FeaturedProducts({
                 </div>
 
                 {/* Products Grid */}
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
                     {filteredProducts?.map((product) => (
                         <div
                             key={product?.id}
@@ -56,7 +56,7 @@ export default function FeaturedProducts({
                                     </div>
                                 )}
                                 {product?.discount && (
-                                    <div className="bg-destructive text-destructive-foreground absolute right-3 top-3 rounded-md px-2 py-1 text-xs font-medium">
+                                    <div className="bg-destructive text-destructive-foreground absolute right-3 top-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
                                         -{product?.discount}%
                                     </div>
                                 )}
@@ -73,25 +73,25 @@ export default function FeaturedProducts({
                             </div>
 
                             {/* Product Info */}
-                            <div className="flex flex-col p-4 md:p-6 lg:flex-1">
-                                <div className="flex flex-col space-y-3 lg:flex-1">
+                            <div className="flex flex-col space-y-1.5 p-2 md:space-y-3 md:p-6 lg:flex-1">
+                                <div className="flex flex-col space-y-1.5 md:space-y-3 lg:flex-1">
                                     <div>
-                                        <h3 className="font-heading text-foreground group-hover:text-primary transition-smooth line-clamp-2 text-lg font-semibold md:text-xl">
+                                        <h3 className="font-heading text-foreground group-hover:text-primary transition-smooth line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
                                             {product?.name}
                                         </h3>
-                                        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                                        <p className="text-muted-foreground mt-0.5 line-clamp-1 text-[10px] md:mt-1 md:line-clamp-2 md:text-sm">
                                             {product?.description}
                                         </p>
                                     </div>
 
                                     {/* Rating */}
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-1">
                                         <div className="flex items-center">
                                             {[...Array(5)]?.map((_, i) => (
                                                 <Icon
                                                     key={i}
                                                     name="StarIcon"
-                                                    size={16}
+                                                    size={10}
                                                     variant={
                                                         i <
                                                         Math.floor(
@@ -111,20 +111,20 @@ export default function FeaturedProducts({
                                                 />
                                             ))}
                                         </div>
-                                        <span className="text-muted-foreground text-sm">
+                                        <span className="text-muted-foreground text-[10px] md:text-sm">
                                             ({product?.reviewCount})
                                         </span>
                                     </div>
 
                                     {/* Price */}
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex flex-col md:flex-row md:items-center md:space-x-2">
                                             {product?.originalPrice && (
-                                                <span className="text-muted-foreground text-sm line-through">
+                                                <span className="text-muted-foreground text-[10px] line-through md:text-sm">
                                                     ${product?.originalPrice}
                                                 </span>
                                             )}
-                                            <span className="font-heading text-foreground text-xl font-bold">
+                                            <span className="font-heading text-foreground text-sm font-bold md:text-xl">
                                                 ${product?.price}
                                             </span>
                                         </div>
@@ -160,7 +160,7 @@ export default function FeaturedProducts({
                                                                         key={
                                                                             index
                                                                         }
-                                                                        className="border-border h-4 w-4 rounded-full border"
+                                                                        className="border-border h-3 w-3 rounded-full border md:h-4 md:w-4"
                                                                         style={{
                                                                             backgroundColor:
                                                                                 bgColor,
