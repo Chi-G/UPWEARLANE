@@ -98,7 +98,7 @@ export default function NewArrivalsCarousel({
                             (_, slideIndex: number) => (
                                     <div
                                         key={slideIndex}
-                                        className="grid w-full flex-shrink-0 grid-cols-3 gap-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
+                                        className="grid w-full flex-shrink-0 grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
                                     >
                                     {newArrivals
                                         ?.slice(
@@ -122,36 +122,36 @@ export default function NewArrivalsCarousel({
                                                     />
 
                                                     {/* New Badge */}
-                                                    <div className="bg-success text-success-foreground absolute left-3 top-3 rounded-md px-2 py-1 text-xs font-medium">
+                                                    <div className="bg-success text-success-foreground absolute left-3 top-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
                                                         <Icon
                                                             name="SparklesIcon"
-                                                            size={14}
-                                                            className="mr-1 inline"
+                                                            size={12}
+                                                            className="mr-0.5 inline md:mr-1 md:size-[14px]"
                                                         />
                                                         New
                                                     </div>
 
                                                     {/* Launch Date */}
-                                                    <div className="bg-background/90 text-foreground absolute bottom-3 left-3 rounded-md px-2 py-1 text-xs font-medium">
+                                                    <div className="bg-background/90 text-foreground absolute bottom-3 left-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
                                                         {product?.launchDate}
                                                     </div>
                                                 </div>
 
                                                 {/* Product Info */}
-                                                <div className="flex flex-1 flex-col p-4 md:p-6">
-                                                    <div className="flex flex-1 flex-col space-y-3">
+                                                <div className="flex flex-1 flex-col space-y-1.5 p-2 md:space-y-3 md:p-6">
+                                                    <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
                                                         <div>
                                                             <Link
                                                                 href={`/product-detail?id=${product?.id}`}
                                                                 className="group-hover:text-primary transition-smooth block"
                                                             >
-                                                                <h3 className="font-heading text-foreground line-clamp-2 text-lg font-semibold md:text-xl">
+                                                                <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
                                                                     {
                                                                         product?.name
                                                                     }
                                                                 </h3>
                                                             </Link>
-                                                            <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                                                            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-[10px] md:mt-1 md:line-clamp-2 md:text-sm">
                                                                 {
                                                                     product?.description
                                                                 }
@@ -171,7 +171,7 @@ export default function NewArrivalsCarousel({
                                                                             key={
                                                                                 index
                                                                             }
-                                                                            className="bg-accent text-accent-foreground rounded-md px-2 py-1 text-xs"
+                                                                            className="bg-accent text-accent-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs"
                                                                         >
                                                                             {
                                                                                 feature
@@ -183,7 +183,7 @@ export default function NewArrivalsCarousel({
                                                                 product.features
                                                                     .length >
                                                                     2 && (
-                                                                <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs">
+                                                                <span className="bg-muted text-muted-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs">
                                                                     +
                                                                     {product
                                                                         .features
@@ -195,12 +195,12 @@ export default function NewArrivalsCarousel({
 
                                                         {/* Price */}
                                                         <div className="flex items-center justify-between">
-                                                            <span className="font-heading text-foreground text-xl font-bold">
+                                                            <span className="font-heading text-foreground text-sm font-bold md:text-xl">
                                                                 $
                                                                 {product?.price}
                                                             </span>
                                                             {product?.preOrder && (
-                                                                <span className="text-primary text-sm font-medium">
+                                                                <span className="text-primary text-[10px] font-medium md:text-sm">
                                                                     Pre-order
                                                                 </span>
                                                             )}
@@ -209,7 +209,7 @@ export default function NewArrivalsCarousel({
                                                         {/* Action Button */}
                                                         <Link
                                                             href={`/product-detail?id=${product?.id}`}
-                                                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect mt-auto inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 font-medium"
+                                                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect mt-auto inline-flex w-full items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium md:px-4 md:py-2.5 md:text-base"
                                                         >
                                                             <Icon
                                                                 name="EyeIcon"
