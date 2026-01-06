@@ -83,7 +83,7 @@ export default function Header() {
                             className="hover-lift flex items-center space-x-2"
                         >
                             <div className="flex h-12 w-12 lg:h-14 lg:w-14 items-center justify-center rounded-lg overflow-hidden bg-slate-950 shadow-sm">
-                                <img src={isDarkMode ? "/logo.png" : "/logo1.png"} alt="UpWearLane" className="h-10 lg:h-12 w-auto object-contain" />
+                                <img src={isDarkMode ? "/logo.png?v=1.1" : "/logo1.png?v=1.1"} alt="UpWearLane" className="h-10 lg:h-12 w-auto object-contain" />
                             </div>
                             <span className="font-heading text-foreground hidden text-xl font-semibold sm:block">
                                 UpWearLane
@@ -171,7 +171,7 @@ export default function Header() {
                     <div className="border-border flex items-center justify-between border-b p-6">
                         <div className="flex items-center space-x-2">
                             <div className="flex h-14 w-14 items-center justify-center rounded-lg overflow-hidden bg-slate-950 shadow-sm">
-                                <img src={isDarkMode ? "/logo.png" : "/logo1.png"} alt="UpWearLane" className="h-12 w-auto object-contain contrast-110" />
+                                <img src={isDarkMode ? "/logo.png?v=1.1" : "/logo1.png?v=1.1"} alt="UpWearLane" className="h-12 w-auto object-contain contrast-110" />
                             </div>
                             <span className="font-heading text-foreground text-xl font-semibold">
                                 UpWearLane
