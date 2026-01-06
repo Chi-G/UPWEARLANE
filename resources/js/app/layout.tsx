@@ -8,9 +8,9 @@ export const viewport = {
 };
 
 export const metadata = {
-    title: 'Laravel with Tailwind CSS',
+    title: 'UpWearLane',
     description:
-        'A boilerplate project with Laravel 12 and Tailwind CSS 3.4.17',
+        'UpWearLane - High-end premium clothing brand.',
     icons: {
         icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
     },
