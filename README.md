@@ -2,6 +2,8 @@
 
 A Laravel shop application with Inertia.js and React.
 
+**[Live Demo: upwearlane.com](https://upwearlane.com)**
+
 ## Getting Started
 
 ### Prerequisites
