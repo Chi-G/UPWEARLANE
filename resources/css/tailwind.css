@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
 @import 'tw-animate-css';
@@ -109,6 +110,10 @@
     /* Medium dark */
     --color-dark-surface-3: #2d2d2d;
     /* Lighter dark */
+
+    /* Custom Fonts */
+    --font-heading: "Playfair Display", serif;
+    --font-premium: "Outfit", sans-serif;
 }
 
 @layer base {
