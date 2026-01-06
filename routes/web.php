@@ -3,10 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\Auth\SocialAuthController;
 
 Route::get('/', function () {
     return Inertia::render('landing-page/page');
 })->name('home');
+
+// Google OAuth routes
+Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -15,11 +20,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 }); 
 
 Route::get('/support', function () {
-    return Inertia::render('customer-support/page'); 
+    return Inertia::render('customer-support/page');
 })->name('support');
 
 Route::get('/product-catalog', function () {
-    return Inertia::render('product-catalog/page'); 
+    return Inertia::render('product-catalog/page');
 })->name('product-catalog');
 
 Route::get('/product-detail', function () {
