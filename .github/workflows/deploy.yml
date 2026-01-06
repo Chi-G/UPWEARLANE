@@ -189,7 +189,8 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa -p ${{ secrets.HOSTINGER_SSH_PORT }} ${{ secrets.HOSTINGER_SSH_HOST }} >> ~/.ssh/known_hosts
+          # Auto-detect host and port with fallback to port 22
+          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT || '22' }} -H ${{ secrets.HOSTINGER_SSH_HOST }} >> ~/.ssh/known_hosts || echo "⚠️ Warning: ssh-keyscan failed. Ensure HOSTINGER_SSH_HOST is a valid domain/IP and port is reachable."
 
       - name: Copy Build Files to Target Server
         continue-on-error: true
