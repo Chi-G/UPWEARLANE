@@ -30,10 +30,14 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <title inertia>{{ config('app.name', 'UpWearLane') }}</title>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1.3">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1.3">
+
+        {{-- Mobile theme colors --}}
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
