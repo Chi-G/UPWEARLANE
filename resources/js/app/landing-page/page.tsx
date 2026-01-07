@@ -18,7 +18,7 @@ export default function LandingPage() {
             heroImage: '/images/products/hero/hero-image.png',
             heroImageAlt:
                 'Professional woman wearing smart fitness tracker and tech-enabled athletic wear in modern urban setting',
-            badge: 'New Collection',
+            badge: '',
             stats: [
                 { value: '50K+', label: 'Happy Customers' },
                 { value: '200+', label: 'Tech Products' },

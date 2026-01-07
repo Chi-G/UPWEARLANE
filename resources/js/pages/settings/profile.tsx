@@ -3,6 +3,7 @@ import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -21,6 +22,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const COUNTRY_CODES = [
+    { code: '+234', country: 'NGR', label: 'Nigeria (+234)' },
+    { code: '+1', country: 'USA', label: 'USA (+1)' },
+    { code: '+44', country: 'UK', label: 'UK (+44)' },
+    { code: '+1', country: 'CAN', label: 'Canada (+1)' },
+];
+
 export default function Profile({
     mustVerifyEmail,
     status,
@@ -29,6 +37,18 @@ export default function Profile({
     status?: string;
 }) {
     const { auth } = usePage<SharedData>().props;
+
+    const [dialCode, setDialCode] = useState(() => {
+        const fullNumber = auth.user.phone_number || '';
+        const foundCode = COUNTRY_CODES.find(c => fullNumber.startsWith(c.code));
+        return foundCode?.code || '+234';
+    });
+
+    const [phoneNumber, setPhoneNumber] = useState(() => {
+        const fullNumber = auth.user.phone_number || '';
+        const foundCode = COUNTRY_CODES.find(c => fullNumber.startsWith(c.code));
+        return foundCode ? fullNumber.replace(foundCode.code, '') : fullNumber;
+    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -86,6 +106,46 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.email}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="phone_number">Phone Number</Label>
+
+                                    <div className="flex gap-2">
+                                        <div className="w-32 shrink-0">
+                                            <select
+                                                title="Select Country Code"
+                                                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                                value={dialCode}
+                                                onChange={(e) => setDialCode(e.target.value)}
+                                            >
+                                                {COUNTRY_CODES.map((c) => (
+                                                    <option key={`${c.country}-${c.code}`} value={c.code}>
+                                                        {c.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <Input
+                                            id="local_phone_number"
+                                            type="tel"
+                                            className="block w-full"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            placeholder="7065910449"
+                                        />
+                                    </div>
+                                    {/* Hidden input to submit the full combined number */}
+                                    <input
+                                        type="hidden"
+                                        name="phone_number"
+                                        value={`${dialCode}${phoneNumber}`}
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.phone_number}
                                     />
                                 </div>
 

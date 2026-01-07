@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shopping_carts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('google_id')->nullable()->after('password');
+            $table->text('avatar')->nullable()->after('google_id');
         });
-    } 
+    }
 
     /**
      * Reverse the migrations.
-     */ 
+     */
     public function down(): void
     {
-        Schema::dropIfExists('shopping_carts');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['google_id', 'avatar']);
+        });
     }
 };

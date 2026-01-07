@@ -26,7 +26,7 @@ export default function LandingPageInteractive({
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoaded(true);
-        }, 2000);
+        }, 1000);
 
         return () => clearTimeout(timer);
     }, []);
@@ -37,7 +37,7 @@ export default function LandingPageInteractive({
                 <div className="space-y-4 text-center">
                     <div className="border-primary mx-auto h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
                     <p className="text-muted-foreground">
-                        Loading UpWearLane...
+                        UpWearLane...
                     </p>
                 </div>
             </div>

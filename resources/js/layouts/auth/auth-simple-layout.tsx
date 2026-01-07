@@ -1,4 +1,3 @@
-import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
@@ -23,8 +22,8 @@ export default function AuthSimpleLayout({
                             href={home()}
                             className="flex flex-col items-center gap-2 font-medium"
                         >
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
+                            <div className="flex h-32 w-32 items-center justify-center rounded-2xl overflow-hidden bg-slate-950 shadow-lg shrink-0 mb-4">
+                                <img src="/logo.png" alt="UpWearLane" className="h-24 w-auto object-contain" />
                             </div>
                             <span className="sr-only">{title}</span>
                         </Link>

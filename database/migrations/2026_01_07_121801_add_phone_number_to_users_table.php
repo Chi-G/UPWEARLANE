@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shopping_carts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('phone_number')->nullable()->after('email');
         });
-    } 
+    }
 
     /**
      * Reverse the migrations.
-     */ 
+     */
     public function down(): void
     {
-        Schema::dropIfExists('shopping_carts');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('phone_number');
+        });
     }
 };

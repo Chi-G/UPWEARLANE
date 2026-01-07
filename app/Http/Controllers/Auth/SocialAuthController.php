@@ -25,33 +25,41 @@ class SocialAuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
+            \Illuminate\Support\Facades\Log::info('Google Callback Hit');
+
             $googleUser = Socialite::driver('google')->user();
-            
-            $user = User::where('email', $googleUser->email)->first();
-            
+
+            \Illuminate\Support\Facades\Log::info('Google User Retrieved', ['email' => $googleUser->getEmail()]);
+
+            $user = User::where('email', $googleUser->getEmail())->first();
+
             if (!$user) {
                 $user = User::create([
-                    'name' => $googleUser->name,
-                    'email' => $googleUser->email,
-                    'google_id' => $googleUser->id,
-                    'avatar' => $googleUser->avatar,
-                    'email_verified_at' => now(),
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                    'email_verified_at' => null,
                     'password' => Hash::make(Str::random(24)),
                 ]);
+
+                $user->sendEmailVerificationNotification();
+
             } else {
                 if (!$user->google_id) {
                     $user->update([
-                        'google_id' => $googleUser->id,
-                        'avatar' => $googleUser->avatar,
+                        'google_id' => $googleUser->getId(),
+                        'avatar' => $googleUser->getAvatar(),
                     ]);
                 }
             }
-            
+
             Auth::login($user, true);
-            
-            return redirect()->intended('/dashboard');
-            
+
+            return redirect()->intended('/');
+
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
             return redirect('/')->with('error', 'Unable to login with Google. Please try again.');
         }
     }

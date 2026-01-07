@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/AppIcon';
+import { router, useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -13,12 +14,16 @@ export default function AuthenticationModal({
 }: AuthenticationModalProps) {
     const [mounted, setMounted] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
-    const [formData, setFormData] = useState({
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+        name: '',
         email: '',
         password: '',
-        name: '',
+        password_confirmation: '',
     });
-    const [isLoading, setIsLoading] = useState(false);
+
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -59,44 +64,37 @@ export default function AuthenticationModal({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setData(name as keyof typeof data, value);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
 
-        setTimeout(() => {
-            console.log('Form submitted:', formData);
-            localStorage.setItem('user_authenticated', 'true');
-            localStorage.setItem('user_email', formData?.email);
-            setIsLoading(false);
-            onClose();
-            window.dispatchEvent(new Event('auth-state-changed'));
-        }, 1500);
+        if (isSignUp) {
+            post(route('register'), {
+                onSuccess: () => {
+                    onClose();
+                    reset();
+                },
+            });
+        } else {
+            post(route('login'), {
+                onSuccess: () => {
+                    onClose();
+                    reset();
+                },
+            });
+        }
     };
 
     const handleGoogleAuth = () => {
-        setIsLoading(true);
-        setTimeout(() => {
-            console.log('Google authentication initiated');
-            localStorage.setItem('user_authenticated', 'true');
-            localStorage.setItem('user_email', 'user@gmail.com');
-            setIsLoading(false);
-            onClose();
-            window.dispatchEvent(new Event('auth-state-changed'));
-        }, 1500);
-    };
-
-    const handleGuestCheckout = () => {
-        localStorage.setItem('guest_checkout', 'true');
-        onClose();
-        window.location.href = '/checkout-flow';
+        window.location.href = route('auth.google');
     };
 
     const toggleMode = () => {
         setIsSignUp(!isSignUp);
-        setFormData({ email: '', password: '', name: '' });
+        reset();
+        clearErrors();
     };
 
     if (!mounted || !isOpen) return null;
@@ -108,7 +106,7 @@ export default function AuthenticationModal({
         >
             <div
                 ref={modalRef}
-                className="bg-background shadow-gold-2xl animate-fade-in w-full max-w-md overflow-hidden rounded-2xl"
+                className="bg-background shadow-gold-2xl animate-fade-in w-full max-w-md overflow-hidden rounded-2xl flex flex-col max-h-[85vh]"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="auth-modal-title"
@@ -131,11 +129,11 @@ export default function AuthenticationModal({
                 </div>
 
                 {/* Modal Content */}
-                <div className="space-y-6 p-6">
+                <div className="space-y-6 p-6 overflow-y-auto">
                     {/* Google OAuth Button */}
                     <button
                         onClick={handleGoogleAuth}
-                        disabled={isLoading}
+                        disabled={processing}
                         className="bg-surface hover:bg-accent text-foreground border-border transition-smooth press-effect flex h-12 w-full items-center justify-center space-x-3 rounded-lg border px-6 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -187,12 +185,17 @@ export default function AuthenticationModal({
                                     type="text"
                                     id="name"
                                     name="name"
-                                    value={formData?.name}
+                                    value={data.name}
                                     onChange={handleInputChange}
                                     required={isSignUp}
-                                    className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4"
+                                    className={`bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
+                                        errors.name ? 'border-destructive' : ''
+                                    }`}
                                     placeholder="John Doe"
                                 />
+                                {errors.name && (
+                                    <p className="text-destructive mt-1 text-sm">{errors.name}</p>
+                                )}
                             </div>
                         )}
 
@@ -207,12 +210,17 @@ export default function AuthenticationModal({
                                 type="email"
                                 id="email"
                                 name="email"
-                                value={formData?.email}
+                                value={data.email}
                                 onChange={handleInputChange}
                                 required
-                                className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4"
+                                className={`bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
+                                    errors.email ? 'border-destructive' : ''
+                                }`}
                                 placeholder="you@example.com"
                             />
+                            {errors.email && (
+                                <p className="text-destructive mt-1 text-sm">{errors.email}</p>
+                            )}
                         </div>
 
                         <div>
@@ -222,24 +230,77 @@ export default function AuthenticationModal({
                             >
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData?.password}
-                                onChange={handleInputChange}
-                                required
-                                className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4"
-                                placeholder="••••••••"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password"
+                                    name="password"
+                                    value={data.password}
+                                    onChange={handleInputChange}
+                                    required
+                                    className={`bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${
+                                        errors.password ? 'border-destructive' : ''
+                                    }`}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    title="Show password"
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="text-muted-foreground hover:text-foreground absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                                    tabIndex={-1}
+                                >
+                                    <Icon name={showPassword ? 'EyeSlashIcon' : 'EyeIcon'} size={20} />
+                                </button>
+                            </div>
+                            {errors.password && (
+                                <p className="text-destructive mt-1 text-sm">{errors.password}</p>
+                            )}
                         </div>
+
+                        {isSignUp && (
+                            <div>
+                                <label
+                                    htmlFor="password_confirmation"
+                                    className="text-foreground mb-2 block text-sm font-medium"
+                                >
+                                    Confirm Password
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        id="password_confirmation"
+                                        name="password_confirmation"
+                                        value={data.password_confirmation}
+                                        onChange={handleInputChange}
+                                        required={isSignUp}
+                                        className={`bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${
+                                            errors.password_confirmation ? 'border-destructive' : ''
+                                        }`}
+                                        placeholder="••••••••"
+                                    />
+                                    <button
+                                        title="Show confirm password"
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="text-muted-foreground hover:text-foreground absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                                        tabIndex={-1}
+                                    >
+                                        <Icon name={showConfirmPassword ? 'EyeSlashIcon' : 'EyeIcon'} size={20} />
+                                    </button>
+                                </div>
+                                {errors.password_confirmation && (
+                                    <p className="text-destructive mt-1 text-sm">{errors.password_confirmation}</p>
+                                )}
+                            </div>
+                        )}
 
                         <button
                             type="submit"
-                            disabled={isLoading}
+                            disabled={processing}
                             className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-gold transition-smooth press-effect h-12 w-full rounded-lg px-8 font-medium disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {isLoading
+                            {processing
                                 ? 'Processing...'
                                 : isSignUp
                                   ? 'Create Account'
@@ -259,17 +320,16 @@ export default function AuthenticationModal({
                         </button>
                     </div>
 
-                    {/* Guest Checkout */}
-                    {!isSignUp && (
-                        <div className="border-border border-t pt-4">
-                            <button
-                                onClick={handleGuestCheckout}
-                                className="text-muted-foreground hover:text-foreground transition-smooth w-full text-sm"
-                            >
-                                Continue as guest
-                            </button>
-                        </div>
-                    )}
+                    {/* Go to Login Route */}
+                    <div className="border-border mt-6 border-t pt-6">
+                        <button
+                            onClick={() => router.visit(route('login'))}
+                            disabled={processing}
+                            className="text-muted-foreground hover:text-foreground transition-smooth w-full text-sm disabled:opacity-50"
+                        >
+                            Login Page
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

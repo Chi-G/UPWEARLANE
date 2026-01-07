@@ -7,7 +7,7 @@ export const metadata = {
         'Sign in or create an account to access exclusive tech fashion deals, track orders, and enjoy faster checkout at UpWearLane.',
 };
 
-export default function UserAuthenticationPage() {
+export default function UserAuthenticationPage({ mode = 'login' }: { mode?: 'login' | 'register' }) {
     const accountBenefits = [
         {
             id: 1,
@@ -50,7 +50,7 @@ export default function UserAuthenticationPage() {
     return (
         <>
             <Header />
-            <UserAuthenticationInteractive benefits={accountBenefits} />
+            <UserAuthenticationInteractive benefits={accountBenefits} initialMode={mode} />
         </>
     );
 }

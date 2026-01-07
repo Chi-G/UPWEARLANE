@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/AppIcon';
+import { HeroData } from '@/types';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -12,7 +13,7 @@ const CATEGORIES = [
     { name: 'AR/VR', icon: 'CubeIcon', slug: 'ar-vr' },
 ];
 
-export default function HeroBanner() {
+export default function HeroBanner({ heroData }: { heroData?: HeroData }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
 
@@ -24,13 +25,33 @@ export default function HeroBanner() {
     };
 
     return (
-        <section className="from-primary/10 via-background to-accent/5 relative bg-gradient-to-b pb-8 pt-24 md:pb-12 md:pt-32">
-            <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+        <section 
+            className="relative pb-8 pt-24 md:pb-12 md:pt-32 bg-cover bg-center bg-no-repeat"
+            style={{ 
+                backgroundImage: heroData?.backgroundImage ? `url(${heroData.backgroundImage})` : undefined 
+            }}
+        >
+             {/* Overlay for background image readability if image exists, otherwise gradient */}
+            <div className={`absolute inset-0 ${heroData?.backgroundImage ? 'bg-background/80 backdrop-blur-[2px]' : 'from-primary/10 via-background to-accent/5 bg-gradient-to-b'}`} />
+            
+            <div className="relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
                 {/* Search Container */}
                 <div className="mx-auto max-w-4xl space-y-8 text-center">
-                    <h1 className="font-heading text-foreground text-3xl font-bold md:text-4xl lg:text-5xl">
-                        Find Your Next Tech Essential
-                    </h1>
+                    <div className="space-y-4">
+                        {heroData?.badge && (
+                            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                                {heroData.badge}
+                            </span>
+                        )}
+                        <h1 className="font-heading text-foreground text-3xl font-bold md:text-4xl lg:text-5xl">
+                            {heroData?.title || 'Find Your Next Tech Essential'}
+                        </h1>
+                        {heroData?.subtitle && (
+                            <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+                                {heroData.subtitle}
+                            </p>
+                        )}
+                    </div>
 
                     {/* Search Bar */}
                     <form

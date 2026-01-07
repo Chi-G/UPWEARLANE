@@ -45,6 +45,12 @@
         @viteReactRefresh
         @vite(['resources/js/app.tsx'])
         @inertiaHead
+        @php
+            // Output Ziggy routes, ensuring proper initialization for JavaScript
+            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
+                 echo (new \Tighten\Ziggy\BladeRouteGenerator)->generate();
+            }
+        @endphp
     </head>
     <body class="font-sans antialiased">
         @inertia

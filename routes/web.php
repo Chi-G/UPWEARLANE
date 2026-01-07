@@ -41,12 +41,14 @@ Route::get('/checkout-flow', function () {
     return Inertia::render('checkout-flow/page');
 })->name('checkout');
 
+// Orders (Public for Guest Checkout)
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Orders
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    // User Order History
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
     // Reviews
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
