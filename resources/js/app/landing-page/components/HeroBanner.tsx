@@ -41,12 +41,13 @@ export default function HeroBanner() {
                         <div className="border-b border-gray-200 sm:w-1/3 sm:border-b-0 sm:border-r">
                             <div className="relative h-full">
                                 <select
+                                    aria-label="Select Category"
                                     value={selectedCategory}
                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                                         setSelectedCategory(e.target.value)
                                     }
                                     className="bg-card text-foreground focus-visible:ring-primary h-full w-full appearance-none px-6 py-4 text-base outline-none transition-colors hover:bg-gray-50/50"
-                                >
+                                > 
                                     <option value="">All Categories</option>
                                     {CATEGORIES.map((cat) => (
                                         <option key={cat.slug} value={cat.slug}>

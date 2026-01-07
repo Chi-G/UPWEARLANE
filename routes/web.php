@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
     return Inertia::render('landing-page/page');
@@ -14,30 +17,39 @@ Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->n
 Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
+    Route::get('dashboard', function () { 
         return Inertia::render('dashboard');
     })->name('dashboard');
-}); 
+});
 
-Route::get('/support', function () {
-    return Inertia::render('customer-support/page');
-})->name('support');
+// Products
+Route::get('/product-catalog', [ProductController::class, 'index'])->name('product-catalog');
+Route::get('/product-detail', [ProductController::class, 'show'])->name('product-detail');
 
-Route::get('/product-catalog', function () {
-    return Inertia::render('product-catalog/page');
-})->name('product-catalog');
-
-Route::get('/product-detail', function () {
-    return Inertia::render('product-detail/page');
-})->name('product-detail');
-
+// Shopping Cart
 Route::get('/shopping-cart', function () {
     return Inertia::render('shopping-cart/page');
 })->name('shopping-cart');
 
+// Support
+Route::get('/support', function () {
+    return Inertia::render('customer-support/page');
+})->name('support');
+
+// Checkout
 Route::get('/checkout-flow', function () {
     return Inertia::render('checkout-flow/page');
 })->name('checkout');
 
+// Authenticated routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Orders
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Reviews
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+});
+
 require __DIR__.'/settings.php';
- 
