@@ -1,4 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    
+    # Protect sensitive files (Standard Security)
+    RewriteRule ^(\.env|\.git|composer\.lock|composer\.json|package\.json|package-lock\.json|yarn\.lock) - [F,L]
+
+    # Rewrite everything to the public folder
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
+# Disable directory browsing
+Options -Indexes
