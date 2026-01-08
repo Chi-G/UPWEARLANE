@@ -1,11 +1,22 @@
 <?php
 
-/**
- * Hostinger Shared Hosting Helper
- * 
- * This file serves as a proxy to the public/index.php file.
- * It ensures the site loads even if the .htaccess rewrite fails for the root path.
- */
+use Illuminate\Http\Request;
 
-// Delegate to the public index
-require __DIR__ . '/public/index.php';
+define('LARAVEL_START', microtime(true));
+
+// Hostinger / Shared Hosting Root Fix
+// Mirrors the logic of public/index.php but adapted for the project root.
+
+// Check for maintenance mode
+if (file_exists($maintenance = __DIR__.'/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+// Register autoloader
+require __DIR__.'/vendor/autoload.php';
+
+// Bootstrap the application
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+// Handle the request
+$app->handleRequest(Request::capture());
