@@ -24,7 +24,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Seed products
-        $this->call(ProductSeeder::class);
+        // Seed all data in order
+        $this->call([
+            CategorySeeder::class,
+            HeroSettingSeeder::class,
+            FooterSettingSeeder::class,
+            ProductSeeder::class,
+        ]);
+
+        $this->command->info('All seeders completed successfully!');
     }
 }
