@@ -12,7 +12,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id', 'name', 'slug', 'description', 'short_description',
-        'base_price', 'original_price', 'discount_percentage', 'sku',
+        'base_price', 'currency', 'original_price', 'discount_percentage', 'sku',
         'stock_quantity', 'is_new', 'is_featured', 'is_bestseller',
         'rating', 'review_count', 'sold_count', 'launch_date',
         'is_pre_order', 'is_active', 'meta_title', 'meta_description',
@@ -97,6 +97,11 @@ class Product extends Model
     public function scopeInStock($query)
     {
         return $query->where('stock_quantity', '>', 0);
+    }
+
+    public function scopeCurrency($query, $currency)
+    {
+        return $query->where('currency', $currency);
     }
 
     // Mutators

@@ -1,5 +1,6 @@
 import { Product } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 import LandingPageInteractive from './components/LandingPageInteractive';
 
 export const metadata = {
@@ -59,6 +60,20 @@ export default function LandingPage() {
         bestsellers, 
         newArrivals 
     } = usePage<PageProps>().props;
+
+    // Ensure currency parameter is in URL
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('currency')) {
+            const savedCurrency = localStorage.getItem('selected_currency') || 'USD';
+            urlParams.set('currency', savedCurrency);
+            router.visit(`${window.location.pathname}?${urlParams.toString()}`, {
+                preserveState: false,
+                preserveScroll: true,
+                replace: true,
+            });
+        }
+    }, []);
 
     const pageData = {
         hero: {

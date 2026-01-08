@@ -1,6 +1,7 @@
 import Header from '@/components/common/Header';
 import { Product } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 import ProductCatalogInteractive from './components/ProductCatalogInteractive';
 
 export const metadata = {
@@ -35,6 +36,20 @@ interface PageProps {
 
 export default function ProductCatalogPage() {
     const { products: paginatedProducts } = usePage<PageProps>().props;
+    
+    // Ensure currency parameter is in URL
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('currency')) {
+            const savedCurrency = localStorage.getItem('selected_currency') || 'USD';
+            urlParams.set('currency', savedCurrency);
+            router.visit(`${window.location.pathname}?${urlParams.toString()}`, {
+                preserveState: false,
+                preserveScroll: true,
+                replace: true,
+            });
+        }
+    }, []);
     
     // Transform database products to frontend format
     const products: Product[] = paginatedProducts?.data?.map((p) => ({

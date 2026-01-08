@@ -6,12 +6,16 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\HeroSetting;
 use App\Models\FooterSetting;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class LandingPageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Get currency from request or default to NGN
+        $currency = $request->get('currency', 'NGN');
+
         // Get active hero settings
         $heroSettings = HeroSetting::where('is_active', true)->first();
         
@@ -23,25 +27,28 @@ class LandingPageController extends Controller
             ->orderBy('sort_order')
             ->get(['id', 'name', 'slug', 'icon', 'image']);
 
-        // Get featured products (limit 8)
+        // Get featured products (limit 8) filtered by currency
         $featuredProducts = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
+            ->currency($currency)
             ->featured()
             ->take(8)
             ->get()
             ->map(fn($p) => $this->transformProduct($p));
 
-        // Get bestsellers (limit 8)
+        // Get bestsellers (limit 8) filtered by currency
         $bestsellers = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
+            ->currency($currency)
             ->bestsellers()
             ->take(8)
             ->get()
             ->map(fn($p) => $this->transformProduct($p, true));
 
-        // Get new arrivals (limit 8)
+        // Get new arrivals (limit 8) filtered by currency
         $newArrivals = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
+            ->currency($currency)
             ->newArrivals()
             ->take(8)
             ->get()

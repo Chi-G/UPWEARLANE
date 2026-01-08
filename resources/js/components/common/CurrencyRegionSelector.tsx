@@ -1,13 +1,14 @@
 import Icon from '@/components/ui/AppIcon';
 import { useEffect, useRef, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 import { Currency } from '@/types';
 
 const CURRENCIES: Currency[] = [
+    { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', region: 'Nigeria' },
     { code: 'USD', symbol: '$', name: 'US Dollar', region: 'USA' },
     { code: 'GBP', symbol: '£', name: 'British Pound', region: 'UK' },
     { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', region: 'Canada' },
-    { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', region: 'Nigeria' },
 ];
 
 export default function CurrencyRegionSelector() {
@@ -57,7 +58,17 @@ export default function CurrencyRegionSelector() {
         localStorage.setItem('selected_currency', currency?.code);
         localStorage.setItem('selected_region', currency?.region);
         setIsOpen(false);
+        
+        // Dispatch event for other components
         window.dispatchEvent(new Event('currency-changed'));
+        
+        // Reload the current page with currency parameter
+        const url = new URL(window.location.href);
+        url.searchParams.set('currency', currency.code);
+        router.visit(url.pathname + url.search, {
+            preserveState: false,
+            preserveScroll: true,
+        });
     };
 
     return (

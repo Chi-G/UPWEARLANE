@@ -18,6 +18,10 @@ class ProductController extends Controller
             ->active()
             ->inStock();
 
+        // Currency filter - use selected currency from request or default to NGN
+        $currency = $request->get('currency', 'NGN');
+        $query->currency($currency);
+
         // Category filter
         if ($request->has('category')) {
             $query->whereHas('category', function ($q) use ($request) {
@@ -57,7 +61,8 @@ class ProductController extends Controller
         return Inertia::render('product-catalog/page', [
             'products' => $products,
             'categories' => Category::active()->orderBy('sort_order')->get(),
-            'filters' => $request->only(['category', 'filter', 'search', 'sort']),
+            'filters' => $request->only(['category', 'filter', 'search', 'sort', 'currency']),
+            'selectedCurrency' => $currency,
         ]);
     }
 

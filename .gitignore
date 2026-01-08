@@ -17,6 +17,9 @@
 .phpactor.json
 .phpunit.result.cache
 BACKEND_IMPLEMENTATION_GUIDE.md
+CURRENCY_FILTERING.md
+HERO_FOOTER_SETTINGS.md
+GEMINI.md
 Homestead.json
 Homestead.yaml
 npm-debug.log
