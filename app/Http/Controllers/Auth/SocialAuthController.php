@@ -43,7 +43,11 @@ class SocialAuthController extends Controller
                     'password' => Hash::make(Str::random(24)),
                 ]);
 
-                $user->sendEmailVerificationNotification();
+                try {
+                    $user->sendEmailVerificationNotification();
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send verification email during Google login: ' . $e->getMessage());
+                }
 
             } else {
                 if (!$user->google_id) {
