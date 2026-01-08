@@ -17,12 +17,6 @@ Route::get('/', function () {
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () { 
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-}); 
-
 // Products
 Route::get('/product-catalog', [ProductController::class, 'index'])->name('product-catalog');
 Route::get('/product-detail', [ProductController::class, 'show'])->name('product-detail');
