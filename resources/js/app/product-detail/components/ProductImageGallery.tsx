@@ -28,13 +28,14 @@ export default function ProductImageGallery({
 
     const toggleZoom = () => {
         setIsZoomed(!isZoomed);
-    };
+    }; 
 
     return (
         <div className="space-y-4">
             {/* Main Image Display */}
             <div className="bg-surface group relative aspect-[3/4] overflow-hidden rounded-2xl">
                 <AppImage
+                    key={images?.[selectedImageIndex]?.url}
                     src={images?.[selectedImageIndex]?.url}
                     alt={images?.[selectedImageIndex]?.alt}
                     className={`h-full w-full object-cover transition-transform duration-300 ${

@@ -8,10 +8,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\LandingPageController;
 
-Route::get('/', function () {
-    return Inertia::render('landing-page/page');
-})->name('home');
+Route::get('/', [LandingPageController::class, 'index'])->name('home');
 
 // Google OAuth routes
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
@@ -19,7 +18,14 @@ Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleC
 
 // Products
 Route::get('/product-catalog', [ProductController::class, 'index'])->name('product-catalog');
-Route::get('/product-detail', [ProductController::class, 'show'])->name('product-detail');
+Route::get('/product-detail/{product}', [ProductController::class, 'show'])->name('product-detail');
+// Redirect old URL format to new format
+Route::get('/product-detail', function (\Illuminate\Http\Request $request) {
+    if ($request->has('id')) {
+        return redirect("/product-detail/{$request->id}");
+    }
+    return redirect('/product-catalog');
+});
 
 // Shopping Cart
 Route::get('/shopping-cart', function () {
@@ -51,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reviews
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])->name('reviews.helpful');
 });
 
 require __DIR__.'/settings.php';

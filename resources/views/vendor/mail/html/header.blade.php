@@ -1,8 +1,8 @@
 @props(['url'])
 <tr>
-<td class="header">
+<td class="header" style="text-align: center;">
 <a href="{{ $url }}" style="display: inline-block; text-decoration: none;">
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
         <tr>
             <td style="vertical-align: middle; padding-right: 12px;">
                 <div style="height: 40px; width: 40px; background-color: #020617; border-radius: 8px; text-align: center;">

@@ -64,7 +64,7 @@ export default function FeaturedProducts({
                                 {/* Quick Actions */}
                                 <div className="bg-background/80 transition-smooth absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                     <Link
-                                        href={`/product-detail?id=${product?.id}`}
+                                        href={`/product-detail/${product?.id}`}
                                         className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect rounded-lg px-6 py-2 font-medium"
                                     >
                                         View Details
@@ -188,14 +188,14 @@ export default function FeaturedProducts({
                         </div>
                     ))}
                 </div>
-
+ 
                 {/* View All Button */}
                 <div className="mt-12 text-center">
                     <Link
-                        href="/product-catalog"
+                        href="/product-catalog?filter=featured"
                         className="bg-surface hover:bg-accent text-foreground border-border transition-smooth press-effect inline-flex items-center rounded-lg border px-8 py-3 font-medium"
                     >
-                        <span>View All Products</span>
+                        <span>View All Featured</span>
                         <Icon
                             name="ArrowRightIcon"
                             size={20}

@@ -17,7 +17,6 @@ export default function ProductDetailInteractive({
                 <div className="mb-16 grid grid-cols-1 gap-8 md:mb-20 md:gap-12 lg:mb-24 lg:grid-cols-2 lg:gap-16">
                     <ProductImageGallery
                         images={product?.images}
-                        productName={product?.name}
                     />
                     <ProductInfo product={product} />
                 </div>
@@ -29,7 +28,7 @@ export default function ProductDetailInteractive({
                         productId={product?.id}
                     />
                 </div>
-
+ 
                 {/* Related Products Section */}
                 <div>
                     <RelatedProducts products={relatedProducts} />

@@ -9,12 +9,14 @@ export default function OrderSummary({
     tax,
     total,
     itemCount,
+    shippingCost,
 }: {
     subtotal: number;
     discount: number;
     tax: number;
     total: number;
     itemCount: number;
+    shippingCost: number;
 }) {
     const [currency, setCurrency] = useState({ symbol: '$', code: 'USD' });
 
@@ -78,17 +80,14 @@ export default function OrderSummary({
                     </span>
                 </div>
 
-                {/* Shipping Note */}
-                <div className="bg-accent/50 flex items-start gap-2 rounded-lg p-3">
-                    <Icon
-                        name="InformationCircleIcon"
-                        size={20}
-                        className="text-primary mt-0.5 flex-shrink-0"
-                    />
-                    <p className="text-muted-foreground text-sm">
-                        Shipping costs will be calculated at checkout based on
-                        your location
-                    </p>
+                {/* Shipping */}
+                <div className="flex items-center justify-between text-base">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="font-data text-foreground font-medium">
+                        {shippingCost === 0
+                            ? 'Free'
+                            : formatPrice(shippingCost)}
+                    </span>
                 </div>
             </div>
             {/* Total */}

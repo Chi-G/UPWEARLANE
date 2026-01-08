@@ -49,14 +49,14 @@ export default function RelatedProducts({ products }: { products: Product[] }) {
                 {products?.map((product: Product) => (
                     <Link
                         key={product?.id}
-                        href="/product-detail"
+                        href={`/product-detail/${product?.id}`}
                         className="group w-64 flex-shrink-0 snap-start md:w-72"
                     >
                         <div className="space-y-3">
                             <div className="bg-surface relative aspect-[3/4] overflow-hidden rounded-xl">
                                 <AppImage
                                     src={product?.image}
-                                    alt={product?.imageAlt}
+                                    alt={product?.name || 'Product image'}
                                     width={400}
                                     height={400}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -84,12 +84,12 @@ export default function RelatedProducts({ products }: { products: Product[] }) {
                                             name="StarIcon"
                                             size={14}
                                             variant={
-                                                i < Math.floor(product?.rating)
+                                                i < Math.floor(Number(product?.rating) || 0)
                                                     ? 'solid'
                                                     : 'outline'
                                             }
                                             className={
-                                                i < Math.floor(product?.rating)
+                                                i < Math.floor(Number(product?.rating) || 0)
                                                     ? 'text-primary'
                                                     : 'text-muted'
                                             }
@@ -101,12 +101,12 @@ export default function RelatedProducts({ products }: { products: Product[] }) {
                                 </div>
                                 <div className="flex items-baseline space-x-2">
                                     <span className="font-heading text-foreground text-xl font-bold">
-                                        ${product?.price?.toFixed(2)}
+                                        ${(Number(product?.price) || 0).toFixed(2)}
                                     </span>
                                     {product?.originalPrice && (
                                         <span className="text-muted-foreground text-sm line-through">
                                             $
-                                            {product?.originalPrice?.toFixed(2)}
+                                            {(Number(product?.originalPrice) || 0).toFixed(2)}
                                         </span>
                                     )}
                                 </div>

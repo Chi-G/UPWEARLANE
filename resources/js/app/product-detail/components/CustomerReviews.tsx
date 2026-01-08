@@ -1,20 +1,42 @@
 import Icon from '@/components/ui/AppIcon';
 import AppImage from '@/components/ui/AppImage';
 import { CustomerReviewsProps } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 import PropTypes from 'prop-types';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+interface AuthUser {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface PageProps {
+    auth: {
+        user: AuthUser | null;
+    };
+    flash?: {
+        success?: string;
+        error?: string;
+    };
+    [key: string]: unknown;
+}
 
 export default function CustomerReviews({
     reviews,
     productId,
 }: CustomerReviewsProps) {
+    const { auth } = usePage<PageProps>().props;
     const [sortBy, setSortBy] = useState('recent');
     const [showReviewForm, setShowReviewForm] = useState(false);
-    const [reviewForm, setReviewForm] = useState({
+    const [helpfulCounts, setHelpfulCounts] = useState<Record<number, number>>({});
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        product_id: productId,
         rating: 5,
         title: '',
         comment: '',
-        name: '',
     });
 
     const sortedReviews = [...reviews]?.sort((a, b) => {
@@ -26,25 +48,81 @@ export default function CustomerReviews({
         return 0;
     });
 
-    const handleInputChange = (
-        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const { name, value } = e.target;
-        setReviewForm((prev) => ({ ...prev, [name]: value }));
-    };
-
     const handleRatingChange = (rating: number) => {
-        setReviewForm((prev) => ({ ...prev, rating }));
+        setData('rating', rating);
     };
 
-    const handleSubmitReview = (e: FormEvent) => {
+    const handleSubmitReview = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Review submitted:', { ...reviewForm, productId });
-        alert(
-            'Thank you for your review! It will be published after moderation.',
-        );
-        setReviewForm({ rating: 5, title: '', comment: '', name: '' });
-        setShowReviewForm(false);
+        
+        if (!auth?.user) {
+            toast.error('Please log in to submit a review', {
+                description: 'You need to be logged in to write a review.',
+            });
+            return;
+        }
+
+        post('/reviews', {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Review submitted!', {
+                    description: 'Thank you for your feedback.',
+                });
+                reset();
+                setShowReviewForm(false);
+            },
+            onError: (errors) => {
+                if (errors.review) {
+                    toast.error('Review Error', {
+                        description: errors.review,
+                    });
+                } else {
+                    toast.error('Failed to submit review', {
+                        description: 'Please check your input and try again.',
+                    });
+                }
+            },
+        });
+    };
+
+    const handleHelpfulClick = async (reviewId: number) => {
+        if (!auth?.user) {
+            toast.error('Please log in', {
+                description: 'You need to be logged in to mark reviews as helpful.',
+            });
+            return;
+        }
+
+        try {
+            const response = await fetch(`/reviews/${reviewId}/helpful`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setHelpfulCounts(prev => ({
+                    ...prev,
+                    [reviewId]: data.helpful_count,
+                }));
+                toast.success('Marked as helpful!');
+            }
+        } catch {
+            toast.error('Failed to mark as helpful');
+        }
+    };
+
+    const handleWriteReviewClick = () => {
+        if (!auth?.user) {
+            toast.error('Please log in', {
+                description: 'You need to be logged in to write a review.',
+            });
+            return;
+        }
+        setShowReviewForm(!showReviewForm);
     };
 
     const averageRating =
@@ -55,9 +133,11 @@ export default function CustomerReviews({
         star,
         count: reviews?.filter((r) => r?.rating === star)?.length,
         percentage:
-            (reviews?.filter((r) => r?.rating === star)?.length /
-                reviews?.length) *
-            100,
+            reviews?.length > 0
+                ? (reviews?.filter((r) => r?.rating === star)?.length /
+                    reviews?.length) *
+                  100
+                : 0,
     }));
 
     return (
@@ -68,7 +148,7 @@ export default function CustomerReviews({
                     Customer Reviews
                 </h2>
                 <button
-                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    onClick={handleWriteReviewClick}
                     className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-gold transition-smooth press-effect h-12 rounded-lg px-6 font-medium"
                 >
                     Write a Review
@@ -137,7 +217,7 @@ export default function CustomerReviews({
                     <form onSubmit={handleSubmitReview} className="space-y-6">
                         <div className="space-y-3">
                             <label className="text-foreground block text-sm font-medium">
-                                Your Rating
+                                Your Rating 
                             </label>
                             <div className="flex items-center space-x-2">
                                 {[1, 2, 3, 4, 5]?.map((star) => (
@@ -153,12 +233,12 @@ export default function CustomerReviews({
                                             name="StarIcon"
                                             size={32}
                                             variant={
-                                                star <= reviewForm?.rating
+                                                star <= data?.rating
                                                     ? 'solid'
                                                     : 'outline'
                                             }
                                             className={
-                                                star <= reviewForm?.rating
+                                                star <= data?.rating
                                                     ? 'text-primary'
                                                     : 'text-muted'
                                             }
@@ -166,25 +246,9 @@ export default function CustomerReviews({
                                     </button>
                                 ))}
                             </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <label
-                                htmlFor="name"
-                                className="text-foreground block text-sm font-medium"
-                            >
-                                Your Name
-                            </label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={reviewForm?.name}
-                                onChange={handleInputChange}
-                                required
-                                className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4"
-                                placeholder="John Doe"
-                            />
+                            {errors.rating && (
+                                <p className="text-destructive text-sm">{errors.rating}</p>
+                            )}
                         </div>
 
                         <div className="space-y-3">
@@ -198,12 +262,15 @@ export default function CustomerReviews({
                                 type="text"
                                 id="title"
                                 name="title"
-                                value={reviewForm?.title}
-                                onChange={handleInputChange}
+                                value={data?.title}
+                                onChange={(e) => setData('title', e.target.value)}
                                 required
                                 className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4"
                                 placeholder="Summarize your experience"
                             />
+                            {errors.title && (
+                                <p className="text-destructive text-sm">{errors.title}</p>
+                            )}
                         </div>
 
                         <div className="space-y-3">
@@ -216,21 +283,25 @@ export default function CustomerReviews({
                             <textarea
                                 id="comment"
                                 name="comment"
-                                value={reviewForm?.comment}
-                                onChange={handleInputChange}
+                                value={data?.comment}
+                                onChange={(e) => setData('comment', e.target.value)}
                                 required
                                 rows={5}
                                 className="bg-input border-border text-foreground placeholder:text-muted-foreground focus-ring transition-smooth w-full resize-none rounded-lg border px-4 py-3"
                                 placeholder="Share your thoughts about this product..."
                             />
+                            {errors.comment && (
+                                <p className="text-destructive text-sm">{errors.comment}</p>
+                            )}
                         </div>
 
                         <div className="flex flex-col gap-3 sm:flex-row">
                             <button
                                 type="submit"
-                                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-gold transition-smooth press-effect h-12 flex-1 rounded-lg px-6 font-medium"
+                                disabled={processing}
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-gold transition-smooth press-effect h-12 flex-1 rounded-lg px-6 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Submit Review
+                                {processing ? 'Submitting...' : 'Submit Review'}
                             </button>
                             <button
                                 type="button"
@@ -333,9 +404,12 @@ export default function CustomerReviews({
                         )}
 
                         <div className="flex items-center space-x-4 pt-2">
-                            <button className="text-muted-foreground hover:text-foreground transition-smooth flex items-center space-x-2 text-sm">
+                            <button 
+                                onClick={() => handleHelpfulClick(review?.id)}
+                                className="text-muted-foreground hover:text-foreground transition-smooth flex items-center space-x-2 text-sm"
+                            >
                                 <Icon name="HandThumbUpIcon" size={16} />
-                                <span>Helpful ({review?.helpfulCount})</span>
+                                <span>Helpful ({helpfulCounts[review?.id] ?? review?.helpfulCount})</span>
                             </button>
                         </div>
                     </div>

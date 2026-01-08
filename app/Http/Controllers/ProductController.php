@@ -64,21 +64,20 @@ class ProductController extends Controller
     /**
      * Display single product details
      */
-    public function show(Request $request)
+    public function show(Product $product)
     {
-        $product = Product::with([
+        $product->load([
             'category',
             'images', 
             'colors',
             'variants', 
             'features',
             'approvedReviews.user'
-        ])
-        ->findOrFail($request->id);
+        ]);
 
         // Related products
         $relatedProducts = Product::with(['primaryImage', 'colors'])
-            ->where('category_id', $product->category_id)
+            ->where('category_id', $product->category_id) 
             ->where('id', '!=', $product->id)
             ->active()
             ->inStock()

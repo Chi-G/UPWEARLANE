@@ -27,13 +27,14 @@ function AppImage({
     fallbackSrc = '/assets/images/no_image.png',
     ...props
 }: AppImageProps) {
-    const [imageSrc, setImageSrc] = useState(src);
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
+    // Use the src directly, fallback only on error
+    const imageSrc = hasError ? fallbackSrc : src;
+
     const handleError = () => {
-        if (!hasError && imageSrc !== fallbackSrc) {
-            setImageSrc(fallbackSrc);
+        if (!hasError) {
             setHasError(true);
         }
         setIsLoading(false);
@@ -41,7 +42,6 @@ function AppImage({
 
     const handleLoad = () => {
         setIsLoading(false);
-        setHasError(false);
     };
 
     const commonClassName = `${className} ${isLoading ? 'bg-gray-200' : ''} ${onClick ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`;

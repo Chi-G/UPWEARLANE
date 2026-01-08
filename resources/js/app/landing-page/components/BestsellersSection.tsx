@@ -123,7 +123,7 @@ export default function BestsellersSection({
                                 <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
                                     <div>
                                         <Link
-                                            href={`/product-detail?id=${product?.id}`}
+                                            href={`/product-detail/${product?.id}`}
                                             className="group-hover:text-primary transition-smooth block"
                                         >
                                             <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">

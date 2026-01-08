@@ -1,6 +1,6 @@
-import { CartItem, PromoCode, ShoppingCartInteractiveProps } from '@/types';
-import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useCart } from '@/hooks/useCart';
+import { PromoCode } from '@/types';
+import { useState } from 'react';
 import CartItemCard from './CartItemCard';
 import EmptyCart from './EmptyCart';
 import OrderSummary from './OrderSummary';
@@ -30,130 +30,89 @@ const VALID_PROMO_CODES: Record<string, PromoCode> = {
     },
 };
 
-export default function ShoppingCartInteractive({
-    initialCartData,
-}: ShoppingCartInteractiveProps) {
-    const [cartItems, setCartItems] = useState<CartItem[]>(initialCartData);
+export default function ShoppingCartInteractive() {
+    const { items: cartItems, updateQuantity, removeFromCart, isInitialized, subtotal: cartSubtotal } = useCart();
     const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const loadCart = () => {
-            try {
-                const savedCart = localStorage.getItem('shopping_cart');
-                if (savedCart) {
-                    const parsedCart = JSON.parse(savedCart);
-                    setCartItems(parsedCart);
-                }
-            } catch (error) {
-                console.error('Error loading cart:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadCart();
-    }, []);
-
-    useEffect(() => {
-        if (!isLoading) {
-            try {
-                localStorage.setItem(
-                    'shopping_cart',
-                    JSON.stringify(cartItems),
-                );
-                window.dispatchEvent(new Event('cart-updated'));
-            } catch (error) {
-                console.error('Error saving cart:', error);
-            }
-        }
-    }, [cartItems, isLoading]);
-
-    const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
-        setCartItems((prev) =>
-            prev?.map((item) =>
-                item?.id === itemId ? { ...item, quantity: newQuantity } : item,
-            ),
-        );
-    };
-
-    const handleRemoveItem = (itemId: string) => {
-        setCartItems((prev) => prev?.filter((item) => item?.id !== itemId));
-    };
+    // Initial loading state
+    const isLoading = !isInitialized;
 
     const handleApplyPromo = (code: string | null) => {
         if (!code) {
             setAppliedPromo(null);
-            return { success: true };
+            return;
         }
 
-        const promo = VALID_PROMO_CODES?.[code];
+        const normalizedCode = code.toUpperCase();
+        const promo = VALID_PROMO_CODES[normalizedCode];
+
         if (!promo) {
-            return {
-                success: false,
-                message: 'Invalid promo code. Please check and try again.',
-            };
+            return { success: false, message: 'Invalid promo code' };
         }
 
-        const subtotal = cartItems?.reduce(
-            (sum, item) => sum + item?.price * item?.quantity,
-            0,
-        );
-        if (subtotal < promo?.minOrder) {
+        if (cartSubtotal < promo.minOrder) {
             return {
                 success: false,
-                message: `This promo requires a minimum order of $${promo?.minOrder?.toFixed(2)}`,
+                message: `Order must be at least $${promo.minOrder} to use this code`,
             };
         }
 
         setAppliedPromo(promo);
-        return { success: true };
+        return { success: true, message: 'Promo code applied successfully!' };
     };
 
     const calculateTotals = () => {
-        const subtotal = cartItems?.reduce(
-            (sum, item) => sum + item?.price * item?.quantity,
-            0,
-        );
-
+        const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const subtotal = cartSubtotal; 
+        
         let discount = 0;
+        let shipping = subtotal > 100 ? 0 : 15.0;
+
         if (appliedPromo) {
-            if (appliedPromo?.type === 'percentage') {
-                discount = (subtotal * appliedPromo?.value) / 100;
-            } else if (appliedPromo?.type === 'fixed') {
-                discount = appliedPromo?.value;
+            if (appliedPromo.type === 'percentage') {
+                discount = subtotal * (appliedPromo.value / 100);
+            } else if (appliedPromo.type === 'fixed') {
+                discount = appliedPromo.value;
+            } else if (appliedPromo.type === 'shipping') {
+                shipping = 0;
             }
         }
 
-        const tax = (subtotal - discount) * 0.08;
-        const total = subtotal - discount + tax;
+        // Limit discount
+        if (discount > subtotal) discount = subtotal;
+
+        const taxRate = 0.08;
+        const tax = (subtotal - discount) * taxRate;
+        
+        const total = subtotal + tax + shipping - discount;
 
         return {
+            itemCount,
             subtotal,
-            discount,
             tax,
+            discount,
+            shipping,
             total,
-            itemCount: cartItems?.reduce(
-                (sum, item) => sum + item?.quantity,
-                0,
-            ),
         };
+    };
+
+    const handleUpdateQuantity = (id: string, quantity: number) => {
+        updateQuantity(id, quantity);
+    };
+
+    const handleRemoveItem = (id: string) => {
+        removeFromCart(id);
     };
 
     if (isLoading) {
         return (
-            <div className="flex min-h-[60vh] items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
-                    <p className="text-muted-foreground">
-                        Loading your cart...
-                    </p>
-                </div>
+            <div className="flex min-h-[400px] items-center justify-center">
+                <div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2 border-t-2"></div>
             </div>
         );
     }
 
-    if (cartItems?.length === 0) {
+    if (cartItems.length === 0) {
         return <EmptyCart />;
     }
 
@@ -165,15 +124,15 @@ export default function ShoppingCartInteractive({
             <div className="space-y-4 lg:col-span-2">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="font-heading text-foreground text-xl font-semibold md:text-2xl">
-                        Shopping Cart ({totals?.itemCount}{' '}
-                        {totals?.itemCount === 1 ? 'item' : 'items'})
+                        Shopping Cart ({totals.itemCount}{' '}
+                        {totals.itemCount === 1 ? 'item' : 'items'})
                     </h2>
                 </div>
 
                 <div className="space-y-4">
-                    {cartItems?.map((item) => (
+                    {cartItems.map((item) => (
                         <CartItemCard
-                            key={item?.id}
+                            key={`${item.id}-${item.variations?.color || ''}-${item.variations?.size || ''}`}
                             item={item}
                             onUpdateQuantity={handleUpdateQuantity}
                             onRemove={handleRemoveItem}
@@ -200,32 +159,15 @@ export default function ShoppingCartInteractive({
                 </div>
 
                 <OrderSummary
-                    subtotal={totals?.subtotal}
-                    discount={totals?.discount}
-                    tax={totals?.tax}
-                    total={totals?.total}
-                    itemCount={totals?.itemCount}
+                    subtotal={totals.subtotal}
+                    discount={totals.discount}
+                    tax={totals.tax}
+                    total={totals.total}
+                    itemCount={totals.itemCount}
+                    shippingCost={totals.shipping}
                 />
             </div>
         </div>
     );
 }
 
-ShoppingCartInteractive.propTypes = {
-    initialCartData: PropTypes?.arrayOf(
-        PropTypes?.shape({
-            id: PropTypes?.string?.isRequired,
-            name: PropTypes?.string?.isRequired,
-            category: PropTypes?.string?.isRequired,
-            price: PropTypes?.number?.isRequired,
-            quantity: PropTypes?.number?.isRequired,
-            image: PropTypes?.string?.isRequired,
-            alt: PropTypes?.string?.isRequired,
-            variations: PropTypes?.shape({
-                color: PropTypes?.string,
-                size: PropTypes?.string,
-            }),
-            stock: PropTypes?.number,
-        }),
-    )?.isRequired,
-};

@@ -1,27 +1,64 @@
 import Icon from '@/components/ui/AppIcon';
 import { HeroData } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-// Hardcoded categories for the layout
-const CATEGORIES = [
-    { name: 'Smart Watches', icon: 'ClockIcon', slug: 'smart-watches' },
-    { name: 'Fitness', icon: 'HeartIcon', slug: 'fitness' },
-    { name: 'Clothing', icon: 'TagIcon', slug: 'clothing' },
-    { name: 'Accessories', icon: 'SparklesIcon', slug: 'accessories' },
-    { name: 'AR/VR', icon: 'CubeIcon', slug: 'ar-vr' },
-];
+interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    icon: string | null;
+    image: string | null;
+}
 
-export default function HeroBanner({ heroData }: { heroData?: HeroData }) {
+interface HeroBannerProps {
+    heroData?: HeroData;
+    categories?: Category[];
+}
+
+// Default icon mapping for categories without icons
+const DEFAULT_ICONS: Record<string, string> = {
+    'smart-watches': 'ClockIcon',
+    'fitness': 'HeartIcon',
+    'clothing': 'TagIcon',
+    'accessories': 'SparklesIcon',
+    'ar-vr': 'CubeIcon',
+};
+
+export default function HeroBanner({ heroData, categories = [] }: HeroBannerProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        // Implement search navigation logic here
-        // e.g., router.visit(`/product-catalog?search=${searchQuery}&category=${selectedCategory}`);
-        console.log('Search:', searchQuery, selectedCategory);
+        
+        // Build URL with query parameters
+        const params = new URLSearchParams();
+        if (searchQuery.trim()) {
+            params.set('search', searchQuery.trim());
+        }
+        if (selectedCategory) {
+            params.set('category', selectedCategory);
+        }
+        
+        const queryString = params.toString();
+        router.visit(`/product-catalog${queryString ? `?${queryString}` : ''}`);
+    };
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setSelectedCategory(value);
+        
+        // If a category is selected and there's no search query, navigate immediately
+        if (value && !searchQuery.trim()) {
+            router.visit(`/product-catalog?category=${value}`);
+        }
+    };
+
+    // Get icon for category - use database icon or fall back to default
+    const getCategoryIcon = (category: Category): string => {
+        return category.icon || DEFAULT_ICONS[category.slug] || 'TagIcon';
     };
 
     return (
@@ -64,13 +101,11 @@ export default function HeroBanner({ heroData }: { heroData?: HeroData }) {
                                 <select
                                     aria-label="Select Category"
                                     value={selectedCategory}
-                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                                        setSelectedCategory(e.target.value)
-                                    }
+                                    onChange={handleCategoryChange}
                                     className="bg-card text-foreground focus-visible:ring-primary h-full w-full appearance-none px-6 py-4 text-base outline-none transition-colors hover:bg-gray-50/50"
                                 > 
                                     <option value="">All Categories</option>
-                                    {CATEGORIES.map((cat) => (
+                                    {categories.map((cat) => (
                                         <option key={cat.slug} value={cat.slug}>
                                             {cat.name}
                                         </option>
@@ -133,7 +168,7 @@ export default function HeroBanner({ heroData }: { heroData?: HeroData }) {
                                 </span>
                             </Link>
 
-                            {CATEGORIES.map((cat) => (
+                            {categories.slice(0, 5).map((cat) => (
                                 <Link
                                     key={cat.slug}
                                     href={`/product-catalog?category=${cat.slug}`}
@@ -141,7 +176,7 @@ export default function HeroBanner({ heroData }: { heroData?: HeroData }) {
                                 >
                                     <div className="bg-primary/10 group-hover:bg-primary text-primary group-hover:text-primary-foreground transition-smooth flex h-10 w-10 items-center justify-center rounded-full md:h-14 md:w-14">
                                         <Icon
-                                            name={cat.icon}
+                                            name={getCategoryIcon(cat)}
                                             size={20}
                                             className="md:h-6 md:w-6"
                                         />

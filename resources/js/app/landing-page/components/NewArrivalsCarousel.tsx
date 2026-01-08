@@ -142,7 +142,7 @@ export default function NewArrivalsCarousel({
                                                     <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
                                                         <div>
                                                             <Link
-                                                                href={`/product-detail?id=${product?.id}`}
+                                                                href={`/product-detail/${product?.id}`}
                                                                 className="group-hover:text-primary transition-smooth block"
                                                             >
                                                                 <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
@@ -208,7 +208,7 @@ export default function NewArrivalsCarousel({
 
                                                         {/* Action Button */}
                                                         <Link
-                                                            href={`/product-detail?id=${product?.id}`}
+                                                            href={`/product-detail/${product?.id}`}
                                                             className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect mt-auto inline-flex w-full items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium md:px-4 md:py-2.5 md:text-base"
                                                         >
                                                             <Icon

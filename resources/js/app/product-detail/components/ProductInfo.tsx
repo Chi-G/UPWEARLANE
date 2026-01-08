@@ -1,9 +1,12 @@
 import Icon from '@/components/ui/AppIcon';
+import { useCart } from '@/hooks/useCart';
 import { CartItem, CurrencyCode, ProductInfoProps } from '@/types';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function ProductInfo({ product }: ProductInfoProps) {
+    const { addToCart } = useCart();
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]);
     const [quantity, setQuantity] = useState(1);
@@ -13,7 +16,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     useEffect(() => {
         const updateCurrency = () => {
             const savedCurrency = (localStorage.getItem('selected_currency') ||
-                'USD') as CurrencyCode;
+                'USD') as CurrencyCode; 
             const rates: Record<CurrencyCode, number> = {
                 USD: 1,
                 GBP: 0.79,
@@ -41,7 +44,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
     const handleAddToCart = () => {
         if (!selectedSize) {
-            alert('Please select a size');
+            toast.error('Please select a size', {
+                description: 'Choose a size before adding to cart',
+            });
             return;
         }
 
@@ -59,27 +64,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             },
         };
 
-        try {
-            const cart: CartItem[] = JSON.parse(
-                localStorage.getItem('shopping_cart') || '[]',
-            );
-            const existingItemIndex = cart?.findIndex(
-                (item: CartItem) => item?.id === cartItem?.id,
-            );
-
-            if (existingItemIndex > -1) {
-                cart[existingItemIndex].quantity += quantity;
-            } else {
-                cart?.push(cartItem);
-            }
-
-            localStorage.setItem('shopping_cart', JSON.stringify(cart));
-            window.dispatchEvent(new Event('cart-updated'));
-            alert('Product added to cart successfully!');
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-            alert('Failed to add product to cart');
-        }
+        addToCart(cartItem);
     };
 
     const handleQuantityChange = (delta: number) => {

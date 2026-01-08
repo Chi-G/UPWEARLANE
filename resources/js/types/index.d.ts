@@ -63,6 +63,8 @@ export interface Product {
     launchDate?: string;
     preOrder?: boolean;
     features?: string[];
+    is_bestseller?: boolean;
+    is_featured?: boolean;
 }
 
 export interface ProductCatalogInteractiveProps {
@@ -89,6 +91,35 @@ export interface HeroData {
 
 export interface PageData {
     hero: HeroData;
+    categories?: Array<{
+        id: number;
+        name: string;
+        slug: string;
+        icon: string | null;
+        image: string | null;
+    }>;
+    heroSettings?: {
+        id: number;
+        title: string;
+        subtitle: string | null;
+        badge: string | null;
+        background_image: string | null;
+        hero_image: string | null;
+        stats: Array<{ value: string; label: string }> | null;
+        is_active: boolean;
+    } | null;
+    footerSettings?: {
+        id: number;
+        company_description: string;
+        social_links: Array<{ name: string; url: string; icon: string }> | null;
+        quick_links: Array<{ name: string; url: string }> | null;
+        contact_address: string | null;
+        contact_phone: string | null;
+        contact_email: string | null;
+        trust_badges: string[] | null;
+        legal_links: Array<{ name: string; url: string }> | null;
+        is_active: boolean;
+    } | null;
     featuredProducts: Product[];
     bestsellers: Product[];
     newArrivals: Product[];
@@ -235,10 +266,6 @@ export interface PromoCode {
     type: 'percentage' | 'fixed' | 'shipping';
     value: number;
     minOrder: number;
-}
-
-export interface ShoppingCartInteractiveProps {
-    initialCartData: CartItem[];
 }
 
 export interface PromoCodeSectionProps {

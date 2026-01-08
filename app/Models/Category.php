@@ -11,7 +11,7 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'description', 'image', 'is_active', 'sort_order'
+        'name', 'slug', 'description', 'image', 'icon', 'is_active', 'sort_order'
     ];
 
     protected $casts = [

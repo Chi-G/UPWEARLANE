@@ -48,7 +48,7 @@ export default function LandingPageInteractive({
         <div className="bg-background min-h-screen">
             <Header />
             <main className="pt-16 lg:pt-20">
-                <HeroBanner heroData={pageData?.hero} />
+                <HeroBanner heroData={pageData?.hero} categories={pageData?.categories} />
                 <FeaturedProducts products={pageData?.featuredProducts} />
                 <BestsellersSection bestsellers={pageData?.bestsellers} />
                 {/* <AdvertisementBanner

@@ -104,7 +104,7 @@ export default function Header() {
                 <div className="mx-auto px-4 sm:px-8">
                     <div className="flex h-16 items-center justify-between lg:h-20">
                         {/* Logo */}
-                        <Link
+                        <Link 
                             href="/"
                             className="hover-lift flex items-center gap-3 no-underline outline-none"
                         >

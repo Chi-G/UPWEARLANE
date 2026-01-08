@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 
 import Icon from '@/components/ui/AppIcon';
+import { useCart } from '@/hooks/useCart';
 import {
     CatalogFilters,
     Product,
     ProductCatalogInteractiveProps,
 } from '@/types';
+import { router } from '@inertiajs/react';
 import FilterSidebar from './FilterSidebar';
 import ProductCard from './ProductCard';
 
 export default function ProductCatalogInteractive({
     initialProducts,
 }: ProductCatalogInteractiveProps) {
+    const { addToCart } = useCart();
     const [viewMode, setViewMode] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('catalog_view_mode') || 'grid';
@@ -23,13 +26,9 @@ export default function ProductCatalogInteractive({
     const [filters, setFilters] = useState<CatalogFilters>(() => {
         let initialCategories: string[] = [];
         if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
+            const params = new URLSearchParams(window.location.search); 
             const categoryParam = params.get('category');
             if (categoryParam) {
-                // Formatting: 'smart-watches' -> 'Smart Watches' if needed, but the filter logic does lowercase check.
-                // The filter logic checks: product.category.toLowerCase().includes(cat.replace('-', ' '))
-                // So passing 'smart-watches' directly works if the logic handles it.
-                // Let's pass the slug directly as that's what we used in the link.
                 initialCategories = [categoryParam];
             }
         }
@@ -39,6 +38,14 @@ export default function ProductCatalogInteractive({
             colors: [],
             brands: [],
         };
+    });
+
+    const [productFilter] = useState<string | null>(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('filter');
+        }
+        return null;
     });
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -61,6 +68,9 @@ export default function ProductCatalogInteractive({
         // setIsLoading(true) is now handled by change handlers
         const timer = setTimeout(() => {
             let filtered = [...initialProducts];
+
+            // Note: Product type filter (bestsellers/featured) is handled by the backend
+            // The backend already filters products when ?filter=bestsellers or ?filter=featured is in URL
 
             // Apply search query filter
             if (searchQuery) {
@@ -167,45 +177,44 @@ export default function ProductCatalogInteractive({
         }, 500); // Reduced delay for snappier feel
 
         return () => clearTimeout(timer);
-    }, [filters, sortBy, initialProducts, searchQuery]);
+    }, [filters, sortBy, initialProducts, searchQuery, productFilter]);
+
+    const clearProductFilter = () => {
+        // Navigate to the product catalog without filter to reload from backend
+        router.visit('/product-catalog', { preserveScroll: true });
+    };
 
     const handleViewModeChange = (mode: string) => {
         setViewMode(mode);
         localStorage.setItem('catalog_view_mode', mode);
     };
 
-    interface CartItem extends Product {
-        quantity: number;
-    }
-
     const handleAddToCart = (product: Product) => {
-        try {
-            const cart: CartItem[] = JSON.parse(
-                localStorage.getItem('shopping_cart') || '[]',
-            );
-            const existingItem = cart?.find(
-                (item: CartItem) => item?.id === product?.id,
-            );
-
-            if (existingItem) {
-                existingItem.quantity = (existingItem?.quantity || 1) + 1;
-            } else {
-                cart?.push({ ...product, quantity: 1 });
-            }
-
-            localStorage.setItem('shopping_cart', JSON.stringify(cart));
-            window.dispatchEvent(new Event('cart-updated'));
-        } catch (error) {
-            console.error('Error adding to cart:', error);
-        }
+        addToCart({
+            id: `${product.id}-default`,
+            name: product.name,
+            category: product.category,
+            price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+            quantity: 1,
+            image: product.image,
+            alt: product.alt,
+            variations: {},
+        });
     };
 
     const handleClearFilters = () => {
-        setIsLoading(true);
+        // If there's a product filter (bestsellers/featured), navigate to reload from backend
+        if (productFilter) {
+            router.visit('/product-catalog', { preserveScroll: true });
+            return;
+        }
+        
+        setIsLoading(true); 
         // Clear URL params
         if (typeof window !== 'undefined') {
             const url = new URL(window.location.href);
             url.searchParams.delete('category');
+            url.searchParams.delete('filter');
             window.history.pushState({}, '', url);
         }
         setSearchQuery('');
@@ -221,7 +230,20 @@ export default function ProductCatalogInteractive({
         filters?.categories?.length +
         filters?.colors?.length +
         filters?.brands?.length +
-        (filters?.priceRange ? 1 : 0);
+        (filters?.priceRange ? 1 : 0) +
+        (productFilter ? 1 : 0);
+
+    const getPageTitle = () => {
+        if (productFilter === 'bestsellers') return 'Bestsellers';
+        if (productFilter === 'featured') return 'Featured Products';
+        if (filters?.categories?.length === 1) {
+            return filters.categories[0]
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+        return 'Product Catalog';
+    };
 
     return (
         <div className="bg-background min-h-screen pt-20">
@@ -229,21 +251,24 @@ export default function ProductCatalogInteractive({
                 {/* Page Header */}
                 <div className="mb-8 hidden md:mb-12 md:block">
                     <h1 className="font-heading text-foreground mb-3 text-3xl font-bold md:mb-4 md:text-4xl lg:text-5xl">
-                        {filters?.categories?.length === 1
-                            ? filters.categories[0]
-                                  .split('-')
-                                  .map(
-                                      (word) =>
-                                          word.charAt(0).toUpperCase() +
-                                          word.slice(1),
-                                  )
-                                  .join(' ')
-                            : 'Product Catalog'}
+                        {getPageTitle()}
                     </h1>
                     <p className="text-muted-foreground max-measure text-base md:text-lg">
-                        Discover our collection of high-tech fashion and
-                        wearable technology
+                        {productFilter === 'bestsellers'
+                            ? 'Our most popular items loved by customers worldwide'
+                            : productFilter === 'featured'
+                              ? 'Handpicked selection of cutting-edge wearable technology'
+                              : 'Discover our collection of high-tech fashion and wearable technology'}
                     </p>
+                    {productFilter && (
+                        <button
+                            onClick={clearProductFilter}
+                            className="mt-4 inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-smooth"
+                        >
+                            <Icon name="XMarkIcon" size={16} />
+                            <span>Clear filter & show all products</span>
+                        </button>
+                    )}
                 </div>
 
                 {/* Toolbar */}

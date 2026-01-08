@@ -8,7 +8,7 @@ export default function AppLogo() {
                 <img src="/logo1.png?v=1.3" alt="UpWearLane" className="h-8 lg:h-10 w-auto object-contain block dark:hidden" />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-                <span className="font-heading text-foreground text-xl font-bold leading-none truncate">
+                <span className="font-heading text-foreground text-xl font-bold leading-normal truncate">
                     UpWearLane
                 </span>
             </div>

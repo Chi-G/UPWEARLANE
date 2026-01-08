@@ -24,7 +24,8 @@ export default function CartItemCard({
         onRemove(item?.id);
     };
 
-    const itemTotal = (item?.price * item?.quantity)?.toFixed(2);
+    const price = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
+    const itemTotal = (price * item?.quantity).toFixed(2);
 
     return (
         <div className="bg-card border-border transition-smooth hover:shadow-gold-sm relative rounded-lg border p-4 md:p-6">
@@ -129,7 +130,7 @@ export default function CartItemCard({
                             </span>
                             {item?.quantity > 1 && (
                                 <span className="text-muted-foreground text-sm">
-                                    (${item?.price?.toFixed(2)} each)
+                                    (${price.toFixed(2)} each)
                                 </span>
                             )}
                         </div>

@@ -18,7 +18,7 @@ export default function ProductCard({
     const [isSelected, setIsSelected] = useState(false);
 
     const handleAddToCart = (e: React.MouseEvent) => {
-        e?.preventDefault();
+        e?.preventDefault(); 
         e?.stopPropagation();
         setIsAdding(true);
         setIsSelected(!isSelected);
@@ -32,7 +32,7 @@ export default function ProductCard({
     if (viewMode === 'list') {
         return (
             <Link
-                href={`/product-detail?id=${product?.id}`}
+                href={`/product-detail/${product?.id}`}
                 className="bg-card hover:bg-accent/50 border-border transition-smooth hover-lift group flex flex-col gap-4 rounded-lg border p-4 sm:flex-row md:gap-6 md:p-6"
             >
                 <div className="w-full flex-shrink-0 sm:w-48 md:w-64">
@@ -175,7 +175,7 @@ export default function ProductCard({
 
     return (
         <Link
-            href={`/product-detail?id=${product?.id}`}
+            href={`/product-detail/${product?.id}`}
             className="bg-card hover:bg-accent/50 border-border transition-smooth hover-lift group flex w-full min-w-0 flex-col overflow-hidden rounded-lg border"
         >
             <div className="bg-muted relative aspect-[3/4] overflow-hidden">
