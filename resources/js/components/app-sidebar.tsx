@@ -25,7 +25,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/" prefetch>
+                            <Link href="/" prefetch className="hover-lift flex items-center gap-3 no-underline outline-none">
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
