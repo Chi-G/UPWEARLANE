@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
                 ->action('Verify Email Address', $url)
                 ->line('If you did not create an account, no further action is required.');
         });
+
+        Model::preventLazyLoading(! app()->isProduction());
     }
 }

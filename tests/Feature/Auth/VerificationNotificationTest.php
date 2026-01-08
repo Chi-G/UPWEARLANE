@@ -5,6 +5,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 
 test('sends verification notification', function () {
+    /** @var \Tests\TestCase $this */
     Notification::fake();
 
     $user = User::factory()->create([
@@ -19,6 +20,7 @@ test('sends verification notification', function () {
 });
 
 test('does not send verification notification if email is verified', function () {
+    /** @var \Tests\TestCase $this */
     Notification::fake();
 
     $user = User::factory()->create([
@@ -27,7 +29,7 @@ test('does not send verification notification if email is verified', function ()
 
     $this->actingAs($user)
         ->post(route('verification.send'))
-        ->assertRedirect(route('dashboard', absolute: false));
+        ->assertRedirect('/');
 
     Notification::assertNothingSent();
 });

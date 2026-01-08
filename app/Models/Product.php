@@ -15,7 +15,8 @@ class Product extends Model
         'base_price', 'original_price', 'discount_percentage', 'sku',
         'stock_quantity', 'is_new', 'is_featured', 'is_bestseller',
         'rating', 'review_count', 'sold_count', 'launch_date',
-        'is_pre_order', 'is_active', 'meta_title', 'meta_description'
+        'is_pre_order', 'is_active', 'meta_title', 'meta_description',
+        'brand', 'specifications'
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class Product extends Model
         'is_bestseller' => 'boolean',
         'is_pre_order' => 'boolean',
         'is_active' => 'boolean',
+        'specifications' => 'array',
     ];
 
     // Relationships

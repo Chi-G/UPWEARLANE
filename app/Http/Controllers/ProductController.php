@@ -68,9 +68,9 @@ class ProductController extends Controller
     {
         $product = Product::with([
             'category',
-            'images',
+            'images', 
             'colors',
-            'variants',
+            'variants', 
             'features',
             'approvedReviews.user'
         ])

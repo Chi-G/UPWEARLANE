@@ -32,9 +32,11 @@ return new class extends Migration
             $table->date('launch_date')->nullable();
             $table->boolean('is_pre_order')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->string('brand')->nullable();
+            $table->json('specifications')->nullable();
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
-            $table->timestamps();
+            $table->timestamps(); 
             $table->softDeletes();
             
             // Indexes for performance

@@ -28,6 +28,11 @@ class Category extends Model
         return $this->hasMany(Product::class)->where('is_active', true);
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;

@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('product_features', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }
-
+ 
     /**
      * Reverse the migrations.
      */

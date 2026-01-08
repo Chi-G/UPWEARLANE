@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_colors', function (Blueprint $table) {
-            $table->id();
+            $table->id(); 
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('hex_code')->nullable();
             $table->timestamps();
         });
     }

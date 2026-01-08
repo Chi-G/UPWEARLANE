@@ -8,10 +8,44 @@ use App\Models\Product;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class OrderController extends Controller
 {
+    /**
+     * Display a listing of the user's orders.
+     */
+    public function index()
+    {
+        $orders = Order::with(['items', 'payment']) 
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+            
+        return Inertia::render('orders/index', [
+            'orders' => $orders
+        ]);
+    }
+
+    /**
+     * Display the specified order.
+     */
+    public function show(Order $order)
+    {
+        // specific user check
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Eager load relationships for the view
+        $order->load(['items', 'shippingAddress', 'billingAddress', 'payment']);
+
+        return Inertia::render('orders/show', [
+            'order' => $order
+        ]);
+    }
+
     /**
      * Create new order from cart
      */
@@ -33,14 +67,14 @@ class OrderController extends Controller
 
             // Create shipping address
             $shippingAddress = Address::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'type' => 'shipping',
                 ...$validated['shipping_address']
             ]);
 
             // Create billing address
             $billingAddress = Address::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'type' => 'billing',
                 ...$validated['billing_address']
             ]);
@@ -49,8 +83,16 @@ class OrderController extends Controller
             $subtotal = 0;
             $orderItems = [];
 
+            // Optimization: Fetch all products in one query to avoid N+1
+            $productIds = collect($validated['items'])->pluck('product_id');
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
             foreach ($validated['items'] as $item) {
-                $product = Product::findOrFail($item['product_id']);
+                $product = $products->get($item['product_id']);
+                
+                if (!$product) {
+                    throw new \Exception("Product ID {$item['product_id']} not found or inactive.");
+                }
                 
                 // Check stock
                 if ($product->stock_quantity < $item['quantity']) {
@@ -83,7 +125,7 @@ class OrderController extends Controller
 
             // Create order
             $order = Order::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'status' => 'pending',
                 'currency' => $validated['currency'],
                 'subtotal' => $subtotal,

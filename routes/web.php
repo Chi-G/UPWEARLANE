@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return Inertia::render('landing-page/page');
@@ -20,7 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () { 
         return Inertia::render('dashboard');
     })->name('dashboard');
-});
+}); 
 
 // Products
 Route::get('/product-catalog', [ProductController::class, 'index'])->name('product-catalog');
@@ -44,6 +45,10 @@ Route::get('/checkout-flow', function () {
 // Orders (Public for Guest Checkout)
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+// Payments
+Route::post('/payments/create-intent', [PaymentController::class, 'createPaymentIntent'])->name('payments.create-intent');
+Route::post('/payments/confirm', [PaymentController::class, 'confirmPayment'])->name('payments.confirm');
 
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {

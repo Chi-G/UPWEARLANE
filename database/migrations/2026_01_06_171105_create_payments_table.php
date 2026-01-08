@@ -9,10 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up(): void 
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->string('transaction_id')->unique();
+            $table->string('payment_provider');
+            $table->string('payment_method')->nullable();
+            $table->decimal('amount', 10, 2);
+            $table->string('currency')->default('USD');
+            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending');
             $table->timestamps();
         });
     }

@@ -39,6 +39,7 @@ return [
 
         'page_paths' => [
             resource_path('js/pages'),
+            resource_path('js/app'),
         ],
 
         'page_extensions' => [
