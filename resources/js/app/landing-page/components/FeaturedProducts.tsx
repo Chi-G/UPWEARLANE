@@ -2,9 +2,10 @@ import Icon from '@/components/ui/AppIcon';
 import AppImage from '@/components/ui/AppImage';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { Product } from '@/types';
+import { Product, CurrencyCode } from '@/types';
+import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/currency';
 
 export default function FeaturedProducts({
     products,
@@ -12,6 +13,21 @@ export default function FeaturedProducts({
     products: Product[];
 }) {
     const [selectedCategory] = useState<string>('All');
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
+    const [currencySymbol, setCurrencySymbol] = useState('₦');
+
+    useEffect(() => {
+        const updateCurrency = () => {
+            const currency = getSelectedCurrency();
+            const symbols = getCurrencySymbols();
+            setSelectedCurrency(currency);
+            setCurrencySymbol(symbols[currency]);
+        };
+
+        updateCurrency();
+        window.addEventListener('currency-changed', updateCurrency);
+        return () => window.removeEventListener('currency-changed', updateCurrency);
+    }, []);
 
     const filteredProducts =
         selectedCategory === 'All'
@@ -121,11 +137,23 @@ export default function FeaturedProducts({
                                         <div className="flex flex-col md:flex-row md:items-center md:space-x-2">
                                             {product?.originalPrice && (
                                                 <span className="text-muted-foreground text-[10px] line-through md:text-sm">
-                                                    ${product?.originalPrice}
+                                                    {currencySymbol}{convertPrice(
+                                                        typeof product.originalPrice === 'string'
+                                                            ? parseFloat(product.originalPrice)
+                                                            : product.originalPrice,
+                                                        (product.currency || 'NGN') as CurrencyCode,
+                                                        selectedCurrency
+                                                    ).toFixed(2)}
                                                 </span>
                                             )}
                                             <span className="font-heading text-foreground text-sm font-bold md:text-xl">
-                                                ${product?.price}
+                                                {currencySymbol}{convertPrice(
+                                                    typeof product.price === 'string'
+                                                        ? parseFloat(product.price)
+                                                        : product.price,
+                                                    (product.currency || 'NGN') as CurrencyCode,
+                                                    selectedCurrency
+                                                ).toFixed(2)} 
                                             </span>
                                         </div>
                                     </div>
@@ -188,7 +216,7 @@ export default function FeaturedProducts({
                         </div>
                     ))}
                 </div>
- 
+
                 {/* View All Button */}
                 <div className="mt-12 text-center">
                     <Link

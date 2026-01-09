@@ -6,7 +6,8 @@ import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
-import { Product } from '@/types';
+import { Product, CurrencyCode } from '@/types';
+import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/currency';
 
 export default function NewArrivalsCarousel({
     newArrivals,
@@ -15,6 +16,8 @@ export default function NewArrivalsCarousel({
 }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
+    const [currencySymbol, setCurrencySymbol] = useState('₦');
 
     const itemsPerView = {
         mobile: 1,
@@ -23,6 +26,19 @@ export default function NewArrivalsCarousel({
     };
 
     const totalSlides = Math.ceil(newArrivals?.length / itemsPerView?.desktop);
+
+    useEffect(() => {
+        const updateCurrency = () => {
+            const currency = getSelectedCurrency();
+            const symbols = getCurrencySymbols();
+            setSelectedCurrency(currency);
+            setCurrencySymbol(symbols[currency]);
+        };
+
+        updateCurrency();
+        window.addEventListener('currency-changed', updateCurrency);
+        return () => window.removeEventListener('currency-changed', updateCurrency);
+    }, []);
 
     useEffect(() => {
         if (!isAutoPlaying) return;
@@ -196,8 +212,13 @@ export default function NewArrivalsCarousel({
                                                         {/* Price */}
                                                         <div className="flex items-center justify-between">
                                                             <span className="font-heading text-foreground text-sm font-bold md:text-xl">
-                                                                $
-                                                                {product?.price}
+                                                                {currencySymbol}{convertPrice(
+                                                                    typeof product.price === 'string' 
+                                                                        ? parseFloat(product.price) 
+                                                                        : product.price,
+                                                                    (product.currency || 'NGN') as CurrencyCode,
+                                                                    selectedCurrency
+                                                                ).toFixed(2)}
                                                             </span>
                                                             {product?.preOrder && (
                                                                 <span className="text-primary text-[10px] font-medium md:text-sm">

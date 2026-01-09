@@ -1,9 +1,10 @@
 import Icon from '@/components/ui/AppIcon';
 import AppImage from '@/components/ui/AppImage';
-import { Product } from '@/types';
+import { Product, CurrencyCode } from '@/types';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/currency';
 
 export default function ProductCard({
     product,
@@ -16,6 +17,21 @@ export default function ProductCard({
 }) {
     const [isAdding, setIsAdding] = useState(false);
     const [isSelected, setIsSelected] = useState(false);
+    const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
+    const [currencySymbol, setCurrencySymbol] = useState('₦');
+
+    useEffect(() => {
+        const updateCurrency = () => {
+            const currency = getSelectedCurrency();
+            const symbols = getCurrencySymbols();
+            setSelectedCurrency(currency);
+            setCurrencySymbol(symbols[currency]);
+        };
+
+        updateCurrency();
+        window.addEventListener('currency-changed', updateCurrency);
+        return () => window.removeEventListener('currency-changed', updateCurrency);
+    }, []);
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e?.preventDefault(); 
@@ -154,11 +170,19 @@ export default function ProductCard({
                     <div className="border-border mt-4 flex items-center justify-between border-t pt-4">
                         <div className="flex items-baseline gap-2">
                             <span className="font-data text-foreground whitespace-nowrap text-2xl font-semibold md:text-3xl">
-                                {product?.price}
+                                {currencySymbol}{convertPrice(
+                                    typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+                                    (product.currency || 'NGN') as CurrencyCode,
+                                    selectedCurrency
+                                ).toFixed(2)}
                             </span>
                             {product?.originalPrice && (
                                 <span className="font-data text-muted-foreground whitespace-nowrap text-base line-through md:text-lg">
-                                    {product?.originalPrice}
+                                    {currencySymbol}{convertPrice(
+                                        typeof product.originalPrice === 'string' ? parseFloat(product.originalPrice) : product.originalPrice,
+                                        (product.currency || 'NGN') as CurrencyCode,
+                                        selectedCurrency
+                                    ).toFixed(2)}
                                 </span>
                             )}
                         </div>
@@ -274,11 +298,19 @@ export default function ProductCard({
                 <div className="border-border flex items-center justify-between border-t pt-3">
                     <div className="flex items-baseline gap-1.5 md:gap-2">
                         <span className="font-data text-foreground whitespace-nowrap text-lg font-semibold md:text-2xl">
-                            {product?.price}
+                            {currencySymbol}{convertPrice(
+                                typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+                                (product.currency || 'NGN') as CurrencyCode,
+                                selectedCurrency
+                            ).toFixed(2)}
                         </span>
                         {product?.originalPrice && (
                             <span className="font-data text-muted-foreground whitespace-nowrap text-xs line-through">
-                                {product?.originalPrice}
+                                {currencySymbol}{convertPrice(
+                                    typeof product.originalPrice === 'string' ? parseFloat(product.originalPrice) : product.originalPrice,
+                                    (product.currency || 'NGN') as CurrencyCode,
+                                    selectedCurrency
+                                ).toFixed(2)}
                             </span>
                         )}
                     </div>
