@@ -18,9 +18,8 @@ class ProductController extends Controller
             ->active()
             ->inStock();
 
-        // Currency filter - use selected currency from request or default to NGN
+        // Get selected currency for frontend conversion (not filtering)
         $currency = $request->get('currency', 'NGN');
-        $query->currency($currency);
 
         // Category filter
         if ($request->has('category')) {

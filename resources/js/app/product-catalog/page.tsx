@@ -30,6 +30,15 @@ interface ProductFromDB {
 interface PageProps {
     products: {
         data: ProductFromDB[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        links: Array<{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }>;
     };
     [key: string]: unknown;
 }
@@ -73,12 +82,24 @@ export default function ProductCatalogPage() {
         isNew: p.is_new,
         is_featured: p.is_featured,
         is_bestseller: p.is_bestseller,
+        currency: 'NGN',
     })) || [];
+
+    const paginationData = {
+        currentPage: paginatedProducts?.current_page || 1,
+        lastPage: paginatedProducts?.last_page || 1,
+        total: paginatedProducts?.total || 0,
+        perPage: paginatedProducts?.per_page || 12,
+        links: paginatedProducts?.links || [],
+    };
 
     return (
         <>
             <Header />
-            <ProductCatalogInteractive initialProducts={products} />
+            <ProductCatalogInteractive 
+                initialProducts={products} 
+                pagination={paginationData}
+            />
         </>
     );
 }

@@ -70,6 +70,17 @@ export interface Product {
 
 export interface ProductCatalogInteractiveProps {
     initialProducts: Product[];
+    pagination?: {
+        currentPage: number;
+        lastPage: number;
+        total: number;
+        perPage: number;
+        links: Array<{
+            url: string | null;
+            label: string;
+            active: boolean;
+        }>;
+    };
 }
 
 export interface HeroStats {

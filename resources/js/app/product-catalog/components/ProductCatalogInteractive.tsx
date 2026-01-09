@@ -13,6 +13,7 @@ import ProductCard from './ProductCard';
 
 export default function ProductCatalogInteractive({
     initialProducts,
+    pagination,
 }: ProductCatalogInteractiveProps) {
     const { addToCart } = useCart();
     const [viewMode, setViewMode] = useState(() => {
@@ -432,6 +433,43 @@ export default function ProductCatalogInteractive({
                                         onAddToCart={handleAddToCart}
                                     />
                                 ))}
+                            </div>
+                        )}
+
+                        {/* Pagination Controls */}
+                        {pagination && pagination.lastPage > 1 && (
+                            <div className="mt-12 flex items-center justify-center gap-2">
+                                {pagination.links.map((link, index) => {
+                                    if (!link.url) {
+                                        return null;
+                                    }
+                                    
+                                    const isActive = link.active;
+                                    const isPrevNext = link.label.includes('Previous') || link.label.includes('Next');
+                                    const label = link.label
+                                        .replace('&laquo;', '«')
+                                        .replace('&raquo;', '»')
+                                        .replace('Previous', '← Previous')
+                                        .replace('Next', 'Next →');
+
+                                    return (
+                                        <button
+                                            key={index}
+                                            onClick={() => router.visit(link.url as string)}
+                                            disabled={isActive}
+                                            className={`
+                                                px-4 py-2 rounded-lg font-medium transition-all
+                                                ${isActive 
+                                                    ? 'bg-primary text-primary-foreground cursor-default' 
+                                                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                                                }
+                                                ${isPrevNext ? 'px-6' : ''}
+                                            `}
+                                        >
+                                            {label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
