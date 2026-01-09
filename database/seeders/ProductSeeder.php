@@ -9,11 +9,22 @@ use App\Models\ProductColor;
 use App\Models\ProductFeature;
 use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
+        // Clear existing products to avoid duplicates
+        $this->command->info('Clearing existing products...');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        ProductFeature::truncate();
+        ProductVariant::truncate();
+        ProductColor::truncate();
+        ProductImage::truncate();
+        Product::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         // Create categories
         $categories = [
             ['name' => 'Smart Watches', 'slug' => 'smart-watches', 'sort_order' => 1],
