@@ -88,7 +88,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Smart Glasses with AR Display',
-                'slug' => 'smart-glasses-ar-display',
+                'slug' => 'smart-glasses-with-ar-display',
                 'description' => 'Lightweight augmented reality glasses featuring heads-up display, voice control, and seamless smartphone integration for the modern tech lifestyle.',
                 'base_price' => 449.99,
                 'original_price' => 549.99,
