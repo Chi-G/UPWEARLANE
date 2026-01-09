@@ -11,6 +11,8 @@ export default function OrderSummary({
     const [currency, setCurrency] = useState<Currency>({
         code: 'USD',
         symbol: '$',
+        name: 'US Dollar',
+        region: 'USA',
     });
     const [subtotal, setSubtotal] = useState(0);
 
@@ -39,10 +41,10 @@ export default function OrderSummary({
             const savedCode =
                 localStorage.getItem('selected_currency') || 'USD';
             const currencies: Record<CurrencyCode, Currency> = {
-                NGN: { code: 'NGN', symbol: '₦' },
-                USD: { code: 'USD', symbol: '$' },
-                GBP: { code: 'GBP', symbol: '£' },
-                CAD: { code: 'CAD', symbol: 'C$' },
+                NGN: { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', region: 'Nigeria' },
+                USD: { code: 'USD', symbol: '$', name: 'US Dollar', region: 'USA' },
+                GBP: { code: 'GBP', symbol: '£', name: 'British Pound', region: 'UK' },
+                CAD: { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', region: 'Canada' },
             };
             setCurrency(
                 currencies[savedCode as CurrencyCode] || currencies.USD,
