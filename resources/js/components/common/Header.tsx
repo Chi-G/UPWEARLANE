@@ -39,7 +39,7 @@ export default function Header() {
         const checkTheme = () => {
             setIsDarkMode(document.documentElement.classList.contains('dark'));
         };
-        
+
         checkTheme();
 
         // Watch for theme changes
@@ -104,7 +104,7 @@ export default function Header() {
                 <div className="mx-auto px-4 sm:px-8">
                     <div className="flex h-16 items-center justify-between lg:h-20">
                         {/* Logo */}
-                        <Link 
+                        <Link
                             href="/"
                             className="hover-lift flex items-center gap-3 no-underline outline-none"
                         >
@@ -159,6 +159,12 @@ export default function Header() {
                                                 <Link href={route('user-password.edit')} className="cursor-pointer w-full">
                                                     <Icon name="LockClosedIcon" size={16} className="mr-2" />
                                                     <span>Security</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem asChild>
+                                                <Link href="/orders" className="cursor-pointer w-full">
+                                                    <Icon name="ShoppingBagIcon" size={16} className="mr-2" />
+                                                    <span>Orders</span>
                                                 </Link>
                                             </DropdownMenuItem>
                                         </DropdownMenuGroup>

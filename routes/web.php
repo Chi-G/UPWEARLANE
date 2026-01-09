@@ -60,5 +60,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])->name('reviews.helpful');
 });
-
+ 
 require __DIR__.'/settings.php';
