@@ -182,8 +182,11 @@ export interface ShippingAddress {
 }
 
 export interface ShippingMethod {
+    id: string;
+    name: string;
     carrier: string;
     deliveryTime: string;
+    delivery: string;
     cost: number;
 }
 
@@ -193,6 +196,8 @@ export interface PaymentInfo {
     cardType?: string;
     cryptocurrency?: string;
     timestamp: string;
+    order_id?: number;
+    order_number?: string;
 }
 
 export interface OrderDetails {
@@ -206,7 +211,7 @@ export type CurrencyCode = 'NGN' | 'USD' | 'GBP' | 'CAD';
 export interface Currency {
     code: CurrencyCode;
     symbol: string;
-    name: string; 
+    name: string;
     region: string;
 }
 

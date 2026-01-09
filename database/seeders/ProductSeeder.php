@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing products to avoid duplicates 
+        // Clear existing products to avoid duplicates
         $this->command->info('Clearing existing products...');
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         ProductFeature::truncate();
@@ -845,9 +845,8 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        $currencies = ['NGN', 'USD', 'GBP', 'CAD'];
-        $currencyIndex = 0;
-
+        // All products are stored in USD as the base currency
+        // Frontend handles conversion to user's selected display currency
         foreach ($products as $productData) {
             $category = Category::where('slug', $productData['category_slug'])->first();
 
@@ -864,7 +863,7 @@ class ProductSeeder extends Seeder
                     'sku' => strtoupper(substr(md5($productData['slug']), 0, 8)),
                     'description' => $productData['description'],
                     'base_price' => $productData['base_price'],
-                    'currency' => $currencies[$currencyIndex % count($currencies)],
+                    'currency' => 'USD',
                     'original_price' => $productData['original_price'],
                     'category_id' => $category->id,
                     'rating' => $productData['rating'],
@@ -924,8 +923,6 @@ class ProductSeeder extends Seeder
                     );
                 }
             }
-
-            $currencyIndex++;
         }
 
         $this->command->info('✅ Products seeded successfully! Total: ' . Product::count());

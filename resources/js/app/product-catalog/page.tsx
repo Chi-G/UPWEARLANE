@@ -16,7 +16,8 @@ interface ProductFromDB {
     slug: string;
     description: string;
     base_price: string;
-    sale_price: string | null;
+    currency: string | null;
+    original_price: string | null;
     rating: number;
     review_count: number;
     is_new: boolean;
@@ -65,10 +66,10 @@ export default function ProductCatalogPage() {
         id: p.id,
         name: p.name,
         category: p.category?.name || 'Uncategorized',
-        price: p.sale_price || p.base_price,
-        originalPrice: p.sale_price ? p.base_price : undefined,
-        discount: p.sale_price
-            ? Math.round((1 - parseFloat(p.sale_price) / parseFloat(p.base_price)) * 100)
+        price: parseFloat(p.base_price),
+        originalPrice: p.original_price ? parseFloat(p.original_price) : undefined,
+        discount: p.original_price
+            ? Math.round((1 - parseFloat(p.base_price) / parseFloat(p.original_price)) * 100)
             : undefined,
         rating: p.rating || 0,
         reviews: p.review_count || 0,
@@ -82,7 +83,7 @@ export default function ProductCatalogPage() {
         isNew: p.is_new,
         is_featured: p.is_featured,
         is_bestseller: p.is_bestseller,
-        currency: 'NGN',
+        currency: p.currency || 'USD',
     })) || [];
 
     const paginationData = {

@@ -1,6 +1,37 @@
 import Icon from '@/components/ui/AppIcon';
-import { PaymentFormProps } from '@/types';
-import React, { useState } from 'react';
+import { PaymentFormProps, CartItem, CurrencyCode, Currency } from '@/types';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// Get conversion rates
+const getConversionRates = (): Record<CurrencyCode, number> => {
+    if (typeof window === 'undefined') {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+
+    try {
+        const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { rate: number }> } } }).page || {};
+        const currencyRates = page.props?.currencyRates || {};
+        const rates: Record<string, number> = {};
+        Object.keys(currencyRates).forEach(code => {
+            rates[code] = currencyRates[code].rate;
+        });
+        return {
+            USD: rates.USD || 1,
+            GBP: rates.GBP || 0.79,
+            CAD: rates.CAD || 1.36,
+            NGN: rates.NGN || 1650,
+        };
+    } catch {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+};
+
+// Convert price from USD to selected currency
+const convertPrice = (usdPrice: number, toCurrency: CurrencyCode): number => {
+    const rates = getConversionRates();
+    return usdPrice * rates[toCurrency];
+};
 
 const PAYMENT_METHODS = [
     {
@@ -13,113 +44,178 @@ const PAYMENT_METHODS = [
         id: 'crypto',
         name: 'Cryptocurrency',
         icon: 'CurrencyDollarIcon',
-        description: 'Bitcoin, Ethereum',
-    },
-    {
-        id: 'google-pay',
-        name: 'Google Pay', 
-        icon: 'DevicePhoneMobileIcon',
-        description: 'Fast and secure',
-    },
-    {
-        id: 'apple-pay',
-        name: 'Apple Pay',
-        icon: 'DevicePhoneMobileIcon',
-        description: 'Touch ID or Face ID',
+        description: 'Bitcoin, Ethereum, USDT',
     },
 ];
 
 const CRYPTO_OPTIONS = [
-    { id: 'btc', name: 'Bitcoin', symbol: 'BTC', icon: '₿' },
-    { id: 'eth', name: 'Ethereum', symbol: 'ETH', icon: 'Ξ' },
+    {
+        id: 'bitcoin',
+        name: 'Bitcoin',
+        symbol: 'BTC',
+        icon: '₿',
+    },
+    {
+        id: 'ethereum',
+        name: 'Ethereum',
+        symbol: 'ETH',
+        icon: 'Ξ',
+    },
+    {
+        id: 'usdc',
+        name: 'USDC Coin',
+        symbol: 'USDC',
+        icon: '$',
+    },
 ];
 
-export default function PaymentForm({
-    onPaymentComplete,
+function PaymentForm({
     onBack,
-}: PaymentFormProps) {
+}: Omit<PaymentFormProps, 'onPaymentComplete'>) {
     const [selectedMethod, setSelectedMethod] = useState('card');
-    const [selectedCrypto, setSelectedCrypto] = useState('btc');
+    const [selectedCrypto, setSelectedCrypto] = useState('bitcoin');
     const [isProcessing, setIsProcessing] = useState(false);
-    const [cardData, setCardData] = useState({
-        number: '',
-        name: '',
-        expiry: '',
-        cvv: '',
-    } as Record<string, string>);
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [error, setError] = useState<string | null>(null);
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [displayCurrency, setDisplayCurrency] = useState<Currency>({
+        code: 'USD',
+        symbol: '$',
+        name: 'US Dollar',
+        region: 'USA',
+    });
+    const [usdTotal, setUsdTotal] = useState(0);
+    const [displayTotal, setDisplayTotal] = useState(0);
 
-    const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        let formattedValue = value;
+    useEffect(() => {
+        // Load cart
+        try {
+            const cart = JSON.parse(localStorage.getItem('shopping_cart') || '[]');
+            setCartItems(cart);
 
-        if (name === 'number') {
-            formattedValue = value
-                ?.replace(/\s/g, '')
-                ?.replace(/(\d{4})/g, '$1 ')
-                ?.trim();
-        } else if (name === 'expiry') {
-            formattedValue = value
-                ?.replace(/\D/g, '')
-                ?.replace(/(\d{2})(\d)/, '$1/$2')
-                ?.slice(0, 5);
-        } else if (name === 'cvv') {
-            formattedValue = value?.replace(/\D/g, '')?.slice(0, 4);
+            // Load display currency
+            const savedCode = (localStorage.getItem('selected_currency') || 'USD') as CurrencyCode;
+            const currencies: Record<CurrencyCode, Currency> = {
+                NGN: { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', region: 'Nigeria' },
+                USD: { code: 'USD', symbol: '$', name: 'US Dollar', region: 'USA' },
+                GBP: { code: 'GBP', symbol: '£', name: 'British Pound', region: 'UK' },
+                CAD: { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', region: 'Canada' },
+            };
+            setDisplayCurrency(currencies[savedCode] || currencies.USD);
+
+            // Calculate totals
+            const shippingMethod = JSON.parse(
+                localStorage.getItem('checkout_shipping_method') || '{}'
+            );
+            const shippingCost = parseFloat(shippingMethod.cost) || 0;
+
+            const subtotal = cart.reduce((sum: number, item: CartItem) => {
+                const usdPrice = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+                return sum + (usdPrice * item.quantity);
+            }, 0);
+            const tax = subtotal * 0.1;
+            const totalUsd = subtotal + shippingCost + tax;
+
+            setUsdTotal(totalUsd);
+            setDisplayTotal(convertPrice(totalUsd, savedCode));
+        } catch (error) {
+            console.error('Error loading cart:', error);
         }
-
-        setCardData((prev) => ({ ...prev, [name]: formattedValue || '' }));
-    };
-
-    const validateCard = () => {
-        const newErrors: Record<string, string> = {};
-
-        if (selectedMethod === 'card') {
-            const number = cardData?.number || '';
-            if (number.replace(/\s/g, '').length < 15) {
-                newErrors.number = 'Invalid card number';
-            }
-            if ((cardData?.name || '').trim().length < 3) {
-                newErrors.name = 'Cardholder name is required';
-            }
-            const expiry = cardData?.expiry || '';
-            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-                newErrors.expiry = 'Invalid expiry date';
-            }
-            const cvv = cardData?.cvv || '';
-            if (cvv.length < 3) {
-                newErrors.cvv = 'Invalid CVV';
-            }
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e?.preventDefault();
+        e.preventDefault();
 
-        if (selectedMethod === 'card' && !validateCard()) {
+        if (cartItems.length === 0) {
+            setError('Your cart is empty');
             return;
         }
 
         setIsProcessing(true);
+        setError(null);
 
-        setTimeout(() => {
-            const paymentData = {
-                method: selectedMethod,
-                ...(selectedMethod === 'card' && {
-                    last4: (cardData?.number || '').slice(-4),
-                    cardType: 'Visa',
-                }),
-                ...(selectedMethod === 'crypto' && {
-                    cryptocurrency: selectedCrypto,
-                }),
-                timestamp: new Date().toISOString(),
-            };
+        try {
+            // Get shipping and delivery info from localStorage
+            const shippingAddress = JSON.parse(
+                localStorage.getItem('checkout_shipping_address') || '{}'
+            );
+            const shippingMethod = JSON.parse(
+                localStorage.getItem('checkout_shipping_method') || '{}'
+            );
 
-            onPaymentComplete(paymentData);
+            if (!shippingAddress.fullName || !shippingMethod.id) {
+                setError('Missing shipping information. Please go back and complete the previous steps.');
+                setIsProcessing(false);
+                return;
+            }
+
+            // Calculate totals - all items are stored in USD base price
+            const subtotal = cartItems.reduce((sum, item) => {
+                const usdPrice = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+                return sum + (usdPrice * item.quantity);
+            }, 0);
+            const shippingCost = parseFloat(shippingMethod.cost) || 0;
+            const tax = subtotal * 0.1; // 10% tax
+            const total = subtotal + shippingCost + tax;
+
+            // Both card and crypto payments use Stripe Checkout (redirect)
+            const paymentMethod = selectedMethod === 'crypto' ? selectedCrypto : 'card';
+
+            console.log('Creating checkout session with:', {
+                paymentMethod,
+                itemCount: cartItems.length,
+                total,
+            });
+
+            const { data } = await axios.post('/payments/create-checkout-session', {
+                items: cartItems.map(item => ({
+                    id: String(item.id),
+                    name: item.name,
+                    price: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
+                    quantity: item.quantity,
+                    currency: 'USD', // All items are in USD base currency
+                })),
+                shipping_address: shippingAddress,
+                shipping_method: shippingMethod,
+                currency: 'USD', // Send USD as base currency to backend
+                subtotal: subtotal,
+                shipping_cost: shippingCost,
+                tax: tax,
+                total: total,
+                payment_method: paymentMethod,
+            });
+
+            if (data.success && data.checkout_url) {
+                // Redirect to Stripe Checkout
+                window.location.href = data.checkout_url;
+                return;
+            } else {
+                throw new Error(data.error || 'Failed to create checkout session');
+            }
+
+        } catch (err: unknown) {
+            console.error('Payment error:', err);
+
+            let errorMessage = 'An error occurred during payment';
+
+            if (err && typeof err === 'object' && 'response' in err) {
+                const response = (err as { response?: { data?: { error?: string; errors?: Record<string, string[]>; message?: string } } }).response;
+
+                // Handle Laravel validation errors
+                if (response?.data?.errors) {
+                    const validationErrors = Object.values(response.data.errors).flat();
+                    errorMessage = validationErrors.join(', ');
+                } else if (response?.data?.error) {
+                    errorMessage = response.data.error;
+                } else if (response?.data?.message) {
+                    errorMessage = response.data.message;
+                }
+            } else if (err instanceof Error) {
+                errorMessage = err.message;
+            }
+
+            setError(errorMessage);
             setIsProcessing(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -137,12 +233,25 @@ export default function PaymentForm({
                     <span>Back</span>
                 </button>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {PAYMENT_METHODS?.map((method) => (
+
+            {error && (
+                <div className="bg-destructive/10 border-destructive text-destructive rounded-lg border p-4">
+                    <div className="flex items-start space-x-2">
+                        <Icon name="ExclamationCircleIcon" size={20} className="flex-shrink-0 mt-0.5" />
+                        <div>
+                            <p className="font-medium">Payment Error</p>
+                            <p className="text-sm mt-1">{error}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-3">
+                {PAYMENT_METHODS.map((method) => (
                     <label
-                        key={method?.id}
+                        key={method.id}
                         className={`transition-smooth flex cursor-pointer items-center rounded-lg border-2 p-4 ${
-                            selectedMethod === method?.id
+                            selectedMethod === method.id
                                 ? 'border-primary bg-accent'
                                 : 'border-border bg-background hover:border-primary/50'
                         }`}
@@ -150,164 +259,52 @@ export default function PaymentForm({
                         <input
                             type="radio"
                             name="payment-method"
-                            value={method?.id}
-                            checked={selectedMethod === method?.id}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                setSelectedMethod(e.target.value)
-                            }
+                            value={method.id}
+                            checked={selectedMethod === method.id}
+                            onChange={(e) => setSelectedMethod(e.target.value)}
                             className="text-primary focus:ring-primary h-5 w-5 focus:ring-offset-0"
                         />
                         <div className="ml-3 flex-1">
                             <div className="flex items-center space-x-2">
                                 <Icon
-                                    name={method?.icon}
+                                    name={method.icon}
                                     size={20}
                                     className="text-foreground"
                                 />
                                 <span className="text-foreground text-sm font-medium md:text-base">
-                                    {method?.name}
+                                    {method.name}
                                 </span>
                             </div>
                             <p className="text-muted-foreground mt-0.5 text-xs">
-                                {method?.description}
+                                {method.description}
                             </p>
                         </div>
                     </label>
                 ))}
             </div>
+
             {selectedMethod === 'card' && (
-                <div className="bg-surface border-border space-y-4 rounded-lg border p-4 md:p-6">
-                    <div>
-                        <label
-                            htmlFor="card-number"
-                            className="text-foreground mb-2 block text-sm font-medium"
-                        >
-                            Card Number
-                        </label>
-                        <input
-                            type="text"
-                            id="card-number"
-                            name="number"
-                            value={cardData?.number}
-                            onChange={handleCardChange}
-                            maxLength={19}
-                            className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                                errors?.number
-                                    ? 'border-error'
-                                    : 'border-border'
-                            }`}
-                            placeholder="1234 5678 9012 3456"
-                        />
-                        {errors?.number && (
-                            <p className="text-error mt-1 flex items-center space-x-1 text-xs">
-                                <Icon name="ExclamationCircleIcon" size={14} />
-                                <span>{errors?.number}</span>
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="card-name"
-                            className="text-foreground mb-2 block text-sm font-medium"
-                        >
-                            Cardholder Name
-                        </label>
-                        <input
-                            type="text"
-                            id="card-name"
-                            name="name"
-                            value={cardData?.name}
-                            onChange={handleCardChange}
-                            className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                                errors?.name ? 'border-error' : 'border-border'
-                            }`}
-                            placeholder="John Doe"
-                        />
-                        {errors?.name && (
-                            <p className="text-error mt-1 flex items-center space-x-1 text-xs">
-                                <Icon name="ExclamationCircleIcon" size={14} />
-                                <span>{errors?.name}</span>
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label
-                                htmlFor="card-expiry"
-                                className="text-foreground mb-2 block text-sm font-medium"
-                            >
-                                Expiry Date
-                            </label>
-                            <input
-                                type="text"
-                                id="card-expiry"
-                                name="expiry"
-                                value={cardData?.expiry}
-                                onChange={handleCardChange}
-                                className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                                    errors?.expiry
-                                        ? 'border-error'
-                                        : 'border-border'
-                                }`}
-                                placeholder="MM/YY"
-                            />
-                            {errors?.expiry && (
-                                <p className="text-error mt-1 flex items-center space-x-1 text-xs">
-                                    <Icon
-                                        name="ExclamationCircleIcon"
-                                        size={14}
-                                    />
-                                    <span>{errors?.expiry}</span>
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="card-cvv"
-                                className="text-foreground mb-2 block text-sm font-medium"
-                            >
-                                CVV
-                            </label>
-                            <input
-                                type="text"
-                                id="card-cvv"
-                                name="cvv"
-                                value={cardData?.cvv}
-                                onChange={handleCardChange}
-                                className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                                    errors?.cvv
-                                        ? 'border-error'
-                                        : 'border-border'
-                                }`}
-                                placeholder="123"
-                            />
-                            {errors?.cvv && (
-                                <p className="text-error mt-1 flex items-center space-x-1 text-xs">
-                                    <Icon
-                                        name="ExclamationCircleIcon"
-                                        size={14}
-                                    />
-                                    <span>{errors?.cvv}</span>
-                                </p>
-                            )}
-                        </div>
+                <div className="bg-accent/50 rounded-lg p-4">
+                    <div className="flex items-start space-x-2">
+                        <Icon name="InformationCircleIcon" size={20} className="text-primary flex-shrink-0 mt-0.5" />
+                        <p className="text-muted-foreground text-xs">
+                            You will be redirected to Stripe's secure checkout page to complete your payment.
+                        </p>
                     </div>
                 </div>
             )}
+
             {selectedMethod === 'crypto' && (
                 <div className="bg-surface border-border space-y-4 rounded-lg border p-4 md:p-6">
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm mb-4">
                         Select your preferred cryptocurrency for payment
                     </p>
                     <div className="space-y-3">
-                        {CRYPTO_OPTIONS?.map((crypto) => (
+                        {CRYPTO_OPTIONS.map((crypto) => (
                             <label
-                                key={crypto?.id}
+                                key={crypto.id}
                                 className={`transition-smooth flex cursor-pointer items-center rounded-lg border-2 p-4 ${
-                                    selectedCrypto === crypto?.id
+                                    selectedCrypto === crypto.id
                                         ? 'border-primary bg-accent'
                                         : 'border-border bg-background hover:border-primary/50'
                                 }`}
@@ -315,50 +312,61 @@ export default function PaymentForm({
                                 <input
                                     type="radio"
                                     name="crypto"
-                                    value={crypto?.id}
-                                    checked={selectedCrypto === crypto?.id}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                        setSelectedCrypto(e.target.value)
-                                    }
+                                    value={crypto.id}
+                                    checked={selectedCrypto === crypto.id}
+                                    onChange={(e) => setSelectedCrypto(e.target.value)}
                                     className="text-primary focus:ring-primary h-5 w-5 focus:ring-offset-0"
                                 />
                                 <div className="ml-3 flex items-center space-x-3">
                                     <span className="text-2xl">
-                                        {crypto?.icon}
+                                        {crypto.icon}
                                     </span>
                                     <div>
                                         <p className="text-foreground text-sm font-medium md:text-base">
-                                            {crypto?.name}
+                                            {crypto.name}
                                         </p>
                                         <p className="text-muted-foreground text-xs">
-                                            {crypto?.symbol}
+                                            {crypto.symbol}
                                         </p>
                                     </div>
                                 </div>
                             </label>
                         ))}
                     </div>
+                    <div className="bg-accent/50 rounded-lg p-4 mt-4">
+                        <div className="flex items-start space-x-2">
+                            <Icon name="InformationCircleIcon" size={20} className="text-primary flex-shrink-0 mt-0.5" />
+                            <p className="text-muted-foreground text-xs">
+                                You will be redirected to Stripe's secure checkout page to complete your crypto payment.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             )}
-            {(selectedMethod === 'google-pay' ||
-                selectedMethod === 'apple-pay') && (
-                <div className="bg-surface border-border rounded-lg border p-6 text-center md:p-8">
-                    <Icon
-                        name="DevicePhoneMobileIcon"
-                        size={48}
-                        className="text-primary mx-auto mb-4"
-                    />
-                    <p className="text-foreground mb-2 text-base font-medium">
-                        {selectedMethod === 'google-pay'
-                            ? 'Google Pay'
-                            : 'Apple Pay'}{' '}
-                        Ready
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                        Click the button below to complete your payment securely
-                    </p>
+
+            {/* Payment Amount Display */}
+            <div className="bg-primary/5 border-primary/20 rounded-lg border p-4">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-foreground font-medium">Total Amount:</span>
+                    <span className="text-foreground font-bold text-lg">
+                        {displayCurrency.symbol}{displayTotal.toFixed(2)} {displayCurrency.code}
+                    </span>
                 </div>
-            )}
+                {displayCurrency.code !== 'USD' && (
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Stripe will process:</span>
+                        <span className="text-muted-foreground font-medium">
+                            ${usdTotal.toFixed(2)} USD
+                        </span>
+                    </div>
+                )}
+                <p className="text-muted-foreground text-xs mt-2">
+                    {displayCurrency.code !== 'USD'
+                        ? 'Your payment will be processed in USD by Stripe. Exchange rates are applied automatically.'
+                        : 'Your payment will be processed securely by Stripe.'}
+                </p>
+            </div>
+
             <div className="bg-accent flex items-center space-x-2 rounded-lg p-4">
                 <Icon
                     name="ShieldCheckIcon"
@@ -366,10 +374,10 @@ export default function PaymentForm({
                     className="text-primary flex-shrink-0"
                 />
                 <p className="text-muted-foreground text-xs md:text-sm">
-                    Your payment information is encrypted and secure. We support
-                    135+ currencies via Stripe.
+                    Your payment information is encrypted and secure. Powered by Stripe.
                 </p>
             </div>
+
             <button
                 type="submit"
                 disabled={isProcessing}
@@ -382,12 +390,14 @@ export default function PaymentForm({
                             size={20}
                             className="animate-spin"
                         />
-                        <span>Processing Payment...</span>
+                        <span>Redirecting to Stripe...</span>
                     </span>
                 ) : (
-                    `Complete Order`
+                    'Continue to Stripe Checkout'
                 )}
             </button>
         </form>
     );
 }
+
+export default PaymentForm;

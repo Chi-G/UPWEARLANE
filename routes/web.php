@@ -48,6 +48,8 @@ Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.sh
 // Payments
 Route::post('/payments/create-intent', [PaymentController::class, 'createPaymentIntent'])->name('payments.create-intent');
 Route::post('/payments/confirm', [PaymentController::class, 'confirmPayment'])->name('payments.confirm');
+Route::post('/payments/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->name('payments.create-checkout-session');
+Route::get('/checkout/success', [PaymentController::class, 'checkoutSuccess'])->name('checkout.success');
 
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {

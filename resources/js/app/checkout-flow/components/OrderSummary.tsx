@@ -3,6 +3,36 @@ import { CartItem, Currency, CurrencyCode, OrderSummaryProps } from '@/types';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
+// Get conversion rates from shared Inertia props
+const getConversionRates = (): Record<CurrencyCode, number> => {
+    if (typeof window === 'undefined') {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+
+    try {
+        const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { rate: number }> } } }).page || {};
+        const currencyRates = page.props?.currencyRates || {};
+        const rates: Record<string, number> = {};
+        Object.keys(currencyRates).forEach(code => {
+            rates[code] = currencyRates[code].rate;
+        });
+        return {
+            USD: rates.USD || 1,
+            GBP: rates.GBP || 0.79,
+            CAD: rates.CAD || 1.36,
+            NGN: rates.NGN || 1650,
+        };
+    } catch {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+};
+
+// Convert price from USD to selected currency
+const convertPrice = (usdPrice: number, toCurrency: CurrencyCode): number => {
+    const rates = getConversionRates();
+    return usdPrice * rates[toCurrency];
+};
+
 export default function OrderSummary({
     shippingCost,
     onCurrencyUpdate,
@@ -23,18 +53,25 @@ export default function OrderSummary({
                     localStorage.getItem('shopping_cart') || '[]',
                 );
                 setCartItems(cart);
-
-                const total = cart?.reduce((sum, item) => {
-                    const price = item?.price || 0;
-                    const quantity = item?.quantity || 1;
-                    return sum + price * quantity;
-                }, 0);
-                setSubtotal(total);
+                calculateSubtotal(cart);
             } catch (error) {
                 console.error('Error loading cart:', error);
                 setCartItems([]);
                 setSubtotal(0);
             }
+        };
+
+        const calculateSubtotal = (cart: CartItem[]) => {
+            const selectedCurrency = (localStorage.getItem('selected_currency') || 'USD') as CurrencyCode;
+
+            const total = cart?.reduce((sum, item) => {
+                // All cart items are now in USD base price
+                const usdPrice = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
+                const quantity = item?.quantity || 1;
+                const convertedPrice = convertPrice(usdPrice, selectedCurrency);
+                return sum + convertedPrice * quantity;
+            }, 0);
+            setSubtotal(total);
         };
 
         const loadCurrency = () => {
@@ -49,6 +86,11 @@ export default function OrderSummary({
             setCurrency(
                 currencies[savedCode as CurrencyCode] || currencies.USD,
             );
+            // Recalculate when currency changes
+            const cart: CartItem[] = JSON.parse(
+                localStorage.getItem('shopping_cart') || '[]',
+            );
+            calculateSubtotal(cart);
         };
 
         loadCart();
@@ -83,37 +125,44 @@ export default function OrderSummary({
                 Order Summary
             </h2>
             <div className="space-y-4">
-                {cartItems?.map((item) => (
-                    <div key={item?.id} className="flex items-start space-x-4">
-                        <div className="bg-muted relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg md:h-24 md:w-20">
-                            <AppImage
-                                src={item?.image}
-                                alt={item?.alt || `${item?.name} product image`}
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <h3 className="text-foreground line-clamp-2 text-sm font-medium md:text-base">
-                                {item?.name}
-                            </h3>
-                            {item?.variations?.color && (
-                                <p className="text-muted-foreground mt-1 text-xs md:text-sm">
-                                    Color: {item?.variations?.color}
-                                </p>
-                            )}
-                            <div className="mt-2 flex items-center justify-between">
-                                <span className="text-muted-foreground text-xs md:text-sm">
-                                    Qty: {item?.quantity}
-                                </span>
-                                <span className="font-data text-foreground text-sm font-medium md:text-base">
-                                    {currency?.symbol}
-                                    {(item?.price * item?.quantity)?.toFixed(2)}
-                                </span>
+                {cartItems?.map((item) => {
+                    // Convert USD price to selected currency
+                    const usdPrice = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
+                    const convertedPrice = convertPrice(usdPrice, currency.code);
+                    const itemTotal = convertedPrice * item?.quantity;
+
+                    return (
+                        <div key={item?.id} className="flex items-start space-x-4">
+                            <div className="bg-muted relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg md:h-24 md:w-20">
+                                <AppImage
+                                    src={item?.image}
+                                    alt={item?.alt || `${item?.name} product image`}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <h3 className="text-foreground line-clamp-2 text-sm font-medium md:text-base">
+                                    {item?.name}
+                                </h3>
+                                {item?.variations?.color && (
+                                    <p className="text-muted-foreground mt-1 text-xs md:text-sm">
+                                        Color: {item?.variations?.color}
+                                    </p>
+                                )}
+                                <div className="mt-2 flex items-center justify-between">
+                                    <span className="text-muted-foreground text-xs md:text-sm">
+                                        Qty: {item?.quantity}
+                                    </span>
+                                    <span className="font-data text-foreground text-sm font-medium md:text-base">
+                                        {currency?.symbol}
+                                        {itemTotal?.toFixed(2)}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
             <div className="border-border space-y-3 border-t pt-4">
                 <div className="flex items-center justify-between text-sm md:text-base">
@@ -139,7 +188,7 @@ export default function OrderSummary({
                         {currency?.symbol}
                         {total?.toFixed(2)}
                     </span>
-                </div> 
+                </div>
             </div>
         </div>
     );

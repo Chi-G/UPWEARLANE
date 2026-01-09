@@ -73,7 +73,8 @@ export default function CartItemCard({
     useEffect(() => {
         const updateCurrency = () => {
             const selectedCurrency = (localStorage.getItem('selected_currency') || 'NGN') as CurrencyCode;
-            const itemBaseCurrency = (item?.currency || 'NGN') as CurrencyCode;
+            // All products are now stored in USD as base currency in the database
+            const itemBaseCurrency = 'USD' as CurrencyCode;
             const basePrice = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
 
             const converted = convertPrice(basePrice, itemBaseCurrency, selectedCurrency);

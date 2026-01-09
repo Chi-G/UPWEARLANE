@@ -59,8 +59,8 @@ class LandingPageController extends Controller
             'id' => $product->id,
             'name' => $product->name,
             'description' => $product->description,
-            'price' => $product->sale_price ?? $product->base_price,
-            'originalPrice' => $product->sale_price ? $product->base_price : null,
+            'price' => $product->base_price,
+            'originalPrice' => $product->original_price,
             'image' => $product->primaryImage?->image_path
                 ? ($this->formatImagePath($product->primaryImage->image_path))
                 : '/images/products/placeholder.png',
@@ -69,11 +69,11 @@ class LandingPageController extends Controller
             'rating' => (float) $product->rating,
             'reviewCount' => (int) $product->review_count,
             'isNew' => (bool) $product->is_new,
-            'discount' => $product->sale_price
-                ? (int) round((1 - (float)$product->sale_price / (float)$product->base_price) * 100)
+            'discount' => $product->original_price
+                ? (int) round((1 - (float)$product->base_price / (float)$product->original_price) * 100)
                 : null,
             'colors' => $product->colors->map(fn($c) => $c->hex_code)->toArray(),
-            'currency' => $product->currency ?? 'NGN',
+            'currency' => $product->currency ?? 'USD',
         ];
 
         if ($includeSoldCount) {

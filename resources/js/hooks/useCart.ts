@@ -15,13 +15,13 @@ const getConversionRates = (): Record<CurrencyCode, number> => {
         // Access shared Inertia props from window
         const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { rate: number }> } } }).page || {};
         const currencyRates = page.props?.currencyRates || {};
-        
+
         // Convert to simple rate mapping
         const rates: Record<string, number> = {};
         Object.keys(currencyRates).forEach(code => {
             rates[code] = currencyRates[code].rate;
         });
-        
+
         // Return with fallback
         return {
             USD: rates.USD || 1,
@@ -53,17 +53,14 @@ export function useCart() {
             const stored = localStorage.getItem(CART_STORAGE_KEY);
             if (stored) {
                 const parsedItems = JSON.parse(stored) as CartItem[];
-                // Upgrade old cart items: add currency field if missing
+                // Upgrade old cart items: all products are now USD base currency
                 const upgradedItems = parsedItems.map(item => ({
                     ...item,
-                    currency: item.currency || 'NGN', // Default to NGN for old items
+                    currency: 'USD', // Force all items to USD as that's our base currency
                 }));
 
-                // Save upgraded items back if any were missing currency
-                const needsUpgrade = parsedItems.some(item => !item.currency);
-                if (needsUpgrade) {
-                    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(upgradedItems));
-                }
+                // Always save upgraded items to ensure consistency
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(upgradedItems));
 
                 setItems(upgradedItems);
             }
@@ -89,7 +86,7 @@ export function useCart() {
 
         window.addEventListener('storage', handleStorage);
         window.addEventListener('cart-updated', handleCustomEvent);
- 
+
         return () => {
             window.removeEventListener('storage', handleStorage);
             window.removeEventListener('cart-updated', handleCustomEvent);
@@ -102,7 +99,8 @@ export function useCart() {
             const selectedCurrency = (localStorage.getItem('selected_currency') || 'NGN') as CurrencyCode;
 
             const total = items.reduce((sum, item) => {
-                const itemBaseCurrency = (item.currency || 'NGN') as CurrencyCode;
+                // All products are now stored in USD as base currency in database
+                const itemBaseCurrency = 'USD' as CurrencyCode;
                 const basePrice = typeof item.price === 'string' ? parseFloat(item.price) : (item.price || 0);
                 const convertedPrice = convertPrice(basePrice, itemBaseCurrency, selectedCurrency);
                 return sum + (convertedPrice * item.quantity);

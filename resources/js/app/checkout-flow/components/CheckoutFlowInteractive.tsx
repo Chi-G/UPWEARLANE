@@ -1,6 +1,5 @@
 import {
     OrderDetails,
-    PaymentInfo,
     ShippingAddress,
     ShippingMethod,
 } from '@/types';
@@ -39,7 +38,6 @@ export default function CheckoutFlowInteractive() {
     const [shippingMethod, setShippingMethod] = useState<ShippingMethod | null>(
         null,
     );
-    const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
     const [shippingCost, setShippingCost] = useState(0);
 
     const handleShippingComplete = (data: ShippingAddress) => {
@@ -54,19 +52,6 @@ export default function CheckoutFlowInteractive() {
         setCurrentStep(2);
     };
 
-    const handlePaymentComplete = (data: PaymentInfo) => {
-        setPaymentInfo(data);
-        setCurrentStep(3);
-
-        try {
-            localStorage.removeItem('shopping_cart');
-            localStorage.removeItem('checkout_shipping_address');
-            window.dispatchEvent(new Event('cart-updated'));
-        } catch (error) {
-            console.error('Error clearing cart:', error);
-        }
-    };
-
     const handleBackToShipping = () => {
         setCurrentStep(0);
     };
@@ -78,7 +63,7 @@ export default function CheckoutFlowInteractive() {
     const orderDetails: OrderDetails = {
         shippingAddress,
         shipping: shippingMethod,
-        payment: paymentInfo,
+        payment: null,
     };
 
     return (
@@ -110,7 +95,6 @@ export default function CheckoutFlowInteractive() {
 
                             {currentStep === 2 && (
                                 <PaymentForm
-                                    onPaymentComplete={handlePaymentComplete}
                                     onBack={handleBackToDelivery}
                                     totalAmount={0}
                                 />
@@ -119,7 +103,7 @@ export default function CheckoutFlowInteractive() {
                             {currentStep === 3 && (
                                 <OrderConfirmation
                                     orderDetails={orderDetails}
-                                /> 
+                                />
                             )}
                         </div>
                     </div>

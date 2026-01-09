@@ -12,7 +12,7 @@ interface ShippingCarrier {
     id: string;
     name: string;
     logo: string;
-    alt: string; 
+    alt: string;
     deliveryTime: string;
     price: number;
     countries: string[];
@@ -22,7 +22,7 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
     {
         id: 'dhl',
         name: 'DHL Express',
-        logo: 'https://img.rocket.new/generatedImages/rocket_gen_img_18ba81e4e-1764635711352.png',
+        logo: 'images/dhl.png',
         alt: 'DHL Express red and yellow logo on delivery truck',
         deliveryTime: '2-3 business days',
         price: 45.0,
@@ -31,7 +31,7 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
     {
         id: 'gig',
         name: 'GIG Logistics',
-        logo: 'https://img.rocket.new/generatedImages/rocket_gen_img_1fd1a74b5-1764918108894.png',
+        logo: 'images/gig.png',
         alt: 'Modern logistics delivery van in urban setting',
         deliveryTime: '3-5 business days',
         price: 25.0,
@@ -40,7 +40,7 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
     {
         id: 'guo',
         name: 'GUO Transport',
-        logo: 'https://img.rocket.new/generatedImages/rocket_gen_img_1ed7171df-1765216920940.png',
+        logo: 'images/guo.png',
         alt: 'Large commercial transport truck on highway',
         deliveryTime: '4-6 business days',
         price: 20.0,
@@ -49,7 +49,7 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
     {
         id: 'ups',
         name: 'UPS Ground',
-        logo: 'https://images.unsplash.com/photo-1719729940952-5c728a3f8a70',
+        logo: 'images/ups.png',
         alt: 'Brown UPS delivery truck parked on residential street',
         deliveryTime: '3-5 business days',
         price: 35.0,
@@ -58,7 +58,7 @@ const SHIPPING_CARRIERS: ShippingCarrier[] = [
     {
         id: 'fedex',
         name: 'FedEx International',
-        logo: 'https://img.rocket.new/generatedImages/rocket_gen_img_1cfd19a5c-1764700910189.png',
+        logo: 'images/fedex.png',
         alt: 'FedEx purple and orange delivery van in commercial area',
         deliveryTime: '2-4 business days',
         price: 50.0,
@@ -124,11 +124,19 @@ export default function ShippingOptions({
             (c) => c?.id === selectedCarrier,
         );
         if (carrier) {
-            onShippingSelect({
-                carrier: carrier?.name,
-                deliveryTime: carrier?.deliveryTime,
-                cost: carrier?.price,
-            });
+            const shippingData = {
+                id: carrier.id,
+                name: carrier.name,
+                carrier: carrier.name,
+                deliveryTime: carrier.deliveryTime,
+                delivery: carrier.deliveryTime,
+                cost: carrier.price,
+            };
+            
+            // Save to localStorage for PaymentForm
+            localStorage.setItem('checkout_shipping_method', JSON.stringify(shippingData));
+            
+            onShippingSelect(shippingData);
         }
     };
 

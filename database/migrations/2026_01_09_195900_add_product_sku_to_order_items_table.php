@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('currency', 3)->default('USD')->after('base_price');
-            $table->index('currency');
+        Schema::table('order_items', function (Blueprint $table) {
+            $table->string('product_sku')->nullable()->after('product_name');
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropIndex(['currency']);
-            $table->dropColumn('currency');
+        Schema::table('order_items', function (Blueprint $table) {
+            $table->dropColumn('product_sku');
         });
     }
 };
