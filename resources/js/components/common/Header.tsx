@@ -330,6 +330,16 @@ export default function Header() {
                                         </Link>
                                     </li>
                                     <li>
+                                        <Link
+                                            href="/orders"
+                                            onClick={closeMobileMenu}
+                                            className="text-foreground hover:bg-accent hover:text-accent-foreground transition-smooth flex w-full items-center space-x-3 rounded-lg px-4 py-3"
+                                        >
+                                            <Icon name="ShoppingBagIcon" size={24} />
+                                            <span className="text-base font-medium">Orders</span>
+                                        </Link>
+                                    </li>
+                                    <li>
                                         <button
                                             onClick={() => {
                                                 handleLogout();
