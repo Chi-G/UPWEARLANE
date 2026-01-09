@@ -9,6 +9,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\CustomerSupportController;
+use App\Http\Controllers\ShoppingCartController;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('home');
 
@@ -28,14 +30,11 @@ Route::get('/product-detail', function (\Illuminate\Http\Request $request) {
 });
 
 // Shopping Cart
-Route::get('/shopping-cart', function () {
-    return Inertia::render('shopping-cart/page');
-})->name('shopping-cart');
+Route::get('/shopping-cart', [ShoppingCartController::class, 'index'])->name('shopping-cart');
+Route::post('/shopping-cart/validate-promo', [ShoppingCartController::class, 'validatePromoCode'])->name('shopping-cart.validate-promo');
 
 // Support
-Route::get('/support', function () {
-    return Inertia::render('customer-support/page');
-})->name('support');
+Route::get('/support', [CustomerSupportController::class, 'index'])->name('support');
 
 // Checkout
 Route::get('/checkout-flow', function () {

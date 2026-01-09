@@ -119,7 +119,7 @@ export default function CheckoutFlowInteractive() {
                             {currentStep === 3 && (
                                 <OrderConfirmation
                                     orderDetails={orderDetails}
-                                />
+                                /> 
                             )}
                         </div>
                     </div>

@@ -48,6 +48,7 @@ export interface Product {
     name: string;
     category: string;
     price: string | number;
+    currency?: string;
     originalPrice?: string | number;
     discount?: number;
     rating: number;
@@ -141,6 +142,7 @@ export interface Review {
 
 export interface ProductDetail extends Product {
     price: number;
+    currency: string;
     originalPrice?: number;
     reviewCount: number;
     isNew?: boolean;
@@ -188,13 +190,25 @@ export interface OrderDetails {
     payment: PaymentInfo | null;
 }
 
-export type CurrencyCode = 'USD' | 'GBP' | 'CAD' | 'NGN';
+export type CurrencyCode = 'NGN' | 'USD' | 'GBP' | 'CAD';
 
 export interface Currency {
     code: CurrencyCode;
     symbol: string;
-    name: string;
+    name: string; 
     region: string;
+}
+
+export interface CurrencyRate {
+    code: string;
+    name: string;
+    symbol: string;
+    rate: number;
+}
+
+export interface PageProps {
+    currencyRates?: Record<string, CurrencyRate>;
+    [key: string]: unknown;
 }
 
 export interface CatalogFilters {
@@ -243,7 +257,8 @@ export interface CartItem {
     id: string;
     name: string;
     category: string;
-    price: number;
+    price: number; // Original price in the product's base currency
+    currency: string; // Product's base currency (e.g., 'NGN', 'USD')
     quantity: number;
     image: string;
     alt: string;

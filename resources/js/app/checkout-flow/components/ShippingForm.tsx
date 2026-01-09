@@ -18,7 +18,7 @@ export default function ShippingForm({
         email: initialData?.email || '',
         phone: initialData?.phone || '',
         address: initialData?.address || '',
-        city: initialData?.city || '',
+        city: initialData?.city || '', 
         state: initialData?.state || '',
         postalCode: initialData?.postalCode || '',
         country: initialData?.country || 'NG',

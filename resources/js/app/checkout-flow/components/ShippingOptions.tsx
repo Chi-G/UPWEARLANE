@@ -12,7 +12,7 @@ interface ShippingCarrier {
     id: string;
     name: string;
     logo: string;
-    alt: string;
+    alt: string; 
     deliveryTime: string;
     price: number;
     countries: string[];

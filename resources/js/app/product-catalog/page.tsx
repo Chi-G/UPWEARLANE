@@ -36,12 +36,12 @@ interface PageProps {
 
 export default function ProductCatalogPage() {
     const { products: paginatedProducts } = usePage<PageProps>().props;
-    
+
     // Ensure currency parameter is in URL
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         if (!urlParams.has('currency')) {
-            const savedCurrency = localStorage.getItem('selected_currency') || 'USD';
+            const savedCurrency = localStorage.getItem('selected_currency') || 'NGN';
             urlParams.set('currency', savedCurrency);
             router.visit(`${window.location.pathname}?${urlParams.toString()}`, {
                 preserveState: false,
@@ -50,7 +50,7 @@ export default function ProductCatalogPage() {
             });
         }
     }, []);
-    
+
     // Transform database products to frontend format
     const products: Product[] = paginatedProducts?.data?.map((p) => ({
         id: p.id,
@@ -58,13 +58,13 @@ export default function ProductCatalogPage() {
         category: p.category?.name || 'Uncategorized',
         price: p.sale_price || p.base_price,
         originalPrice: p.sale_price ? p.base_price : undefined,
-        discount: p.sale_price 
+        discount: p.sale_price
             ? Math.round((1 - parseFloat(p.sale_price) / parseFloat(p.base_price)) * 100)
             : undefined,
         rating: p.rating || 0,
         reviews: p.review_count || 0,
         reviewCount: p.review_count || 0,
-        image: p.primary_image?.image_path 
+        image: p.primary_image?.image_path
             ? (p.primary_image.image_path.startsWith('/') ? p.primary_image.image_path : `/images/products/${p.primary_image.image_path}`)
             : '/images/products/placeholder.png',
         alt: p.primary_image?.alt_text || p.name,

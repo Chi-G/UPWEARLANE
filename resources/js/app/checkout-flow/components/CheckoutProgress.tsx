@@ -74,7 +74,7 @@ export default function CheckoutProgress({
                                                     ? 'bg-primary'
                                                     : 'bg-border'
                                             }`}
-                                        />
+                                        /> 
                                     </div>
                                 )}
                             </div>

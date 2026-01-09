@@ -39,10 +39,10 @@ export default function OrderSummary({
             const savedCode =
                 localStorage.getItem('selected_currency') || 'USD';
             const currencies: Record<CurrencyCode, Currency> = {
+                NGN: { code: 'NGN', symbol: '₦' },
                 USD: { code: 'USD', symbol: '$' },
                 GBP: { code: 'GBP', symbol: '£' },
                 CAD: { code: 'CAD', symbol: 'C$' },
-                NGN: { code: 'NGN', symbol: '₦' },
             };
             setCurrency(
                 currencies[savedCode as CurrencyCode] || currencies.USD,
@@ -137,7 +137,7 @@ export default function OrderSummary({
                         {currency?.symbol}
                         {total?.toFixed(2)}
                     </span>
-                </div>
+                </div> 
             </div>
         </div>
     );

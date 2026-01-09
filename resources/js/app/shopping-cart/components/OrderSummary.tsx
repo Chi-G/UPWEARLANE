@@ -10,6 +10,7 @@ export default function OrderSummary({
     total,
     itemCount,
     shippingCost,
+    trustSignals,
 }: {
     subtotal: number;
     discount: number;
@@ -17,21 +18,22 @@ export default function OrderSummary({
     total: number;
     itemCount: number;
     shippingCost: number;
+    trustSignals?: Array<{ icon: string; text: string; color: string }>;
 }) {
-    const [currency, setCurrency] = useState({ symbol: '$', code: 'USD' });
+    const [currency, setCurrency] = useState({ symbol: '₦', code: 'NGN' });
 
     useEffect(() => {
         const loadCurrency = () => {
             const savedCode =
-                localStorage.getItem('selected_currency') || 'USD';
+                localStorage.getItem('selected_currency') || 'NGN';
             const currencies: Record<string, { symbol: string; code: string }> =
                 {
+                    NGN: { symbol: '₦', code: 'NGN' },
                     USD: { symbol: '$', code: 'USD' },
                     GBP: { symbol: '£', code: 'GBP' },
                     CAD: { symbol: 'C$', code: 'CAD' },
-                    NGN: { symbol: '₦', code: 'NGN' },
                 };
-            const currencyInfo = currencies[savedCode] || currencies.USD;
+            const currencyInfo = currencies[savedCode] || currencies.NGN;
             setCurrency(currencyInfo);
         };
 
@@ -43,6 +45,18 @@ export default function OrderSummary({
 
     const formatPrice = (amount: number): string => {
         return `${currency?.symbol}${amount?.toFixed(2)}`;
+    };
+
+    // Convert free shipping threshold to current currency
+    const convertThreshold = (usdAmount: number): number => {
+        const conversionRates: Record<string, number> = {
+            USD: 1,
+            GBP: 0.79,
+            CAD: 1.36,
+            NGN: 1580,
+        };
+        const rate = conversionRates[currency?.code || 'NGN'] || 1;
+        return usdAmount * rate;
     };
 
     return (
@@ -122,26 +136,51 @@ export default function OrderSummary({
             </Link>
             {/* Trust Signals */}
             <div className="border-border mt-6 space-y-3 border-t pt-6">
-                <div className="text-muted-foreground flex items-center gap-3 text-sm">
-                    <Icon
-                        name="ShieldCheckIcon"
-                        size={20}
-                        className="text-success"
-                    />
-                    <span>Secure checkout with SSL encryption</span>
-                </div>
-                <div className="text-muted-foreground flex items-center gap-3 text-sm">
-                    <Icon name="TruckIcon" size={20} className="text-primary" />
-                    <span>Free shipping on orders over $100</span>
-                </div>
-                <div className="text-muted-foreground flex items-center gap-3 text-sm">
-                    <Icon
-                        name="ArrowPathIcon"
-                        size={20}
-                        className="text-primary"
-                    />
-                    <span>30-day return policy</span>
-                </div>
+                {trustSignals && trustSignals.length > 0 ? (
+                    trustSignals.map((signal, index) => {
+                        // Replace $100 with converted amount in the text
+                        let displayText = signal.text;
+                        if (displayText.includes('$100')) {
+                            const convertedAmount = convertThreshold(100);
+                            const formattedAmount = `${currency?.symbol}${Math.round(convertedAmount)}`;
+                            displayText = displayText.replace('$100', formattedAmount);
+                        }
+
+                        return (
+                            <div key={index} className="text-muted-foreground flex items-center gap-3 text-sm">
+                                <Icon
+                                    name={signal.icon}
+                                    size={20}
+                                    className={signal.color}
+                                />
+                                <span>{displayText}</span>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <>
+                        <div className="text-muted-foreground flex items-center gap-3 text-sm">
+                            <Icon
+                                name="ShieldCheckIcon"
+                                size={20}
+                                className="text-success"
+                            />
+                            <span>Secure checkout with SSL encryption</span>
+                        </div>
+                        <div className="text-muted-foreground flex items-center gap-3 text-sm">
+                            <Icon name="TruckIcon" size={20} className="text-primary" />
+                            <span>Free shipping on orders over {formatPrice(convertThreshold(100))}</span>
+                        </div>
+                        <div className="text-muted-foreground flex items-center gap-3 text-sm">
+                            <Icon
+                                name="ArrowPathIcon"
+                                size={20}
+                                className="text-primary"
+                            />
+                            <span>30-day return policy</span>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

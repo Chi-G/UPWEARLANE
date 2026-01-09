@@ -16,7 +16,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     useEffect(() => {
         const updateCurrency = () => {
             const savedCurrency = (localStorage.getItem('selected_currency') ||
-                'USD') as CurrencyCode; 
+                'NGN') as CurrencyCode;
             const rates: Record<CurrencyCode, number> = {
                 USD: 1,
                 GBP: 0.79,
@@ -55,6 +55,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             name: product?.name || '',
             category: product?.category || '',
             price: product?.price || 0,
+            currency: product?.currency || 'NGN',
             quantity: quantity,
             image: product?.images?.[0]?.url || '',
             alt: product?.images?.[0]?.alt || '',

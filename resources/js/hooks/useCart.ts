@@ -1,19 +1,71 @@
-import { CartItem } from '@/types';
+import { CartItem, CurrencyCode } from '@/types';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const CART_STORAGE_KEY = 'shopping_cart';
 
+// Get conversion rates from Inertia shared props
+const getConversionRates = (): Record<CurrencyCode, number> => {
+    if (typeof window === 'undefined') {
+        // Fallback for SSR
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+
+    try {
+        // Access shared Inertia props from window
+        const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { rate: number }> } } }).page || {};
+        const currencyRates = page.props?.currencyRates || {};
+        
+        // Convert to simple rate mapping
+        const rates: Record<string, number> = {};
+        Object.keys(currencyRates).forEach(code => {
+            rates[code] = currencyRates[code].rate;
+        });
+        
+        // Return with fallback
+        return {
+            USD: rates.USD || 1,
+            GBP: rates.GBP || 0.79,
+            CAD: rates.CAD || 1.36,
+            NGN: rates.NGN || 1650,
+        };
+    } catch {
+        // Fallback rates if something goes wrong
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+};
+
+// Convert price from one currency to another
+const convertPrice = (basePrice: number, fromCurrency: CurrencyCode, toCurrency: CurrencyCode): number => {
+    const rates = getConversionRates();
+    const priceInUSD = basePrice / rates[fromCurrency];
+    return priceInUSD * rates[toCurrency];
+};
+
 export function useCart() {
     // Initial state from localStorage if available (sync init for SSR safety)
     const [items, setItems] = useState<CartItem[]>([]);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [subtotal, setSubtotal] = useState(0);
 
     const loadCart = () => {
         try {
             const stored = localStorage.getItem(CART_STORAGE_KEY);
             if (stored) {
-                setItems(JSON.parse(stored)); 
+                const parsedItems = JSON.parse(stored) as CartItem[];
+                // Upgrade old cart items: add currency field if missing
+                const upgradedItems = parsedItems.map(item => ({
+                    ...item,
+                    currency: item.currency || 'NGN', // Default to NGN for old items
+                }));
+
+                // Save upgraded items back if any were missing currency
+                const needsUpgrade = parsedItems.some(item => !item.currency);
+                if (needsUpgrade) {
+                    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(upgradedItems));
+                }
+
+                setItems(upgradedItems);
             }
         } catch (e) {
             console.error('Failed to load cart', e);
@@ -37,12 +89,34 @@ export function useCart() {
 
         window.addEventListener('storage', handleStorage);
         window.addEventListener('cart-updated', handleCustomEvent);
-
+ 
         return () => {
             window.removeEventListener('storage', handleStorage);
             window.removeEventListener('cart-updated', handleCustomEvent);
         };
     }, []);
+
+    // Calculate subtotal with dynamic currency conversion
+    useEffect(() => {
+        const calculateSubtotal = () => {
+            const selectedCurrency = (localStorage.getItem('selected_currency') || 'NGN') as CurrencyCode;
+
+            const total = items.reduce((sum, item) => {
+                const itemBaseCurrency = (item.currency || 'NGN') as CurrencyCode;
+                const basePrice = typeof item.price === 'string' ? parseFloat(item.price) : (item.price || 0);
+                const convertedPrice = convertPrice(basePrice, itemBaseCurrency, selectedCurrency);
+                return sum + (convertedPrice * item.quantity);
+            }, 0);
+
+            setSubtotal(total);
+        };
+
+        calculateSubtotal();
+
+        // Recalculate when currency changes
+        window.addEventListener('currency-changed', calculateSubtotal);
+        return () => window.removeEventListener('currency-changed', calculateSubtotal);
+    }, [items]);
 
     const saveItems = (newItems: CartItem[]) => {
         try {
@@ -90,7 +164,7 @@ export function useCart() {
         }
     };
 
-    const updateQuantity = (itemId: string, newQty: number) => { 
+    const updateQuantity = (itemId: string, newQty: number) => {
         if (newQty < 1) return;
         const newItems = items.map((item) =>
             item.id === itemId ? { ...item, quantity: newQty } : item
@@ -105,7 +179,6 @@ export function useCart() {
     };
 
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return {
         items,

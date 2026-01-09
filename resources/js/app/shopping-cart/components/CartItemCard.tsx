@@ -1,8 +1,63 @@
 import Icon from '@/components/ui/AppIcon';
 import AppImage from '@/components/ui/AppImage';
-import { CartItemCardProps } from '@/types';
+import { CartItemCardProps, CurrencyCode } from '@/types';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Get conversion rates from shared Inertia props
+const getConversionRates = (): Record<CurrencyCode, number> => {
+    if (typeof window === 'undefined') {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+
+    try {
+        const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { rate: number }> } } }).page || {};
+        const currencyRates = page.props?.currencyRates || {}; 
+        const rates: Record<string, number> = {};
+        Object.keys(currencyRates).forEach(code => {
+            rates[code] = currencyRates[code].rate;
+        });
+        return {
+            NGN: rates.NGN || 1650,
+            USD: rates.USD || 1,
+            GBP: rates.GBP || 0.79,
+            CAD: rates.CAD || 1.36,
+        };
+    } catch {
+        return { USD: 1, GBP: 0.79, CAD: 1.36, NGN: 1650 };
+    }
+};
+
+// Get currency symbols from shared props
+const getCurrencySymbols = (): Record<CurrencyCode, string> => {
+    if (typeof window === 'undefined') {
+        return { USD: '$', GBP: '£', CAD: 'C$', NGN: '₦' };
+    }
+
+    try {
+        const page = (window as Window & { page?: { props?: { currencyRates?: Record<string, { symbol: string }> } } }).page || {};
+        const currencyRates = page.props?.currencyRates || {};
+        const symbols: Record<string, string> = {};
+        Object.keys(currencyRates).forEach(code => {
+            symbols[code] = currencyRates[code].symbol;
+        });
+        return {
+            NGN: symbols.NGN || '₦',
+            USD: symbols.USD || '$',
+            GBP: symbols.GBP || '£',
+            CAD: symbols.CAD || 'C$',
+        };
+    } catch {
+        return { USD: '$', GBP: '£', CAD: 'C$', NGN: '₦' };
+    }
+};
+
+// Convert price from item's base currency to selected currency
+const convertPrice = (basePrice: number, fromCurrency: CurrencyCode, toCurrency: CurrencyCode): number => {
+    const rates = getConversionRates();
+    const priceInUSD = basePrice / rates[fromCurrency];
+    return priceInUSD * rates[toCurrency];
+};
 
 export default function CartItemCard({
     item,
@@ -11,6 +66,25 @@ export default function CartItemCard({
 }: CartItemCardProps) {
     const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [displayPrice, setDisplayPrice] = useState(item?.price);
+    const [displayCurrency, setDisplayCurrency] = useState<CurrencyCode>(item?.currency as CurrencyCode);
+
+    // Update displayed price when currency changes
+    useEffect(() => {
+        const updateCurrency = () => {
+            const selectedCurrency = (localStorage.getItem('selected_currency') || 'NGN') as CurrencyCode;
+            const itemBaseCurrency = (item?.currency || 'NGN') as CurrencyCode;
+            const basePrice = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
+
+            const converted = convertPrice(basePrice, itemBaseCurrency, selectedCurrency);
+            setDisplayPrice(converted);
+            setDisplayCurrency(selectedCurrency);
+        };
+
+        updateCurrency();
+        window.addEventListener('currency-changed', updateCurrency);
+        return () => window.removeEventListener('currency-changed', updateCurrency);
+    }, [item?.price, item?.currency]);
 
     const handleQuantityChange = async (newQuantity: number) => {
         if (newQuantity < 1 || newQuantity > 99) return;
@@ -24,8 +98,8 @@ export default function CartItemCard({
         onRemove(item?.id);
     };
 
-    const price = typeof item?.price === 'string' ? parseFloat(item.price) : (item?.price || 0);
-    const itemTotal = (price * item?.quantity).toFixed(2);
+    const itemTotal = (displayPrice * item?.quantity).toFixed(2);
+    const currencySymbol = getCurrencySymbols()[displayCurrency] || '₦';
 
     return (
         <div className="bg-card border-border transition-smooth hover:shadow-gold-sm relative rounded-lg border p-4 md:p-6">
@@ -126,11 +200,11 @@ export default function CartItemCard({
                         {/* Price */}
                         <div className="flex items-baseline gap-2">
                             <span className="font-data text-foreground whitespace-nowrap text-xl font-semibold md:text-2xl">
-                                ${itemTotal}
+                                {currencySymbol}{itemTotal}
                             </span>
                             {item?.quantity > 1 && (
                                 <span className="text-muted-foreground text-sm">
-                                    (${price.toFixed(2)} each)
+                                    ({currencySymbol}{displayPrice.toFixed(2)} each)
                                 </span>
                             )}
                         </div>

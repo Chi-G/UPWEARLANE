@@ -17,7 +17,7 @@ const PAYMENT_METHODS = [
     },
     {
         id: 'google-pay',
-        name: 'Google Pay',
+        name: 'Google Pay', 
         icon: 'DevicePhoneMobileIcon',
         description: 'Fast and secure',
     },

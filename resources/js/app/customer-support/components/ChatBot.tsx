@@ -18,11 +18,41 @@ interface Message {
     timestamp: Date;
 }
 
-export default function ChatBot() {
+interface ChatbotSettingData {
+    bot_name: string;
+    bot_subtitle: string;
+    welcome_message: string;
+    default_response: string;
+    header_icon: string;
+}
+
+interface ChatbotResponseData {
+    keyword: string;
+    response: string;
+}
+
+interface ChatBotProps {
+    setting?: ChatbotSettingData;
+    responses?: ChatbotResponseData[];
+}
+
+export default function ChatBot({ setting, responses }: ChatBotProps) {
+    // Default values
+    const botName = setting?.bot_name || 'AI Support Bot';
+    const botSubtitle =
+        setting?.bot_subtitle || 'Powered by UpWearLane Intelligence';
+    const welcomeMessage =
+        setting?.welcome_message ||
+        "Hello! I'm your UpWearLane assistant. How can I help you today?";
+    const defaultResponse =
+        setting?.default_response ||
+        "I'm processing your request. For more specific help, you can try asking about 'order status', 'returns', or 'sizing'.";
+    const headerIcon = setting?.header_icon || 'CpuChipIcon';
+
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 1,
-            text: "Hello! I'm your UpWearLane assistant. How can I help you today?",
+            text: welcomeMessage,
             sender: 'bot',
             timestamp: new Date(),
         },
@@ -51,24 +81,34 @@ export default function ChatBot() {
         setInput('');
         setIsTyping(true);
 
-        // Simulate bot response
+        // Find matching response from database
         setTimeout(() => {
-            let botResponse =
-                "I'm processing your request. For more specific help, you can try asking about 'order status', 'returns', or 'sizing'.";
-
+            let botResponse = defaultResponse;
             const lowerInput = input.toLowerCase();
-            if (lowerInput.includes('order')) {
-                botResponse =
-                    'To check your order status, please provide your order ID (e.g., #UWL-12345). You can also find this in your dashboard.';
-            } else if (lowerInput.includes('return')) {
-                botResponse =
-                    'We offer a 30-day hassle-free return policy. Would you like to start a return process or view our return policy details?';
-            } else if (
-                lowerInput.includes('size') ||
-                lowerInput.includes('sizing')
-            ) {
-                botResponse =
-                    'Our size guide is available on every product page. Most of our smart clothing runs true to size, but we recommend checking the specific measurements for tech-infused garments.';
+
+            // Check if we have custom responses from database
+            if (responses && responses.length > 0) {
+                const matchedResponse = responses.find((r) =>
+                    lowerInput.includes(r.keyword.toLowerCase())
+                );
+                if (matchedResponse) {
+                    botResponse = matchedResponse.response;
+                }
+            } else {
+                // Fallback to hardcoded logic if no database responses
+                if (lowerInput.includes('order')) {
+                    botResponse =
+                        'To check your order status, please provide your order ID (e.g., #UWL-12345). You can also find this in your dashboard.';
+                } else if (lowerInput.includes('return')) {
+                    botResponse =
+                        'We offer a 30-day hassle-free return policy. Would you like to start a return process or view our return policy details?';
+                } else if (
+                    lowerInput.includes('size') ||
+                    lowerInput.includes('sizing')
+                ) {
+                    botResponse =
+                        'Our size guide is available on every product page. Most of our smart clothing runs true to size, but we recommend checking the specific measurements for tech-infused garments.';
+                }
             }
 
             const botMessage: Message = {
@@ -88,16 +128,14 @@ export default function ChatBot() {
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
                         <Icon
-                            name="CpuChipIcon"
+                            name={headerIcon}
                             className="h-6 w-6 text-white"
                         />
                     </div>
                     <div>
-                        <CardTitle className="text-lg">
-                            AI Support Bot
-                        </CardTitle>
+                        <CardTitle className="text-lg">{botName}</CardTitle>
                         <CardDescription className="text-xs text-white/70">
-                            Powered by UpWearLane Intelligence
+                            {botSubtitle}
                         </CardDescription>
                     </div>
                 </div>

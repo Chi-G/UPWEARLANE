@@ -26,7 +26,7 @@ export default function ProductCatalogInteractive({
     const [filters, setFilters] = useState<CatalogFilters>(() => {
         let initialCategories: string[] = [];
         if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search); 
+            const params = new URLSearchParams(window.location.search);
             const categoryParam = params.get('category');
             if (categoryParam) {
                 initialCategories = [categoryParam];
@@ -195,11 +195,12 @@ export default function ProductCatalogInteractive({
             name: product.name,
             category: product.category,
             price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+            currency: product.currency || 'NGN',
             quantity: 1,
             image: product.image,
             alt: product.alt,
             variations: {},
-        });
+        }); 
     };
 
     const handleClearFilters = () => {
@@ -208,8 +209,8 @@ export default function ProductCatalogInteractive({
             router.visit('/product-catalog', { preserveScroll: true });
             return;
         }
-        
-        setIsLoading(true); 
+
+        setIsLoading(true);
         // Clear URL params
         if (typeof window !== 'undefined') {
             const url = new URL(window.location.href);

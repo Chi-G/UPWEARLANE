@@ -71,7 +71,7 @@ export default function OrderConfirmation({
                             <p className="text-muted-foreground mt-1 text-xs">
                                 Estimated delivery: {estimatedDelivery}
                             </p>
-                        </div>
+                        </div> 
                     </div>
 
                     <div className="flex items-start space-x-3">

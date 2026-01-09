@@ -8,8 +8,32 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-export default function WhatsAppChat() {
-    const whatsappNumber = '+2347065910449';
+interface WhatsAppChatData {
+    title: string;
+    description: string;
+    phone_number: string;
+    features: string[];
+    button_text: string;
+}
+
+interface WhatsAppChatProps {
+    data?: WhatsAppChatData;
+}
+
+export default function WhatsAppChat({ data }: WhatsAppChatProps) {
+    // Default values if no data provided
+    const title = data?.title || 'WhatsApp Support';
+    const description =
+        data?.description ||
+        'Connect directly with our support team for immediate assistance.';
+    const whatsappNumber = data?.phone_number || '+2347065910449';
+    const features = data?.features || [
+        'Average response time: < 5 minutes',
+        'Available 24/7 for premium members',
+        'Real-time troubleshooting',
+    ];
+    const buttonText = data?.button_text || 'Chat on WhatsApp';
+
     const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}`;
 
     return (
@@ -27,43 +51,30 @@ export default function WhatsAppChat() {
                         </svg>
                     </div>
                     <CardTitle className="text-xl font-bold">
-                        WhatsApp Support
+                        {title}
                     </CardTitle>
                 </div>
                 <CardDescription className="text-base">
-                    Connect directly with our support team for immediate
-                    assistance.
+                    {description}
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <ul className="text-muted-foreground space-y-2 text-sm">
-                    <li className="flex items-center gap-2">
-                        <Icon
-                            name="CheckCircleIcon"
-                            className="h-4 w-4 text-green-500"
-                        />
-                        Average response time: &lt; 5 minutes
-                    </li>
-                    <li className="flex items-center gap-2">
-                        <Icon
-                            name="CheckCircleIcon"
-                            className="h-4 w-4 text-green-500"
-                        />
-                        Available 24/7 for premium members
-                    </li>
-                    <li className="flex items-center gap-2">
-                        <Icon
-                            name="CheckCircleIcon"
-                            className="h-4 w-4 text-green-500"
-                        />
-                        Real-time troubleshooting
-                    </li>
+                    {features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2">
+                            <Icon
+                                name="CheckCircleIcon"
+                                className="h-4 w-4 text-green-500"
+                            />
+                            {feature}
+                        </li>
+                    ))}
                 </ul>
                 <Button
                     className="h-12 w-full gap-2 bg-green-500 text-lg text-white transition-all duration-300 hover:bg-green-600"
                     onClick={() => window.open(whatsappUrl, '_blank')}
                 >
-                    Chat on WhatsApp
+                    {buttonText}
                     <Icon name="ArrowRightIcon" className="h-5 w-5" />
                 </Button>
             </CardContent>

@@ -6,84 +6,78 @@ import FAQSection from './components/FAQSection';
 import SupportHeader from './components/SupportHeader';
 import WhatsAppChat from './components/WhatsAppChat';
 
-// Mock footer data if needed, or we can use the one from landing-page context
-const footerData = {
-    companyDescription:
-        'UpWearLane is the premier destination for cutting-edge wearable technology and smart fashion. We blend innovation with style to create the future of fashion.',
-    socialLinks: [
-        {
-            name: 'Facebook',
-            url: 'https://facebook.com/upwearlane',
-            icon: 'Facebook',
-        },
-        {
-            name: 'Twitter',
-            url: 'https://twitter.com/upwearlane',
-            icon: 'Twitter',
-        },
-        {
-            name: 'Instagram',
-            url: 'https://instagram.com/upwearlane',
-            icon: 'Instagram',
-        },
-        {
-            name: 'LinkedIn',
-            url: 'https://linkedin.com/company/upwearlane',
-            icon: 'Linkedin',
-        },
-    ],
-    quickLinks: [
-        { name: 'About Us', url: '/about' },
-        { name: 'Product Catalog', url: '/product-catalog' },
-        { name: 'Size Guide', url: '/size-guide' },
-        { name: 'Shipping Info', url: '/shipping' },
-        { name: 'Returns', url: '/returns' },
-        { name: 'Support', url: '/support' },
-    ],
-    categories: [
-        {
-            name: 'Smart Watches',
-            url: '/product-catalog?category=smartwatches',
-        },
-        { name: 'Fitness Trackers', url: '/product-catalog?category=fitness' },
-        { name: 'Smart Clothing', url: '/product-catalog?category=clothing' },
-        {
-            name: 'Tech Accessories',
-            url: '/product-catalog?category=accessories',
-        },
-        { name: 'AR/VR Gear', url: '/product-catalog?category=arvr' },
-        { name: 'New Arrivals', url: '/product-catalog?filter=new' },
-    ],
-    contact: {
-        address: 'Abuja, Nigeria',
-        phone: '+234 7065910449',
-        email: 'info@upwearlane.com',
-    },
-    trustBadges: [
-        'SSL Secure',
-        'PCI Compliant',
-        '30-Day Returns',
-        'Global Shipping',
-    ],
-    legalLinks: [
-        { name: 'Privacy Policy', url: '/privacy' },
-        { name: 'Terms of Service', url: '/terms' },
-        { name: 'Cookie Policy', url: '/cookies' },
-    ],
-};
+interface SupportHeaderData {
+    badge_icon: string;
+    badge_text: string;
+    title: string;
+    subtitle?: string;
+    description: string;
+    background_pattern_icon: string;
+}
 
-export default function CustomerSupportPage() {
+interface WhatsAppChatData {
+    title: string;
+    description: string;
+    phone_number: string;
+    features: string[];
+    button_text: string;
+}
+
+interface FaqData {
+    id: number;
+    question: string;
+    answer: string;
+}
+
+interface ChatbotSettingData {
+    bot_name: string;
+    bot_subtitle: string;
+    welcome_message: string;
+    default_response: string;
+    header_icon: string;
+}
+
+interface ChatbotResponseData {
+    keyword: string;
+    response: string;
+}
+
+interface CustomerSupportPageProps {
+    supportHeader?: SupportHeaderData;
+    whatsappChat?: WhatsAppChatData;
+    faqs?: FaqData[];
+    chatbotSetting?: ChatbotSettingData;
+    chatbotResponses?: ChatbotResponseData[];
+    footerData?: {
+        companyDescription: string;
+        socialLinks: { name: string; url: string; icon: string }[];
+        quickLinks: { name: string; url: string }[];
+        categories: { name: string; url: string }[];
+        contact: { address: string; phone: string; email: string };
+        trustBadges: string[];
+        legalLinks: { name: string; url: string }[];
+    };
+}
+
+export default function CustomerSupportPage({
+    supportHeader,
+    whatsappChat,
+    faqs,
+    chatbotSetting,
+    chatbotResponses,
+    footerData,
+}: CustomerSupportPageProps) {
     return (
         <div className="bg-background flex min-h-screen flex-col">
             <Header />
 
             <main className="flex-1 pt-16 lg:pt-20">
-                <SupportHeader />
+                <SupportHeader data={supportHeader} />
 
                 <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                     <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-3">
                         <div className="space-y-6 lg:col-span-1">
-                            <WhatsAppChat />
+                            <WhatsAppChat data={whatsappChat} />
 
                             <div className="border-border bg-muted/20 rounded-xl border p-6">
                                 <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
@@ -137,17 +131,20 @@ export default function CustomerSupportPage() {
                                     tech setups.
                                 </p>
                             </div>
-                            <ChatBot />
+                            <ChatBot
+                                setting={chatbotSetting}
+                                responses={chatbotResponses}
+                            />
                         </div>
                     </div>
 
                     <div className="mx-auto max-w-4xl">
-                        <FAQSection />
+                        <FAQSection faqs={faqs} />
                     </div>
                 </div>
             </main>
 
-            <Footer footerData={footerData} />
+            {footerData && <Footer footerData={footerData} />}
         </div>
     );
 }
