@@ -22,7 +22,6 @@ class LandingPageController extends Controller
 
         $featuredProducts = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
-            ->currency($currency)
             ->featured()
             ->take(8)
             ->get()
@@ -30,7 +29,6 @@ class LandingPageController extends Controller
 
         $bestsellers = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
-            ->currency($currency)
             ->bestsellers()
             ->take(8)
             ->get()
@@ -38,7 +36,6 @@ class LandingPageController extends Controller
 
         $newArrivals = Product::with(['primaryImage', 'colors', 'category'])
             ->active()
-            ->currency($currency)
             ->newArrivals()
             ->take(8)
             ->get()
@@ -76,6 +73,7 @@ class LandingPageController extends Controller
                 ? (int) round((1 - (float)$product->sale_price / (float)$product->base_price) * 100)
                 : null,
             'colors' => $product->colors->map(fn($c) => $c->hex_code)->toArray(),
+            'currency' => $product->currency ?? 'NGN',
         ];
 
         if ($includeSoldCount) {

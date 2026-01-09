@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing products to avoid duplicates
+        // Clear existing products to avoid duplicates 
         $this->command->info('Clearing existing products...');
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         ProductFeature::truncate();
@@ -166,6 +166,7 @@ class ProductSeeder extends Seeder
                 'sold_count' => 3200,
                 'is_new' => false,
                 'is_featured' => false,
+                'is_bestseller' => true,
                 'stock_quantity' => 150,
                 'image' => '/images/products/bestsellers/bestseller-1.png',
                 'colors' => [
@@ -194,6 +195,7 @@ class ProductSeeder extends Seeder
                 'sold_count' => 2800,
                 'is_new' => false,
                 'is_featured' => false,
+                'is_bestseller' => true,
                 'stock_quantity' => 200,
                 'image' => '/images/products/bestsellers/bestseller-2.png',
                 'colors' => [
@@ -221,6 +223,7 @@ class ProductSeeder extends Seeder
                 'sold_count' => 2400,
                 'is_new' => false,
                 'is_featured' => false,
+                'is_bestseller' => true,
                 'stock_quantity' => 180,
                 'image' => '/images/products/bestsellers/bestseller-3.png',
                 'colors' => [
@@ -249,6 +252,7 @@ class ProductSeeder extends Seeder
                 'sold_count' => 1900,
                 'is_new' => false,
                 'is_featured' => false,
+                'is_bestseller' => true,
                 'stock_quantity' => 250,
                 'image' => '/images/products/bestsellers/bestseller-4.png',
                 'colors' => [
@@ -868,6 +872,7 @@ class ProductSeeder extends Seeder
                     'sold_count' => $productData['sold_count'],
                     'is_new' => $productData['is_new'],
                     'is_featured' => $productData['is_featured'],
+                    'is_bestseller' => $productData['is_bestseller'] ?? false,
                     'is_active' => true,
                     'stock_quantity' => $productData['stock_quantity'],
                     'specifications' => [
