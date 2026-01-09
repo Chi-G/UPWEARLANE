@@ -10,7 +10,11 @@ class ShoppingCart extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'session_id', 'product_id', 'product_variant_id', 'quantity'
+        'user_id', 'session_id', 'product_id', 'product_variant_id', 'quantity', 'currency', 'price_at_add'
+    ];
+
+    protected $casts = [
+        'price_at_add' => 'decimal:2',
     ];
 
     public function user()
