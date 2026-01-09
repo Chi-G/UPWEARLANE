@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\FooterSetting;
+use App\Models\CurrencyRate;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-
+ 
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -38,6 +40,12 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        // Get footer data to share globally
+        $footerSetting = FooterSetting::where('is_active', true)->first();
+
+        // Get currency rates to share globally
+        $currencyRates = CurrencyRate::getActiveRates();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,6 +54,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'footerData' => $footerSetting ? $footerSetting->getFormattedData() : null,
+            'currencyRates' => $currencyRates,
         ];
     }
 }
