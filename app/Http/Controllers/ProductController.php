@@ -7,8 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ProductController extends Controller
-{
+class ProductController extends Controller {
     /**
      * Display product catalog with filters
      */
@@ -72,25 +71,66 @@ class ProductController extends Controller
     {
         $product->load([
             'category',
-            'images', 
+            'images',
             'colors',
-            'variants', 
+            'variants',
             'features',
             'approvedReviews.user'
         ]);
 
+        $currency = request()->get('currency', 'NGN');
+        // Example rates array (replace with your actual rates source)
+        $rates = [
+            'NGN' => 1650,
+            'USD' => 1,
+            'GBP' => 0.79,
+            'CAD' => 1.36,
+        ];
+
+        // Convert main product
+        $convertedProduct = $this->convertProductToCurrency($product, $currency, $rates);
+
         // Related products
         $relatedProducts = Product::with(['primaryImage', 'colors'])
-            ->where('category_id', $product->category_id) 
+            ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->active()
             ->inStock()
             ->limit(4)
             ->get();
 
+        // Convert related products
+        $convertedRelatedProducts = $relatedProducts->map(function ($related) use ($currency, $rates) {
+            return $this->convertProductToCurrency($related, $currency, $rates);
+        });
+
         return Inertia::render('product-detail/page', [
-            'product' => $product,
-            'relatedProducts' => $relatedProducts,
+            'product' => $convertedProduct,
+            'relatedProducts' => $convertedRelatedProducts,
         ]);
+    }
+
+    // Helper to convert product prices to selected currency
+    protected function convertProductToCurrency($product, $currency, $rates)
+    {
+        $baseCurrency = $product->currency ?? 'NGN';
+        $rate = $rates[$baseCurrency] ?? 1;
+        $targetRate = $rates[$currency] ?? 1;
+
+        // Convert price to USD, then to target currency
+        $priceInUSD = $product->base_price / $rate;
+        $convertedPrice = $priceInUSD * $targetRate;
+
+        $originalPriceInUSD = $product->original_price ? $product->original_price / $rate : null;
+        $convertedOriginalPrice = $originalPriceInUSD ? $originalPriceInUSD * $targetRate : null;
+
+        return array_merge(
+            $product->toArray(),
+            [
+                'price' => round($convertedPrice, 2),
+                'originalPrice' => $convertedOriginalPrice ? round($convertedOriginalPrice, 2) : null,
+                'currency' => $currency,
+            ]
+        );
     }
 }

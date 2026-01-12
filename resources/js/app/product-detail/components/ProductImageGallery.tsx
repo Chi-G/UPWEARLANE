@@ -7,6 +7,9 @@ import { useState } from 'react';
 export default function ProductImageGallery({
     images,
 }: ProductImageGalleryProps) {
+    // Debug: log images array for troubleshooting
+    console.log('ProductImageGallery images:', images);
+
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isZoomed, setIsZoomed] = useState(false);
 
@@ -28,7 +31,7 @@ export default function ProductImageGallery({
 
     const toggleZoom = () => {
         setIsZoomed(!isZoomed);
-    }; 
+    };
 
     return (
         <div className="space-y-4">

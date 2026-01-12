@@ -49,7 +49,7 @@ export interface Product {
     category: string;
     price: string | number;
     currency?: string;
-    originalPrice?: string | number;
+    originalPrice?: string | number; 
     discount?: number;
     rating: number;
     reviews?: number;

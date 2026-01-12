@@ -222,8 +222,8 @@ export default function NewArrivalsCarousel({
                                                                             ? parseFloat(product.price)
                                                                             : product.price,
                                                                         (product.currency || 'NGN') as CurrencyCode,
-                                                                        selectedCurrency
-                                                                    ).toFixed(2)}
+                                                                        selectedCurrency 
+                                                                    ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                                 </span>
                                                                 {product?.preOrder && (
                                                                     <span className="text-primary text-[10px] font-medium md:text-sm">

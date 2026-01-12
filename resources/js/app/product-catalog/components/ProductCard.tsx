@@ -193,7 +193,7 @@ export default function ProductCard({
                                     typeof product.price === 'string' ? parseFloat(product.price) : product.price,
                                     (product.currency || 'NGN') as CurrencyCode,
                                     selectedCurrency
-                                ).toFixed(2)}
+                                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                             {product?.originalPrice && (
                                 <span className="font-data text-muted-foreground whitespace-nowrap text-base line-through md:text-lg">
@@ -201,7 +201,7 @@ export default function ProductCard({
                                         typeof product.originalPrice === 'string' ? parseFloat(product.originalPrice) : product.originalPrice,
                                         (product.currency || 'NGN') as CurrencyCode,
                                         selectedCurrency
-                                    ).toFixed(2)}
+                                    ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </span>
                             )}
                         </div>
@@ -321,7 +321,7 @@ export default function ProductCard({
                                 typeof product.price === 'string' ? parseFloat(product.price) : product.price,
                                 (product.currency || 'NGN') as CurrencyCode,
                                 selectedCurrency
-                            ).toFixed(2)}
+                            ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         {product?.originalPrice && (
                             <span className="font-data text-muted-foreground whitespace-nowrap text-xs line-through">
@@ -329,7 +329,7 @@ export default function ProductCard({
                                     typeof product.originalPrice === 'string' ? parseFloat(product.originalPrice) : product.originalPrice,
                                     (product.currency || 'NGN') as CurrencyCode,
                                     selectedCurrency
-                                ).toFixed(2)}
+                                ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                         )}
                     </div>

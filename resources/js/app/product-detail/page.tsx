@@ -68,11 +68,13 @@ interface ProductData {
     features: ProductFeature[];
     variants: ProductVariant[];
     approved_reviews: Review[];
+    currency?: string;
 }
 
 interface RelatedProduct {
     id: number;
     name: string;
+    currency: string;
     base_price: string | number;
     original_price?: string | number;
     rating: string | number;
@@ -88,16 +90,17 @@ interface PageProps {
     relatedProducts: RelatedProduct[];
 }
 
-export default function ProductDetailPage() { 
+export default function ProductDetailPage() {
     const { product, relatedProducts } = usePage<{ props: PageProps }>().props as unknown as PageProps;
 
     // Transform product data to match frontend format
     const transformedProduct = {
         id: product.id,
         name: product.name,
+        currency: product.currency || 'NGN',
         category: product.category?.name || 'Uncategorized',
         price: typeof product.base_price === 'string' ? parseFloat(product.base_price) : product.base_price,
-        originalPrice: product.original_price 
+        originalPrice: product.original_price
             ? (typeof product.original_price === 'string' ? parseFloat(product.original_price) : product.original_price)
             : undefined,
         rating: typeof product.rating === 'string' ? parseFloat(product.rating) : product.rating,
@@ -119,9 +122,9 @@ export default function ProductDetailPage() {
             .filter(Boolean) || ['S', 'M', 'L', 'XL'],
         features: product.features?.map(f => f.name) || [],
         specifications: product.specifications || {},
-        image: product.images?.[0]?.image_path 
-            ? (product.images[0].image_path.startsWith('http') 
-                ? product.images[0].image_path 
+        image: product.images?.[0]?.image_path
+            ? (product.images[0].image_path.startsWith('http')
+                ? product.images[0].image_path
                 : product.images[0].image_path)
             : '/images/placeholder.png',
         alt: product.images?.[0]?.alt_text || product.name,
@@ -138,7 +141,7 @@ export default function ProductDetailPage() {
         title: review.title || 'Review',
         comment: review.comment,
         date: review.created_at,
-        verified: true, 
+        verified: true,
         helpfulCount: 0,
     })) || [];
 
@@ -146,16 +149,17 @@ export default function ProductDetailPage() {
     const transformedRelatedProducts = relatedProducts?.map(rp => ({
         id: rp.id,
         name: rp.name,
+        currency: rp.currency || 'NGN',
         category: 'Related',
         price: typeof rp.base_price === 'string' ? parseFloat(rp.base_price) : rp.base_price,
-        originalPrice: rp.original_price 
+        originalPrice: rp.original_price
             ? (typeof rp.original_price === 'string' ? parseFloat(rp.original_price) : rp.original_price)
             : undefined,
         rating: typeof rp.rating === 'string' ? parseFloat(rp.rating) : rp.rating,
         reviewCount: rp.review_count || 0,
-        image: rp.primary_image?.image_path 
-            ? (rp.primary_image.image_path.startsWith('http') 
-                ? rp.primary_image.image_path 
+        image: rp.primary_image?.image_path
+            ? (rp.primary_image.image_path.startsWith('http')
+                ? rp.primary_image.image_path
                 : rp.primary_image.image_path)
             : '/images/placeholder.png',
         imageAlt: rp.primary_image?.alt_text || rp.name,

@@ -54,7 +54,7 @@ export default function CustomerReviews({
 
     const handleSubmitReview = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!auth?.user) {
             toast.error('Please log in to submit a review', {
                 description: 'You need to be logged in to write a review.',
@@ -159,7 +159,7 @@ export default function CustomerReviews({
                 <div className="space-y-4">
                     <div className="flex items-end space-x-3">
                         <span className="font-heading text-foreground text-5xl font-bold md:text-6xl">
-                            {averageRating?.toFixed(1)}
+                            {averageRating?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         <span className="text-muted-foreground pb-2 text-lg">
                             out of 5
@@ -217,7 +217,7 @@ export default function CustomerReviews({
                     <form onSubmit={handleSubmitReview} className="space-y-6">
                         <div className="space-y-3">
                             <label className="text-foreground block text-sm font-medium">
-                                Your Rating 
+                                Your Rating
                             </label>
                             <div className="flex items-center space-x-2">
                                 {[1, 2, 3, 4, 5]?.map((star) => (
@@ -372,14 +372,11 @@ export default function CustomerReviews({
                                 </div>
                             </div>
                             <span className="text-muted-foreground whitespace-nowrap text-sm">
-                                {new Date(review.date)?.toLocaleDateString(
-                                    'en-US',
-                                    {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                    },
-                                )}
+                                {new Date(review.date).toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                })}
                             </span>
                         </div>
 
@@ -404,7 +401,7 @@ export default function CustomerReviews({
                         )}
 
                         <div className="flex items-center space-x-4 pt-2">
-                            <button 
+                            <button
                                 onClick={() => handleHelpfulClick(review?.id)}
                                 className="text-muted-foreground hover:text-foreground transition-smooth flex items-center space-x-2 text-sm"
                             >

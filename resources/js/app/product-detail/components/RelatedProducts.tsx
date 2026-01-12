@@ -4,9 +4,11 @@ import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import { Product } from '@/types';
+import { convertPrice, getSelectedCurrency } from '@/utils/currency';
 
 export default function RelatedProducts({ products }: { products: Product[] }) {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const selectedCurrency = getSelectedCurrency();
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef?.current) {
@@ -15,6 +17,17 @@ export default function RelatedProducts({ products }: { products: Product[] }) {
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
             });
+        }
+    };
+
+    // Helper to get currency symbol
+    const getCurrencySymbol = (currency?: string) => {
+        switch (currency) {
+            case 'USD': return '$';
+            case 'NGN': return '₦';
+            case 'GBP': return '£';
+            case 'CAD': return 'C$';
+            default: return currency ? currency + ' ' : '$';
         }
     };
 
@@ -101,12 +114,21 @@ export default function RelatedProducts({ products }: { products: Product[] }) {
                                 </div>
                                 <div className="flex items-baseline space-x-2">
                                     <span className="font-heading text-foreground text-xl font-bold">
-                                        ${(Number(product?.price) || 0).toFixed(2)}
+                                        {getCurrencySymbol(selectedCurrency)}
+                                        {convertPrice(
+                                            Number(product?.price) || 0,
+                                            'USD', // default base currency
+                                            selectedCurrency
+                                        ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                     {product?.originalPrice && (
                                         <span className="text-muted-foreground text-sm line-through">
-                                            $
-                                            {(Number(product?.originalPrice) || 0).toFixed(2)}
+                                            {getCurrencySymbol(selectedCurrency)}
+                                            {convertPrice(
+                                                Number(product?.originalPrice) || 0,
+                                                'USD',
+                                                selectedCurrency
+                                            ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </span>
                                     )}
                                 </div>

@@ -216,7 +216,7 @@ export default function BestsellersSection({
                                                                   : product.originalPrice,
                                                               (product.currency || 'NGN') as CurrencyCode,
                                                               selectedCurrency
-                                                          ).toFixed(2)}
+                                                          ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                       </span>
                                                   )}
                                                   <span className="font-heading text-foreground text-sm font-bold md:text-xl">
@@ -226,7 +226,7 @@ export default function BestsellersSection({
                                                               : product.price,
                                                           (product.currency || 'NGN') as CurrencyCode,
                                                           selectedCurrency
-                                                      ).toFixed(2)}
+                                                      ).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                   </span>
                                               </div>
                                               {product?.discount && (
