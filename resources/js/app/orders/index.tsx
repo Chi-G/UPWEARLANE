@@ -1,6 +1,9 @@
+
 import Icon from '@/components/ui/AppIcon';
 import { Link } from '@inertiajs/react';
 import Header from '@/components/common/Header';
+import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
 
 interface OrderItem {
     id: number;
@@ -31,14 +34,36 @@ interface Props {
     };
 }
 
+function formatDateWithSuffixAndTime(dateString: string): string {
+    return format(new Date(dateString), "do 'of' MMM yyyy, h:mm a");
+}
+
 export default function OrdersIndex({ orders }: Props) {
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoading(false), 3000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <>
-            <Header />
+            <Header /> 
             <div className="min-h-screen bg-background py-12">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto p-10">
                     <h1 className="text-2xl font-bold mb-8 text-foreground">My Orders</h1>
-                    {orders.data.length === 0 ? (
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-8">
+                            {[...Array(3)].map((_, i) => (
+                                <div key={i} className="flex flex-col space-y-3">
+                                    <div className="h-12 w-full bg-muted animate-pulse rounded-xl" />
+                                    <div className="space-y-2">
+                                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                                        <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : orders.data.length === 0 ? (
                         <div className="bg-surface border-border rounded-xl border p-8 text-center">
                             <Icon name="InboxIcon" size={32} className="text-muted-foreground mb-2" />
                             <p className="text-muted-foreground">You have no orders yet.</p>
@@ -55,7 +80,7 @@ export default function OrdersIndex({ orders }: Props) {
                                         <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">{order.status}</span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm mb-2">
-                                        <span className="text-muted-foreground">Placed: {new Date(order.created_at).toLocaleString()}</span>
+                                        <span className="text-muted-foreground">Placed: {formatDateWithSuffixAndTime(order.created_at)}</span>
                                         <span className="text-foreground font-bold">{order.currency} {typeof order.total === 'number' ? order.total.toFixed(2) : parseFloat(order.total).toFixed(2)}</span>
                                     </div>
                                     <div className="flex flex-wrap gap-2 mt-2">
@@ -73,7 +98,7 @@ export default function OrdersIndex({ orders }: Props) {
                         </div>
                     )}
                     {/* Pagination (simple) */}
-                    {orders.last_page > 1 && (
+                    {!isLoading && orders.last_page > 1 && (
                         <div className="flex justify-center mt-8 gap-2">
                             {Array.from({ length: orders.last_page }, (_, i) => i + 1).map(page => (
                                 <Link

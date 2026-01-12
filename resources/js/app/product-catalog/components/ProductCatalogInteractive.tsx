@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 
 import Icon from '@/components/ui/AppIcon';
@@ -52,7 +53,8 @@ export default function ProductCatalogInteractive({
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [products, setProducts] = useState(initialProducts);
-    // Show loading animation on initial mount for 2s
+
+    // Show loading animation on initial mount for seconds
     const [isLoading, setIsLoading] = useState(true);
 
     const updateFilters = (newFilters: CatalogFilters) => {
@@ -66,18 +68,14 @@ export default function ProductCatalogInteractive({
     };
 
     useEffect(() => {
-        // setIsLoading(true) is now handled by change handlers
         const timer = setTimeout(() => {
             let filtered = [...initialProducts];
-
-            // Note: Product type filter (bestsellers/featured) is handled by the backend
-            // The backend already filters products when ?filter=bestsellers or ?filter=featured is in URL
 
             // Apply search query filter
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
                 filtered = filtered.filter((product) =>
-                    product.name.toLowerCase().includes(query)
+                    product.name.toLowerCase().includes(query),
                 );
             }
 
@@ -175,7 +173,7 @@ export default function ProductCatalogInteractive({
 
             setProducts(filtered);
             setIsLoading(false);
-        }, 500); // Reduced delay for snappier feel
+        }, 4000); // 4s skeleton always on first load
 
         return () => clearTimeout(timer);
     }, [filters, sortBy, initialProducts, searchQuery, productFilter]);
@@ -195,13 +193,16 @@ export default function ProductCatalogInteractive({
             id: `${product.id}-default`,
             name: product.name,
             category: product.category,
-            price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
+            price:
+                typeof product.price === 'string'
+                    ? parseFloat(product.price)
+                    : product.price,
             currency: product.currency || 'NGN',
             quantity: 1,
             image: product.image,
             alt: product.alt,
             variations: {},
-        }); 
+        });
     };
 
     const handleClearFilters = () => {
@@ -265,7 +266,7 @@ export default function ProductCatalogInteractive({
                     {productFilter && (
                         <button
                             onClick={clearProductFilter}
-                            className="mt-4 inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-smooth"
+                            className="text-primary hover:text-primary/80 transition-smooth mt-4 inline-flex items-center gap-2 text-sm"
                         >
                             <Icon name="XMarkIcon" size={16} />
                             <span>Clear filter & show all products</span>
@@ -388,13 +389,19 @@ export default function ProductCatalogInteractive({
                     {/* Products Grid/List */}
                     <div className="min-w-0 flex-1">
                         {isLoading ? (
-                            <div className="flex items-center justify-center py-20">
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
-                                    <p className="text-muted-foreground text-sm md:text-base">
-                                        Loading products...
-                                    </p>
-                                </div>
+                            <div className="grid grid-cols-2 gap-3 py-20 sm:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                                {[...Array(8)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex flex-col space-y-3"
+                                    >
+                                        <Skeleton className="h-[125px] w-full rounded-xl" />
+                                        <div className="space-y-2">
+                                            <Skeleton className="h-4 w-full" />
+                                            <Skeleton className="h-4 w-3/4" />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         ) : products?.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -430,6 +437,7 @@ export default function ProductCatalogInteractive({
                                         key={product?.id}
                                         product={product}
                                         viewMode={viewMode}
+                                        isLoading={isLoading}
                                         onAddToCart={handleAddToCart}
                                     />
                                 ))}
@@ -443,9 +451,11 @@ export default function ProductCatalogInteractive({
                                     if (!link.url) {
                                         return null;
                                     }
-                                    
+
                                     const isActive = link.active;
-                                    const isPrevNext = link.label.includes('Previous') || link.label.includes('Next');
+                                    const isPrevNext =
+                                        link.label.includes('Previous') ||
+                                        link.label.includes('Next');
                                     const label = link.label
                                         .replace('&laquo;', '«')
                                         .replace('&raquo;', '»')
@@ -455,16 +465,15 @@ export default function ProductCatalogInteractive({
                                     return (
                                         <button
                                             key={index}
-                                            onClick={() => router.visit(link.url as string)}
+                                            onClick={() =>
+                                                router.visit(link.url as string)
+                                            }
                                             disabled={isActive}
-                                            className={`
-                                                px-4 py-2 rounded-lg font-medium transition-all
-                                                ${isActive 
-                                                    ? 'bg-primary text-primary-foreground cursor-default' 
+                                            className={`rounded-lg px-4 py-2 font-medium transition-all ${
+                                                isActive
+                                                    ? 'bg-primary text-primary-foreground cursor-default'
                                                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                                                }
-                                                ${isPrevNext ? 'px-6' : ''}
-                                            `}
+                                            } ${isPrevNext ? 'px-6' : ''} `}
                                         >
                                             {label}
                                         </button>

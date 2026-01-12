@@ -5,14 +5,17 @@ import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/currency';
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductCard({
     product,
     viewMode,
+    isLoading,
     onAddToCart,
 }: {
     product: Product;
     viewMode: string;
+    isLoading: boolean;
     onAddToCart: (product: Product) => void;
 }) {
     const [isAdding, setIsAdding] = useState(false);
@@ -34,7 +37,7 @@ export default function ProductCard({
     }, []);
 
     const handleAddToCart = (e: React.MouseEvent) => {
-        e?.preventDefault(); 
+        e?.preventDefault();
         e?.stopPropagation();
         setIsAdding(true);
         setIsSelected(!isSelected);
@@ -44,6 +47,22 @@ export default function ProductCard({
             setIsAdding(false);
         }, 300);
     };
+
+    if (isLoading) {
+        return (
+            <div className={viewMode === 'list' ? "bg-card border-border flex flex-col gap-4 rounded-lg border p-4 sm:flex-row md:gap-6 md:p-6" : "bg-card border-border flex w-full min-w-0 flex-col overflow-hidden rounded-lg border"}>
+                <div className={viewMode === 'list' ? "w-full flex-shrink-0 sm:w-48 md:w-64" : "bg-muted relative aspect-[3/4] overflow-hidden"}>
+                    <Skeleton className={viewMode === 'list' ? "h-[200px] w-full rounded-lg" : "h-[300px] w-full rounded-lg"} />
+                </div>
+                <div className={viewMode === 'list' ? "flex min-w-0 flex-1 flex-col justify-between" : "space-y-2 p-3 md:space-y-3 md:p-6"}>
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2 mb-2" />
+                    <Skeleton className="h-4 w-1/3 mb-2" />
+                    <Skeleton className="h-4 w-1/4" />
+                </div>
+            </div>
+        );
+    }
 
     if (viewMode === 'list') {
         return (
@@ -202,7 +221,7 @@ export default function ProductCard({
             href={`/product-detail/${product?.id}`}
             className="bg-card hover:bg-accent/50 border-border transition-smooth hover-lift group flex w-full min-w-0 flex-col overflow-hidden rounded-lg border"
         >
-            <div className="bg-muted relative aspect-[3/4] overflow-hidden">
+            <div className="bg-muted relative aspect-[4/4] overflow-hidden">
                 <AppImage
                     src={product?.image}
                     alt={product?.alt}

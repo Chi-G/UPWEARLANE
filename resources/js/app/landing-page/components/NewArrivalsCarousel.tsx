@@ -5,6 +5,7 @@ import AppImage from '@/components/ui/AppImage';
 import { Link } from '@inertiajs/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { Product, CurrencyCode } from '@/types';
 import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/currency';
@@ -18,6 +19,7 @@ export default function NewArrivalsCarousel({
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
     const [currencySymbol, setCurrencySymbol] = useState('₦');
+    const [isLoading, setIsLoading] = useState(true);
 
     const itemsPerView = {
         mobile: 1,
@@ -37,7 +39,12 @@ export default function NewArrivalsCarousel({
 
         updateCurrency();
         window.addEventListener('currency-changed', updateCurrency);
-        return () => window.removeEventListener('currency-changed', updateCurrency);
+        // Simulate loading for 2 seconds
+        const timer = setTimeout(() => setIsLoading(false), 4000);
+        return () => {
+            window.removeEventListener('currency-changed', updateCurrency);
+            clearTimeout(timer);
+        };
     }, []);
 
     useEffect(() => {
@@ -104,149 +111,148 @@ export default function NewArrivalsCarousel({
 
                 {/* Carousel Container */}
                 <div className="relative overflow-hidden">
-                    <div
-                        className="ease-smooth flex transition-transform duration-500"
-                        style={{
-                            transform: `translateX(-${currentIndex * 100}%)`,
-                        }}
-                    >
-                        {Array.from({ length: totalSlides })?.map(
-                            (_, slideIndex: number) => (
+                    {isLoading ? (
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+                            {[...Array(4)].map((_, i) => (
+                                <div key={i} className="flex flex-col space-y-3">
+                                    <Skeleton className="h-[250px] w-full rounded-xl" />
+                                    <div className="space-y-2">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-3/4" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div
+                            className="ease-smooth flex transition-transform duration-500"
+                            style={{
+                                transform: `translateX(-${currentIndex * 100}%)`,
+                            }}
+                        >
+                            {Array.from({ length: totalSlides })?.map(
+                                (_, slideIndex: number) => (
                                     <div
                                         key={slideIndex}
-                                        className="grid w-full flex-shrink-0 grid-cols-3 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
+                                        className="grid w-full flex-shrink-0 grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
                                     >
-                                    {newArrivals
-                                        ?.slice(
-                                            slideIndex * itemsPerView?.desktop,
-                                            (slideIndex + 1) *
-                                                itemsPerView?.desktop,
-                                        )
-                                        ?.map((product: Product) => (
-                                            <div
-                                                key={product?.id}
-                                                className="bg-card border-border shadow-gold hover:shadow-gold-md transition-smooth hover-lift group flex h-full flex-col overflow-hidden rounded-xl border"
-                                            >
-                                                {/* Product Image */}
-                                                <div className="relative aspect-[3/4] overflow-hidden">
-                                                    <AppImage
-                                                        src={product?.image}
-                                                        alt={product?.alt}
-                                                        width={400}
-                                                        height={400}
-                                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                    />
-
-                                                    {/* New Badge */}
-                                                    <div className="bg-success text-success-foreground absolute left-3 top-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
-                                                        <Icon
-                                                            name="SparklesIcon"
-                                                            size={12}
-                                                            className="mr-0.5 inline md:mr-1 md:size-[14px]"
+                                        {newArrivals
+                                            ?.slice(
+                                                slideIndex * itemsPerView?.desktop,
+                                                (slideIndex + 1) * itemsPerView?.desktop,
+                                            )
+                                            ?.map((product: Product) => (
+                                                <div
+                                                    key={product?.id}
+                                                    className="bg-card border-border shadow-gold hover:shadow-gold-md transition-smooth hover-lift group flex h-full flex-col overflow-hidden rounded-xl border"
+                                                >
+                                                    {/* Product Image */}
+                                                    <div className="relative aspect-[3/4] overflow-hidden">
+                                                        <AppImage
+                                                            src={product?.image}
+                                                            alt={product?.alt}
+                                                            width={400}
+                                                            height={400}
+                                                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                         />
-                                                        New
+
+                                                        {/* New Badge */}
+                                                        <div className="bg-success text-success-foreground absolute left-3 top-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
+                                                            <Icon
+                                                                name="SparklesIcon"
+                                                                size={12}
+                                                                className="mr-0.5 inline md:mr-1 md:size-[14px]"
+                                                            />
+                                                            New
+                                                        </div>
+
+                                                        {/* Launch Date */}
+                                                        <div className="bg-background/90 text-foreground absolute bottom-3 left-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
+                                                            {product?.launchDate}
+                                                        </div>
                                                     </div>
 
-                                                    {/* Launch Date */}
-                                                    <div className="bg-background/90 text-foreground absolute bottom-3 left-3 rounded-md px-1.5 py-0.5 text-[10px] font-medium md:px-2 md:py-1 md:text-xs">
-                                                        {product?.launchDate}
-                                                    </div>
-                                                </div>
+                                                    {/* Product Info */}
+                                                    <div className="flex flex-1 flex-col space-y-1.5 p-2 md:space-y-3 md:p-6">
+                                                        <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
+                                                            <div>
+                                                                <Link
+                                                                    href={`/product-detail/${product?.id}`}
+                                                                    className="group-hover:text-primary transition-smooth block"
+                                                                >
+                                                                    <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
+                                                                        {product?.name}
+                                                                    </h3>
+                                                                </Link>
+                                                                <p className="text-muted-foreground mt-0.5 line-clamp-1 text-[10px] md:mt-1 md:line-clamp-2 md:text-sm">
+                                                                    {product?.description}
+                                                                </p>
+                                                            </div>
 
-                                                {/* Product Info */}
-                                                <div className="flex flex-1 flex-col space-y-1.5 p-2 md:space-y-3 md:p-6">
-                                                    <div className="flex flex-1 flex-col space-y-1.5 md:space-y-3">
-                                                        <div>
+                                                            {/* Features */}
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {product?.features
+                                                                    ?.slice(0, 2)
+                                                                    ?.map(
+                                                                        (
+                                                                            feature: string,
+                                                                            index: number,
+                                                                        ) => (
+                                                                            <span
+                                                                                key={index}
+                                                                                className="bg-accent text-accent-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs"
+                                                                            >
+                                                                                {feature}
+                                                                            </span>
+                                                                        ),
+                                                                    )}
+                                                                {product?.features &&
+                                                                    product.features.length > 2 && (
+                                                                        <span className="bg-muted text-muted-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs">
+                                                                            +{product.features.length - 2}
+                                                                        </span>
+                                                                    )}
+                                                            </div>
+
+                                                            {/* Price */}
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="font-heading text-foreground text-sm font-bold md:text-xl">
+                                                                    {currencySymbol}{convertPrice(
+                                                                        typeof product.price === 'string'
+                                                                            ? parseFloat(product.price)
+                                                                            : product.price,
+                                                                        (product.currency || 'NGN') as CurrencyCode,
+                                                                        selectedCurrency
+                                                                    ).toFixed(2)}
+                                                                </span>
+                                                                {product?.preOrder && (
+                                                                    <span className="text-primary text-[10px] font-medium md:text-sm">
+                                                                        Pre-order
+                                                                    </span>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Action Button */}
                                                             <Link
                                                                 href={`/product-detail/${product?.id}`}
-                                                                className="group-hover:text-primary transition-smooth block"
+                                                                className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect mt-auto inline-flex w-full items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium md:px-4 md:py-2.5 md:text-base"
                                                             >
-                                                                <h3 className="font-heading text-foreground line-clamp-2 text-xs font-semibold md:text-lg lg:text-xl">
-                                                                    {
-                                                                        product?.name
-                                                                    }
-                                                                </h3>
+                                                                <Icon
+                                                                    name="EyeIcon"
+                                                                    size={16}
+                                                                    className="mr-2"
+                                                                />
+                                                                View Details
                                                             </Link>
-                                                            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-[10px] md:mt-1 md:line-clamp-2 md:text-sm">
-                                                                {
-                                                                    product?.description
-                                                                }
-                                                            </p>
                                                         </div>
-
-                                                        {/* Features */}
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {product?.features
-                                                                ?.slice(0, 2)
-                                                                ?.map(
-                                                                    (
-                                                                        feature: string,
-                                                                        index: number,
-                                                                    ) => (
-                                                                        <span
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                            className="bg-accent text-accent-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs"
-                                                                        >
-                                                                            {
-                                                                                feature
-                                                                            }
-                                                                        </span>
-                                                                    ),
-                                                                )}
-                                                            {product?.features &&
-                                                                product.features
-                                                                    .length >
-                                                                    2 && (
-                                                                <span className="bg-muted text-muted-foreground rounded-md px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs">
-                                                                    +
-                                                                    {product
-                                                                        .features
-                                                                        .length -
-                                                                        2}
-                                                                </span>
-                                                            )}
-                                                        </div>
-
-                                                        {/* Price */}
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="font-heading text-foreground text-sm font-bold md:text-xl">
-                                                                {currencySymbol}{convertPrice(
-                                                                    typeof product.price === 'string' 
-                                                                        ? parseFloat(product.price) 
-                                                                        : product.price,
-                                                                    (product.currency || 'NGN') as CurrencyCode,
-                                                                    selectedCurrency
-                                                                ).toFixed(2)}
-                                                            </span>
-                                                            {product?.preOrder && (
-                                                                <span className="text-primary text-[10px] font-medium md:text-sm">
-                                                                    Pre-order
-                                                                </span>
-                                                            )}
-                                                        </div>
-
-                                                        {/* Action Button */}
-                                                        <Link
-                                                            href={`/product-detail/${product?.id}`}
-                                                            className="bg-primary hover:bg-primary/90 text-primary-foreground transition-smooth press-effect mt-auto inline-flex w-full items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium md:px-4 md:py-2.5 md:text-base"
-                                                        >
-                                                            <Icon
-                                                                name="EyeIcon"
-                                                                size={16}
-                                                                className="mr-2"
-                                                            />
-                                                            View Details
-                                                        </Link>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                </div>
-                            ),
-                        )}
-                    </div>
+                                            ))}
+                                    </div>
+                                ),
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Dots Indicator */}
