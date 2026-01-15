@@ -7,11 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return in_array($this->email, [
+            'chijindu.nwokeohuru@gmail.com',
+            'admin@upwearlane.com',
+            'superadmin@upwearlane.com',
+        ]);
+    }
 
     /**
      * The attributes that are mass assignable.
