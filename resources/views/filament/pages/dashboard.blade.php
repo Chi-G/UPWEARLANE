@@ -1,14 +1,18 @@
-@extends('filament::page')
-
-@section('content')
-    <div class="filament-page-heading">
-        <h1 class="filament-heading">Admin Dashboard</h1>
-    </div>
-
-    <div class="filament-grid">
-        <div class="filament-card">
-            <h2>Welcome</h2>
-            <p>Welcome to the admin dashboard. Add widgets or panels here.</p>
+<x-filament-panels::page>
+    <div class="filament-page-heading flex items-center justify-between mb-6">
+        <div>
+            <h1 class="filament-heading text-2xl font-bold">Welcome</h1>
+            <div class="text-lg font-semibold text-gray-700">Admin</div>
         </div>
+        <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
+            @csrf
+            <button type="submit" class="text-danger-600 hover:text-danger-500 font-bold">Sign out</button>
+        </form>
     </div>
-@endsection
+
+    @widgets([
+        App\Filament\Widgets\StatsOverview::class,
+        App\Filament\Widgets\RecentOrdersTable::class,
+    ])
+</x-filament-panels::page>
+

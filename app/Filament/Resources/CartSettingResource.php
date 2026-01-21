@@ -18,6 +18,8 @@ class CartSettingResource extends Resource
 {
     protected static ?string $model = CartSetting::class;
 
+    protected static ?int $navigationSort = 3;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Shop Management';

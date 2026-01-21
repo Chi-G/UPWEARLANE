@@ -16,22 +16,30 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Products', Product::count())
-                ->description('Total products in catalog')
-                ->descriptionIcon('heroicon-m-shopping-bag')
-                ->color('primary'),
-            Stat::make('Total Orders', Order::count())
-                ->description('Orders placed to date')
-                ->descriptionIcon('heroicon-m-shopping-cart')
-                ->color('success'),
             Stat::make('Total Users', User::count())
                 ->description('Registered customers')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('info'),
-            Stat::make('Active Promo Codes', PromoCode::where('is_active', true)->count())
-                ->description('Discounts currently available')
-                ->descriptionIcon('heroicon-m-ticket')
+            Stat::make('Total Orders', Order::count())
+                ->description('All time orders')
+                ->descriptionIcon('heroicon-m-shopping-cart')
+                ->color('primary'),
+            Stat::make('Total Revenue', '$' . number_format(Order::where('status', 'completed')->sum('total'), 2))
+                ->description('Total paid orders')
+                ->descriptionIcon('heroicon-m-currency-dollar')
+                ->color('success'),
+            Stat::make('Active Products', Product::where('is_active', true)->count())
+                ->description('Products available for sale')
+                ->descriptionIcon('heroicon-m-shopping-bag')
+                ->color('success'),
+            Stat::make('Categories', \App\Models\Category::count())
+                ->description('Product categories')
+                ->descriptionIcon('heroicon-m-tag')
                 ->color('warning'),
-        ];
+            Stat::make('Pending Orders', Order::where('status', 'pending')->count())
+                ->description('Orders awaiting processing')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color('danger'),
+        ]; 
     }
 }
