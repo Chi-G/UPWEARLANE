@@ -15,11 +15,10 @@ class OrdersChart extends ChartWidget
     protected function getData(): array
     {
         $data = Order::select(DB::raw('count(*) as count'), DB::raw('DATE(created_at) as date'))
+            ->where('created_at', '>=', now()->subDays(7))
             ->groupBy('date')
-            ->orderBy('date', 'desc')
-            ->limit(7)
-            ->get()
-            ->reverse();
+            ->orderBy('date', 'asc')
+            ->get();
 
         return [
             'datasets' => [
@@ -27,9 +26,11 @@ class OrdersChart extends ChartWidget
                     'label' => 'Orders',
                     'data' => $data->pluck('count')->toArray(),
                     'fill' => 'start',
+                    'borderColor' => '#3b82f6',
+                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                 ],
             ],
-            'labels' => $data->pluck('date')->toArray(),
+            'labels' => $data->map(fn ($item) => \Carbon\Carbon::parse($item->date)->format('M d'))->toArray(),
         ];
     }
 
