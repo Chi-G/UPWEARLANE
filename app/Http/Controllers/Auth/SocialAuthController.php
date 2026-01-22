@@ -58,7 +58,7 @@ class SocialAuthController extends Controller
                 }
             }
 
-            Auth::login($user, true);
+            Auth::login($user, false);
 
             return redirect()->intended('/');
 

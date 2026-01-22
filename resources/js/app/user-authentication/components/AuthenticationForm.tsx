@@ -55,9 +55,8 @@ export default function AuthenticationForm({
                         name="name"
                         value={data.name}
                         onChange={handleInputChange}
-                        className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                            errors.name ? 'border-destructive' : 'border-border'
-                        }`}
+                        className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${errors.name ? 'border-destructive' : 'border-border'
+                            }`}
                         placeholder="John Doe"
                         disabled={processing}
                         required={isSignUp}
@@ -83,9 +82,8 @@ export default function AuthenticationForm({
                     name="email"
                     value={data.email}
                     onChange={handleInputChange}
-                    className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${
-                        errors.email ? 'border-destructive' : 'border-border'
-                    }`}
+                    className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 ${errors.email ? 'border-destructive' : 'border-border'
+                        }`}
                     placeholder="you@example.com"
                     disabled={processing}
                     required
@@ -111,9 +109,8 @@ export default function AuthenticationForm({
                         name="password"
                         value={data.password}
                         onChange={handleInputChange}
-                        className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${
-                            errors.password ? 'border-destructive' : 'border-border'
-                        }`}
+                        className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${errors.password ? 'border-destructive' : 'border-border'
+                            }`}
                         placeholder="••••••••"
                         disabled={processing}
                         required
@@ -151,11 +148,10 @@ export default function AuthenticationForm({
                             name="password_confirmation"
                             value={data.password_confirmation}
                             onChange={handleInputChange}
-                            className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${
-                                errors.password_confirmation
-                                    ? 'border-destructive'
-                                    : 'border-border'
-                            }`}
+                            className={`bg-input text-foreground placeholder:text-muted-foreground focus-ring transition-smooth h-12 w-full rounded-lg border px-4 pr-12 ${errors.password_confirmation
+                                ? 'border-destructive'
+                                : 'border-border'
+                                }`}
                             placeholder="••••••••"
                             disabled={processing}
                             required={isSignUp}
@@ -180,21 +176,21 @@ export default function AuthenticationForm({
             )}
 
             <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        id={isSignUp ? "acceptTerms" : "remember"}
-                        name={isSignUp ? "acceptTerms" : "remember"}
-                        checked={isSignUp ? data.acceptTerms : data.remember}
-                        onChange={handleInputChange}
-                        className="border-input text-primary focus:ring-primary h-4 w-4 rounded"
-                        disabled={processing}
-                    />
-                    <label
-                        htmlFor={isSignUp ? "acceptTerms" : "remember"}
-                        className="text-muted-foreground ml-2 block text-sm"
-                    >
-                        {isSignUp ? (
+                {isSignUp ? (
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="acceptTerms"
+                            name="acceptTerms"
+                            checked={data.acceptTerms}
+                            onChange={handleInputChange}
+                            className="border-input text-primary focus:ring-primary h-4 w-4 rounded"
+                            disabled={processing}
+                        />
+                        <label
+                            htmlFor="acceptTerms"
+                            className="text-muted-foreground ml-2 block text-sm"
+                        >
                             <span>
                                 I agree to the{' '}
                                 <a
@@ -211,28 +207,29 @@ export default function AuthenticationForm({
                                     Privacy Policy
                                 </a>
                             </span>
-                        ) : (
-                            'Remember me'
-                        )}
-                    </label>
-                </div>
-                {!isSignUp && (
-                    <a
-                        href={route('password.request')}
-                        className="text-primary hover:text-primary/90 text-sm font-medium hover:underline"
-                    >
-                        Forgot password?
-                    </a>
+                        </label>
+                    </div>
+                ) : (
+                    <div className="flex w-full justify-end">
+                        <a
+                            href={route('password.request')}
+                            className="text-primary hover:text-primary/90 text-sm font-medium hover:underline"
+                        >
+                            Forgot password?
+                        </a>
+                    </div>
                 )}
             </div>
 
-             {/* Show acceptTerms error if present */}
-             {isSignUp && errors.acceptTerms && (
+
+
+            {/* Show acceptTerms error if present */}
+            {isSignUp && errors.acceptTerms && (
                 <p className="text-destructive mt-1 flex items-center gap-1 text-sm">
                     <Icon name="ExclamationCircleIcon" size={16} />
                     {errors.acceptTerms}
                 </p>
-             )}
+            )}
 
 
             <button

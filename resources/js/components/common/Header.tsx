@@ -88,18 +88,17 @@ export default function Header() {
 
     return (
         <>
-        {showVerificationBanner && (
-            <div className="bg-yellow-500 text-white text-center text-sm py-2 px-4 fixed top-0 w-full z-[60]">
-                <span>Your email address is not verified. </span>
-                <Link href={route('verification.notice')} className="underline font-bold hover:text-yellow-100">
-                    Verify Now
-                </Link>
-            </div>
-        )}
+            {showVerificationBanner && (
+                <div className="bg-yellow-500 text-white text-center text-sm py-2 px-4 fixed top-0 w-full z-[60]">
+                    <span>Your email address is not verified. </span>
+                    <Link href={route('verification.notice')} className="underline font-bold hover:text-yellow-100">
+                        Verify Now
+                    </Link>
+                </div>
+            )}
             <header
-                className={`bg-background border-border transition-smooth fixed left-0 w-full border-b ${
-                    isScrolled ? 'shadow-gold-sm' : ''
-                } ${showVerificationBanner ? 'top-8' : 'top-0'} z-50`}
+                className={`bg-background border-border transition-smooth fixed left-0 w-full border-b ${isScrolled ? 'shadow-gold-sm' : ''
+                    } ${showVerificationBanner ? 'top-8' : 'top-0'} z-50`}
             >
                 <div className="mx-auto px-4 sm:px-8">
                     <div className="flex h-16 items-center justify-between lg:h-20">
@@ -111,7 +110,7 @@ export default function Header() {
                             <div className="flex h-10 w-10 lg:h-12 lg:w-12 items-center justify-center rounded-lg overflow-hidden bg-slate-950 shadow-sm shrink-0">
                                 <img src={isDarkMode ? "/logo.png?v=1.3" : "/logo1.png?v=1.3"} alt="UpWearLane" className="h-8 lg:h-10 w-auto object-contain" />
                             </div>
-                            <span className="font-heading text-foreground text-xl font-bold leading-none">
+                            <span className="font-heading text-foreground text-xl font-bold leading-normal">
                                 UpWearLane
                             </span>
                         </Link>
@@ -263,9 +262,8 @@ export default function Header() {
             )}
             {/* Mobile Menu Drawer */}
             <div
-                className={`bg-background ease-smooth fixed bottom-0 left-0 top-0 z-[70] w-80 max-w-[85vw] transform transition-transform duration-300 lg:hidden ${
-                    isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-                }`}
+                className={`bg-background ease-smooth fixed bottom-0 left-0 top-0 z-[70] w-80 max-w-[85vw] transform transition-transform duration-300 lg:hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}
             >
                 <div className="flex h-full flex-col">
                     {/* Mobile Menu Header */}
@@ -274,7 +272,7 @@ export default function Header() {
                             <div className="flex h-14 w-14 items-center justify-center rounded-lg overflow-hidden bg-slate-950 shadow-sm">
                                 <img src={isDarkMode ? "/logo.png?v=1.3" : "/logo1.png?v=1.3"} alt="UpWearLane" className="h-12 w-auto object-contain contrast-110" />
                             </div>
-                            <span className="font-heading text-foreground text-xl font-bold">
+                            <span className="font-heading text-foreground text-xl font-bold leading-normal">
                                 UpWearLane
                             </span>
                         </div>

@@ -82,7 +82,7 @@
     <div class="welcome-card">
         <div class="flex items-center">
             <div class="avatar-circle">
-                {{ substr(auth()->user()->name, 0, 1) }}
+                {{ substr(auth()->user()?->name ?? 'Admin', 0, 1) }}
             </div>
             <div class="welcome-text">
                 <h1>Welcome</h1>
