@@ -33,8 +33,6 @@ export default function HeroBanner({ heroData, categories: initialCategories = [
 
     // Poll for category updates every 5 seconds
     useEffect(() => {
-        setCategories(initialCategories);
-
         const fetchCategories = async () => {
              try {
                  const response = await fetch('/api/categories');

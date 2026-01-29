@@ -32,16 +32,16 @@ export default function ProductCatalogInteractive({
 
     const [filters, setFilters] = useState<CatalogFilters>(() => {
         // Safe access to avoid TypeError if initialFilters has properties that are functions (like sort on an array)
-        const getVal = (obj: any, key: string) => {
+        const getVal = (obj: Record<string, unknown> | undefined, key: string) => {
             if (obj && typeof obj[key] !== 'function') return obj[key];
             return undefined;
         };
 
         return {
-            categories: getVal(initialFilters, 'category') ? [initialFilters!.category!] : [],
-            priceRange: getVal(initialFilters, 'priceRange') || null,
-            colors: getVal(initialFilters, 'colors') ? (initialFilters!.colors as string).split(',') : [],
-            brands: getVal(initialFilters, 'brands') ? (initialFilters!.brands as string).split(',') : [],
+            categories: getVal(initialFilters as unknown as Record<string, unknown>, 'category') ? [initialFilters!.category!] : [],
+            priceRange: (getVal(initialFilters as unknown as Record<string, unknown>, 'priceRange') as string) || null,
+            colors: getVal(initialFilters as unknown as Record<string, unknown>, 'colors') ? (initialFilters!.colors as string).split(',') : [],
+            brands: getVal(initialFilters as unknown as Record<string, unknown>, 'brands') ? (initialFilters!.brands as string).split(',') : [],
         };
     });
 
@@ -51,7 +51,7 @@ export default function ProductCatalogInteractive({
     });
 
     const currencySymbol = (() => {
-        const code = selectedCurrency || (initialFilters as any)?.currency || 'NGN';
+        const code = selectedCurrency || (initialFilters as unknown as Record<string, string>)?.currency || 'NGN';
         const symbols: Record<string, string> = {
             'NGN': '₦',
             'USD': '$',
@@ -66,7 +66,7 @@ export default function ProductCatalogInteractive({
     const [products, setProducts] = useState(initialProducts);
 
     // Show loading animation on initial mount for seconds
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const updateFilters = (newFilters: CatalogFilters) => {
         setIsLoading(true);
@@ -80,7 +80,6 @@ export default function ProductCatalogInteractive({
 
     useEffect(() => {
         setProducts(initialProducts);
-        setIsLoading(false);
     }, [initialProducts]);
 
     useEffect(() => {

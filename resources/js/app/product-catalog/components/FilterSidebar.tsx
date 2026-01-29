@@ -1,5 +1,5 @@
 import Icon from '@/components/ui/AppIcon';
-import { FilterSidebarProps } from '@/types';
+import { FilterSidebarProps, CurrencyCode } from '@/types';
 import { useState } from 'react';
 import { convertPrice, formatPrice } from '@/utils/currency';
 
@@ -56,26 +56,26 @@ export default function FilterSidebar({
 
     const priceRangesList = (priceRanges && priceRanges.length > 0) 
         ? priceRanges.map(pr => {
-            const minConverted = convertPrice(Number(pr.min_price), 'NGN', selectedCurrency as any);
-            const maxConverted = pr.max_price ? convertPrice(Number(pr.max_price), 'NGN', selectedCurrency as any) : null;
+            const minConverted = convertPrice(Number(pr.min_price), 'NGN', selectedCurrency as CurrencyCode);
+            const maxConverted = pr.max_price ? convertPrice(Number(pr.max_price), 'NGN', selectedCurrency as CurrencyCode) : null;
             
             let label = pr.label;
             
             // If no label is set, generate a dynamic one like "₦0 - ₦50"
             if (!label || label.trim() === '') {
                 if (maxConverted === null) {
-                    label = `Above ${formatPrice(minConverted, selectedCurrency as any)}`;
+                    label = `Above ${formatPrice(minConverted, selectedCurrency as CurrencyCode)}`;
                 } else {
-                    label = `${formatPrice(minConverted, selectedCurrency as any)} - ${formatPrice(maxConverted, selectedCurrency as any)}`;
+                    label = `${formatPrice(minConverted, selectedCurrency as CurrencyCode)} - ${formatPrice(maxConverted, selectedCurrency as CurrencyCode)}`;
                 }
             } else if (label.includes('{min}') || label.includes('{max}')) {
                 // Support placeholders {min} and {max}
                 label = label
-                    .replace('{min}', formatPrice(minConverted, selectedCurrency as any))
-                    .replace('{max}', maxConverted ? formatPrice(maxConverted, selectedCurrency as any) : 'Any');
+                    .replace('{min}', formatPrice(minConverted, selectedCurrency as CurrencyCode))
+                    .replace('{max}', maxConverted ? formatPrice(maxConverted, selectedCurrency as CurrencyCode) : 'Any');
             } else {
                 // Fallback: simple symbol replacement
-                label = label.replace(/\$/g, currencySymbol).replace(/\₦/g, currencySymbol);
+                label = label.replace(/\$/g, currencySymbol).replace(/₦/g, currencySymbol);
             }
 
             return {
@@ -181,7 +181,7 @@ export default function FilterSidebar({
                     </button>
                     {expandedSections?.price && (
                         <div className="space-y-2">
-                            {priceRangesList?.map((range: any) => (
+                            {priceRangesList?.map((range: { id: string; label: string }) => (
                                 <label
                                     key={range?.id}
                                     className="group flex cursor-pointer items-center"

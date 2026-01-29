@@ -1,5 +1,5 @@
 import Header from '@/components/common/Header';
-import { Product } from '@/types';
+import { Product, PriceRange } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import ProductCatalogInteractive from './components/ProductCatalogInteractive';
@@ -53,7 +53,7 @@ interface PageProps {
     };
     categories: Category[];
     brands: Array<{ id: number; name: string }>;
-    priceRanges: any[];
+    priceRanges: PriceRange[];
     [key: string]: unknown;
 }
 
@@ -116,9 +116,9 @@ export default function ProductCatalogPage() {
                 pagination={paginationData}
                 categories={categories}
                 brands={brands}
-                initialFilters={serverFilters as any}
+                initialFilters={serverFilters as Record<string, unknown>}
                 selectedCurrency={selectedCurrency as string}
-                priceRanges={priceRanges as any}
+                priceRanges={priceRanges}
             />
         </>
     );
