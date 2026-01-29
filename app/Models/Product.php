@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'category_id', 'name', 'slug', 'description', 'short_description',
+        'category_id', 'brand_setting_id', 'name', 'slug', 'description', 'short_description',
         'base_price', 'currency', 'original_price', 'discount_percentage', 'sku',
         'stock_quantity', 'is_new', 'is_featured', 'is_bestseller',
         'rating', 'review_count', 'sold_count', 'launch_date',
@@ -36,6 +36,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function brandSetting()
+    {
+        return $this->belongsTo(BrandSetting::class);
     }
 
     public function images()

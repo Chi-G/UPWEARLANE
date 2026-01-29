@@ -17,10 +17,20 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->email, [
+        return in_array($this->email, self::getAdminEmails());
+    }
+
+    public static function getAdminEmails(): array
+    {
+        return [
             'admin@upwearlane.com',
             'superadmin@upwearlane.com',
-        ]);
+        ];
+    }
+
+    public static function getAdmins()
+    {
+        return self::whereIn('email', self::getAdminEmails())->get();
     }
 
     /**

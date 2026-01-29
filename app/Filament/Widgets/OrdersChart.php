@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrdersChart extends ChartWidget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 8;
 
     protected ?string $heading = 'Orders Trend';
 

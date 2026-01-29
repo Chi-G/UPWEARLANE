@@ -24,23 +24,13 @@ class PaymentController extends Controller
      */
     private function getConversionRates(): array
     {
-        // Try dynamic rates from database; fall back to sensible defaults
-        try {
-            $rates = \App\Models\CurrencyRate::getConversionRates();
-            return array_merge([
-                'USD' => 1.0,
-                'GBP' => 0.79,
-                'CAD' => 1.36,
-                'NGN' => 1650.0,
-            ], $rates);
-        } catch (\Throwable $e) {
-            return [
-                'USD' => 1.0,
-                'GBP' => 0.79,
-                'CAD' => 1.36,
-                'NGN' => 1650.0,
-            ];
-        }
+        $rates = \App\Models\CurrencyRate::getConversionRates();
+        
+        // Ensure NGN and USD are always present to avoid errors
+        return array_merge([
+            'USD' => 1.0,
+            'NGN' => 1500.0,
+        ], $rates);
     }
 
     /**

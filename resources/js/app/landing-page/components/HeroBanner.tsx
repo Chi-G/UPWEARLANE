@@ -2,7 +2,7 @@ import Icon from '@/components/ui/AppIcon';
 import { HeroData } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Category {
     id: number;
@@ -26,9 +26,34 @@ const DEFAULT_ICONS: Record<string, string> = {
     'ar-vr': 'CubeIcon',
 };
 
-export default function HeroBanner({ heroData, categories = [] }: HeroBannerProps) {
+export default function HeroBanner({ heroData, categories: initialCategories = [] }: HeroBannerProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [categories, setCategories] = useState<Category[]>(initialCategories);
+
+    // Poll for category updates every 5 seconds
+    useEffect(() => {
+        setCategories(initialCategories);
+
+        const fetchCategories = async () => {
+             try {
+                 const response = await fetch('/api/categories');
+                 if (response.ok) {
+                     const data = await response.json();
+                     setCategories(prev => {
+                        const isSame = JSON.stringify(prev) === JSON.stringify(data);
+                        return isSame ? prev : data;
+                     });
+                 }
+             } catch (error) {
+                 console.error('Failed to fetch categories:', error);
+             }
+        };
+
+        const intervalId = setInterval(fetchCategories, 5000);
+        
+        return () => clearInterval(intervalId);
+    }, [initialCategories]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -134,7 +159,7 @@ export default function HeroBanner({ heroData, categories = [] }: HeroBannerProp
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                                placeholder="I am looking for..."
+                                placeholder={heroData?.searchPlaceholder || "I am looking for..."}
                                 className="bg-card text-foreground placeholder:text-muted-foreground h-full w-full px-12 py-4 text-base outline-none"
                             />
                         </div>
@@ -150,7 +175,7 @@ export default function HeroBanner({ heroData, categories = [] }: HeroBannerProp
 
                     {/* Category Grid */}
                     <div className="mt-8">
-                        <div className="grid grid-cols-5 gap-2 md:gap-4 lg:gap-6">
+                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:gap-4 lg:gap-6 lg:grid-cols-6">
                             {/* Post Ad Button */}
                             <Link
                                 href="/post-ad"
@@ -168,7 +193,7 @@ export default function HeroBanner({ heroData, categories = [] }: HeroBannerProp
                                 </span>
                             </Link>
 
-                            {categories.slice(0, 5).map((cat) => (
+                            {categories.map((cat) => (
                                 <Link
                                     key={cat.slug}
                                     href={`/product-catalog?category=${cat.slug}`}
@@ -194,7 +219,7 @@ export default function HeroBanner({ heroData, categories = [] }: HeroBannerProp
     );
 }
 
-// Keeping empty propTypes if needed to satisfy linter or parent, though we are not using heroData anymore.
 HeroBanner.propTypes = {
-    heroData: PropTypes.any,
+    heroData: PropTypes.object,
+    categories: PropTypes.array,
 };

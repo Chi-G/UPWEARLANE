@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function PromoCodeSection({
     onApplyPromo,
     appliedPromo,
+    availablePromoCodes = [],
 }: PromoCodeSectionProps) {
     const [promoCode, setPromoCode] = useState('');
     const [isApplying, setIsApplying] = useState(false);
@@ -75,9 +76,11 @@ export default function PromoCodeSection({
                         </span>
                         <span className="font-data text-success font-semibold">
                             -
-                            {appliedPromo?.type === 'percentage'
-                                ? `${appliedPromo?.value}%`
-                                : `$${appliedPromo?.value?.toFixed(2)}`}
+                            {appliedPromo?.type === 'shipping'
+                                ? 'Free Shipping'
+                                : appliedPromo?.type === 'percentage'
+                                  ? `${Number(appliedPromo?.value)}%`
+                                  : `$${Number(appliedPromo?.value).toFixed(2)}`}
                         </span>
                     </div>
                 </div>
@@ -112,23 +115,21 @@ export default function PromoCodeSection({
                     )}
 
                     <div className="text-muted-foreground text-xs">
-                        <p className="mb-1">
-                            Available promo codes for testing:
-                        </p>
-                        <ul className="space-y-1 pl-4">
-                            <li>
-                                • <span className="font-data">SAVE10</span> -
-                                10% off your order
-                            </li>
-                            <li>
-                                • <span className="font-data">TECH20</span> -
-                                $20 off orders over $100
-                            </li>
-                            <li>
-                                • <span className="font-data">FREESHIP</span> -
-                                Free shipping on all orders
-                            </li>
-                        </ul>
+                        {availablePromoCodes && availablePromoCodes.length > 0 && (
+                            <>
+                                <p className="mb-1">
+                                    Available promo codes:
+                                </p>
+                                <ul className="space-y-1 pl-4">
+                                    {availablePromoCodes.map((code) => (
+                                        <li key={code.code}>
+                                            • <span className="font-data">{code.code}</span> -{' '}
+                                            {code.description}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

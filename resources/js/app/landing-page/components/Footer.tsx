@@ -1,10 +1,10 @@
 import Icon from '@/components/ui/AppIcon';
-import { Link } from '@inertiajs/react';
-import PropTypes from 'prop-types';
+import { Link, usePage } from '@inertiajs/react';
 
-import { FooterData } from '@/types';
+import { FooterData, SharedData } from '@/types';
 
 export default function Footer({ footerData }: { footerData: FooterData }) {
+    const { name: appName } = usePage<SharedData>().props;
     const currentYear = new Date()?.getFullYear();
 
     return (
@@ -15,6 +15,9 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
                         {/* Company Info */}
                         <div className="space-y-6">
+                            <h4 className="font-heading text-xl font-bold text-primary">
+                                {appName || 'UpWearLane'}
+                            </h4>
                             <p className="text-secondary-foreground/80 leading-relaxed">
                                 {footerData?.companyDescription}
                             </p>
@@ -123,7 +126,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                                 <h5 className="text-sm font-medium">
                                     Secure & Trusted
                                 </h5>
-                                <div className="flex items-center space-x-3">
+                                <div className="flex flex-wrap gap-2">
                                     {footerData?.trustBadges?.map(
                                         (badge: string, index: number) => (
                                             <div
@@ -146,7 +149,7 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                 <div className="border-secondary-foreground/20 border-t py-6">
                     <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
                         <div className="text-secondary-foreground/60 text-sm">
-                            © {currentYear} UpWearLane. All rights reserved.
+                            © {currentYear} {appName || 'UpWearLane'}. All rights reserved.
                         </div>
                         <div className="flex items-center space-x-6">
                             {footerData?.legalLinks?.map((link) => (
@@ -175,40 +178,3 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
         </footer>
     );
 }
-
-Footer.propTypes = {
-    footerData: PropTypes?.shape({
-        companyDescription: PropTypes?.string?.isRequired,
-        socialLinks: PropTypes?.arrayOf(
-            PropTypes?.shape({
-                name: PropTypes?.string?.isRequired,
-                url: PropTypes?.string?.isRequired,
-                icon: PropTypes?.string?.isRequired,
-            }),
-        )?.isRequired,
-        quickLinks: PropTypes?.arrayOf(
-            PropTypes?.shape({
-                name: PropTypes?.string?.isRequired,
-                url: PropTypes?.string?.isRequired,
-            }),
-        )?.isRequired,
-        categories: PropTypes?.arrayOf(
-            PropTypes?.shape({
-                name: PropTypes?.string?.isRequired,
-                url: PropTypes?.string?.isRequired,
-            }),
-        )?.isRequired,
-        contact: PropTypes?.shape({
-            address: PropTypes?.string?.isRequired,
-            phone: PropTypes?.string?.isRequired,
-            email: PropTypes?.string?.isRequired,
-        })?.isRequired,
-        trustBadges: PropTypes?.arrayOf(PropTypes?.string)?.isRequired,
-        legalLinks: PropTypes?.arrayOf(
-            PropTypes?.shape({
-                name: PropTypes?.string?.isRequired,
-                url: PropTypes?.string?.isRequired,
-            }),
-        )?.isRequired,
-    })?.isRequired,
-};

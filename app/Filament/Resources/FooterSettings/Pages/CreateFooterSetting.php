@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Filament\Resources\FooterSettings\Pages;
+
+use App\Filament\Resources\FooterSettings\FooterSettingResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateFooterSetting extends CreateRecord
+{
+    protected static string $resource = FooterSettingResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+}

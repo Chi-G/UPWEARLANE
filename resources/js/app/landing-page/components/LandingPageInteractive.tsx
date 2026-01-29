@@ -49,12 +49,24 @@ export default function LandingPageInteractive({
             <Header />
             <main className="pt-16 lg:pt-20">
                 <HeroBanner heroData={pageData?.hero} categories={pageData?.categories} />
-                <FeaturedProducts products={pageData?.featuredProducts} />
-                <BestsellersSection bestsellers={pageData?.bestsellers} />
+                <FeaturedProducts 
+                    products={pageData?.featuredProducts?.items} 
+                    sectionTitle={pageData?.featuredProducts?.title}
+                    sectionDescription={pageData?.featuredProducts?.description}
+                />
+                <BestsellersSection 
+                    bestsellers={pageData?.bestsellers?.items} 
+                    sectionTitle={pageData?.bestsellers?.title}
+                    sectionDescription={pageData?.bestsellers?.description}
+                />
                 {/* <AdvertisementBanner
                     advertisements={pageData?.advertisements}
                 /> */}
-                <NewArrivalsCarousel newArrivals={pageData?.newArrivals} />
+                <NewArrivalsCarousel 
+                    newArrivals={pageData?.newArrivals?.items} 
+                    sectionTitle={pageData?.newArrivals?.title}
+                    sectionDescription={pageData?.newArrivals?.description}
+                />
                 {/* <PromotionalDeals deals={pageData?.promotionalDeals} /> */}
                 {/* <NewsletterSubscription newsletterData={pageData?.newsletter} /> */}
             </main>
@@ -86,12 +98,9 @@ export default function LandingPageInteractive({
 LandingPageInteractive.propTypes = {
     pageData: PropTypes?.shape({
         hero: PropTypes?.object?.isRequired,
-        featuredProducts: PropTypes?.array?.isRequired,
-        bestsellers: PropTypes?.array?.isRequired,
-        newArrivals: PropTypes?.array?.isRequired,
-        promotionalDeals: PropTypes?.array?.isRequired,
-        advertisements: PropTypes?.array?.isRequired,
-        newsletter: PropTypes?.object?.isRequired,
+        featuredProducts: PropTypes?.object?.isRequired,
+        bestsellers: PropTypes?.object?.isRequired,
+        newArrivals: PropTypes?.object?.isRequired,
         footer: PropTypes?.object?.isRequired,
     })?.isRequired,
 };

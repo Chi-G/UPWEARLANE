@@ -22,13 +22,16 @@ class CartSettingResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Shop Management';
+    protected static \UnitEnum|string|null $navigationGroup = 'System Management';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            TextInput::make('name')->required(),
-            Textarea::make('value'),
+            TextInput::make('page_title')->required(),
+            Textarea::make('page_description'),
+            TextInput::make('free_shipping_threshold')->numeric()->prefix('₦'),
+            TextInput::make('default_shipping_cost')->numeric()->prefix('₦'),
+            TextInput::make('tax_rate')->numeric()->suffix('%'),
             Toggle::make('is_active'),
         ]);
     }
@@ -36,8 +39,8 @@ class CartSettingResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table->columns([
-            TextColumn::make('id')->sortable(),
-            TextColumn::make('name')->searchable(),
+            TextColumn::make('page_title')->searchable(),
+            TextColumn::make('free_shipping_threshold')->money('NGN'),
             BooleanColumn::make('is_active'),
         ]);
     }

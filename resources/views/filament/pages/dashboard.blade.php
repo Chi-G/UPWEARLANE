@@ -17,16 +17,17 @@
         }
 
         .welcome-card {
-            background: white;
+            background: oklch(0.666 0.179 58.318);
+            color: white;
             border-radius: 1rem;
             padding: 1.5rem;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            border: 1px solid #1e40af;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 2rem;
-            max-width: 600px;
+            width: 100%;
         }
 
         .avatar-circle {
@@ -44,17 +45,18 @@
         }
 
         .welcome-text h1 {
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin: 0;
-            color: #111827;
+            color: white;
             line-height: 1.2;
         }
 
         .welcome-text p {
             font-size: 0.875rem;
-            color: #6b7280;
+            color: white;
             margin: 0;
+            margin-top: 1rem;
         }
 
         .logout-btn {
@@ -81,12 +83,9 @@
 
     <div class="welcome-card">
         <div class="flex items-center">
-            <div class="avatar-circle">
-                {{ substr(auth()->user()?->name ?? 'Admin', 0, 1) }}
-            </div>
             <div class="welcome-text">
-                <h1>Welcome</h1>
-                <p>Admin</p>
+                <h1>Welcome back, {{ filament()->auth()->user()?->name ?? 'Admin' }} !</h1> 
+                <p class="mt-1">{{ now()->format('l, F j, Y') }}</p>
             </div>
         </div>
         
@@ -111,4 +110,3 @@
         </div>
     </div>
 </x-filament-panels::page>
-

@@ -16,8 +16,18 @@ class ShoppingCartController extends Controller
 
         // Get all active promo codes (for potential display/suggestions)
         $activePromoCodes = PromoCode::active()
-            ->select('code', 'description', 'type', 'value', 'min_order')
-            ->get();
+            ->select('code', 'description', 'type', 'value', 'min_order', 'product_ids')
+            ->get()
+            ->map(function ($code) {
+                return [
+                    'code' => $code->code,
+                    'description' => $code->description,
+                    'type' => $code->type,
+                    'value' => (float) $code->value,
+                    'minOrder' => (float) $code->min_order,
+                    'productIds' => $code->product_ids,
+                ];
+            });
 
         return Inertia::render('shopping-cart/page', [
             'cartSettings' => $cartSettings ? $cartSettings->getFormattedData() : null,
@@ -62,6 +72,7 @@ class ShoppingCartController extends Controller
                 'type' => $promoCode->type,
                 'value' => (float) $promoCode->value,
                 'minOrder' => (float) $promoCode->min_order,
+                'productIds' => $promoCode->product_ids,
             ],
         ]);
     }

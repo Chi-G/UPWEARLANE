@@ -43,7 +43,7 @@ class FooterSetting extends Model
                 'phone' => $this->contact_phone ?? '',
                 'email' => $this->contact_email ?? '',
             ],
-            'trustBadges' => $this->trust_badges ?? [],
+            'trustBadges' => collect($this->trust_badges ?? [])->pluck('name')->toArray(),
             'legalLinks' => $this->legal_links ?? [],
         ];
     }

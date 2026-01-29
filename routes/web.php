@@ -24,6 +24,9 @@ Route::middleware([HandleInertiaRequests::class])->group(function () {
     Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
+    // API Routes (Public)
+    Route::get('/api/categories', [LandingPageController::class, 'getCategories'])->name('api.categories');
+
     // Products
     Route::get('/product-catalog', [ProductController::class, 'index'])->name('product-catalog');
     Route::get('/product-detail/{product}', [ProductController::class, 'show'])->name('product-detail');

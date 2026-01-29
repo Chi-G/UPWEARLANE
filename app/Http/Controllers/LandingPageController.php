@@ -16,30 +16,71 @@ class LandingPageController extends Controller
 
         $heroSettings = HeroSetting::where('is_active', true)->first();
 
+        // Initial fetch for SSR/View
         $categories = Category::active()
             ->orderBy('sort_order')
             ->get(['id', 'name', 'slug', 'icon', 'image']);
 
-        $featuredProducts = Product::with(['primaryImage', 'colors', 'category'])
-            ->active()
-            ->featured()
-            ->take(8)
-            ->get()
-            ->map(fn($p) => $this->transformProduct($p));
+        // Featured Products
+        $featuredQuery = Product::with(['primaryImage', 'colors', 'category'])->active();
+        if ($heroSettings && !empty($heroSettings->featured_product_ids)) {
+            $featuredProducts = $featuredQuery->whereIn('id', $heroSettings->featured_product_ids)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p));
+        } else {
+            $featuredProducts = $featuredQuery->featured()
+                ->latest()
+                ->take(8)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p));
+        }
 
-        $bestsellers = Product::with(['primaryImage', 'colors', 'category'])
-            ->active()
-            ->bestsellers()
-            ->take(8)
-            ->get()
-            ->map(fn($p) => $this->transformProduct($p, true));
+        // Bestsellers
+        $bestsellersQuery = Product::with(['primaryImage', 'colors', 'category'])->active();
+        if ($heroSettings && !empty($heroSettings->bestseller_product_ids)) {
+            $bestsellers = $bestsellersQuery->whereIn('id', $heroSettings->bestseller_product_ids)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p, true));
+        } else {
+            $bestsellers = $bestsellersQuery->bestsellers()
+                ->orderByDesc('sold_count')
+                ->take(8)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p, true));
+        }
 
-        $newArrivals = Product::with(['primaryImage', 'colors', 'category'])
-            ->active()
-            ->newArrivals()
-            ->take(8)
-            ->get()
-            ->map(fn($p) => $this->transformProduct($p));
+        // New Arrivals
+        $newArrivalsQuery = Product::with(['primaryImage', 'colors', 'category'])->active();
+        if ($heroSettings && !empty($heroSettings->new_arrival_product_ids)) {
+            $newArrivals = $newArrivalsQuery->whereIn('id', $heroSettings->new_arrival_product_ids)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p));
+        } else {
+            $newArrivals = $newArrivalsQuery->newArrivals()
+                ->latest('launch_date')
+                ->take(8)
+                ->get()
+                ->map(fn($p) => $this->transformProduct($p));
+        }
+
+        if ($heroSettings) {
+            if ($heroSettings->background_image && !str_starts_with($heroSettings->background_image, 'http')) {
+                $heroSettings->background_image = '/storage/' . $heroSettings->background_image;
+            }
+
+            // Format Ads Images
+            if (!empty($heroSettings->advertisements)) {
+                $heroSettings->advertisements = array_map(function ($ad) {
+                    if (isset($ad['backgroundImage']) && !str_starts_with($ad['backgroundImage'], 'http')) {
+                        $ad['backgroundImage'] = '/storage/' . $ad['backgroundImage'];
+                    }
+                    if (isset($ad['productImage']) && !str_starts_with($ad['productImage'], 'http')) {
+                        $ad['productImage'] = '/storage/' . $ad['productImage'];
+                    }
+                    return $ad;
+                }, $heroSettings->advertisements);
+            }
+        }
 
         return Inertia::render('landing-page/page', [
             'categories' => $categories,
@@ -48,6 +89,18 @@ class LandingPageController extends Controller
             'bestsellers' => $bestsellers,
             'newArrivals' => $newArrivals,
         ]);
+    }
+
+    /**
+     * API endpoint to fetch categories dynamically
+     */
+    public function getCategories()
+    {
+        return response()->json(
+            Category::active()
+                ->orderBy('sort_order')
+                ->get(['id', 'name', 'slug', 'icon', 'image'])
+        );
     }
 
     /**

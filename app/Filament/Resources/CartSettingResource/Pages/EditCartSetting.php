@@ -8,4 +8,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditCartSetting extends EditRecord
 {
     protected static string $resource = CartSettingResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

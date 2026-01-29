@@ -49,7 +49,7 @@ export interface Product {
     category: string;
     price: string | number;
     currency?: string;
-    originalPrice?: string | number; 
+    originalPrice?: string | number;
     discount?: number;
     rating: number;
     reviews?: number;
@@ -81,11 +81,34 @@ export interface ProductCatalogInteractiveProps {
             active: boolean;
         }>;
     };
+    categories: Array<{
+        id: number | string;
+        name: string;
+        slug: string;
+        icon: string | null;
+    }>;
+    brands: Array<{
+        id: number;
+        name: string;
+    }>;
+    initialFilters?: {
+        category?: string;
+        brands?: string;
+        colors?: string;
+        priceRange?: string;
+        search?: string;
+        sort?: string;
+        filter?: string;
+    };
+    selectedCurrency?: string;
+    priceRanges?: PriceRange[];
 }
 
-export interface HeroStats {
-    value: string;
+export interface PriceRange {
+    id: number;
     label: string;
+    min_price: number;
+    max_price: number | null;
 }
 
 export interface HeroData {
@@ -93,10 +116,8 @@ export interface HeroData {
     subtitle: string;
     backgroundImage: string;
     backgroundImageAlt: string;
-    heroImage: string;
-    heroImageAlt: string;
     badge: string;
-    stats: HeroStats[];
+    searchPlaceholder?: string;
 }
 
 
@@ -116,8 +137,13 @@ export interface PageData {
         subtitle: string | null;
         badge: string | null;
         background_image: string | null;
-        hero_image: string | null;
-        stats: Array<{ value: string; label: string }> | null;
+        search_placeholder: string | null;
+        featured_title: string;
+        featured_description: string | null;
+        bestsellers_title: string;
+        bestsellers_description: string | null;
+        new_arrivals_title: string;
+        new_arrivals_description: string | null;
         is_active: boolean;
     } | null;
     footerSettings?: {
@@ -132,9 +158,21 @@ export interface PageData {
         legal_links: Array<{ name: string; url: string }> | null;
         is_active: boolean;
     } | null;
-    featuredProducts: Product[];
-    bestsellers: Product[];
-    newArrivals: Product[];
+    featuredProducts: {
+        title: string;
+        description: string;
+        items: Product[];
+    };
+    bestsellers: {
+        title: string;
+        description: string;
+        items: Product[];
+    };
+    newArrivals: {
+        title: string;
+        description: string;
+        items: Product[];
+    };
     footer: FooterData;
 }
 
@@ -240,6 +278,19 @@ export interface FilterSidebarProps {
     onClearFilters: () => void;
     isMobileOpen: boolean;
     onMobileClose: () => void;
+    categories: Array<{
+        id: number | string;
+        name: string;
+        slug: string;
+        icon: string | null;
+    }>;
+    brands: Array<{
+        id: number;
+        name: string;
+    }>;
+    currencySymbol: string;
+    priceRanges: PriceRange[];
+    selectedCurrency: string;
 }
 export interface SocialAuthButtonsProps {
     onGoogleAuth: () => void;
@@ -297,6 +348,7 @@ export interface PromoCode {
     type: 'percentage' | 'fixed' | 'shipping';
     value: number;
     minOrder: number;
+    productIds?: number[];
 }
 
 export interface PromoCodeSectionProps {
@@ -304,6 +356,7 @@ export interface PromoCodeSectionProps {
         code: string | null,
     ) => { success: boolean; message?: string } | void;
     appliedPromo?: PromoCode | null;
+    availablePromoCodes?: PromoCode[];
 }
 export interface ProductInfoProps {
     product: ProductDetail;

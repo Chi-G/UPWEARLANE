@@ -21,6 +21,7 @@ class PromoCode extends Model
         'valid_from',
         'valid_until',
         'is_active',
+        'product_ids',
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class PromoCode extends Model
         'valid_from' => 'datetime',
         'valid_until' => 'datetime',
         'is_active' => 'boolean',
+        'product_ids' => 'array',
     ];
 
     /**
@@ -61,6 +63,18 @@ class PromoCode extends Model
         }
 
         return ['valid' => true, 'message' => 'Promo code applied successfully!'];
+    }
+
+    /**
+     * Check if promo code applies to a specific product
+     */
+    public function appliesToProduct($productId): bool
+    {
+        if (empty($this->product_ids)) {
+            return true; // No specific products linked, applies to all
+        }
+
+        return in_array($productId, $this->product_ids);
     }
 
     /**

@@ -67,10 +67,28 @@ export default function ShoppingCartInteractive({
         let shipping = subtotal > freeShippingThreshold ? 0 : defaultShippingCost;
 
         if (appliedPromo) {
+            let eligibleSubtotal = subtotal;
+
+            if (appliedPromo.productIds && appliedPromo.productIds.length > 0) {
+                // Filter items that match productIds
+                // Note: item.id is a string, productIds are numbers. We need to handle this conversion carefully.
+                // Assuming item.id is numeric string of product ID. If it's composite, we might need to parse.
+                // Looking at CartItem interface, id is string.
+                eligibleSubtotal = cartItems
+                    .filter(item => appliedPromo.productIds!.includes(parseInt(item.id)))
+                    .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            }
+
             if (appliedPromo.type === 'percentage') {
-                discount = subtotal * (appliedPromo.value / 100);
+                discount = eligibleSubtotal * (appliedPromo.value / 100);
             } else if (appliedPromo.type === 'fixed') {
                 discount = appliedPromo.value;
+                // Cap discount at eligible subtotal if strictly applying to specific products,
+                // or cap at total subtotal if it's just a "credit" but unlocked by having specific products?
+                // Usually "Fixed off Product" implies up to the value of those products.
+                if (appliedPromo.productIds && appliedPromo.productIds.length > 0 && discount > eligibleSubtotal) {
+                    discount = eligibleSubtotal;
+                }
             } else if (appliedPromo.type === 'shipping') {
                 shipping = 0;
             }

@@ -25,7 +25,17 @@ interface ProductFromDB {
     is_bestseller: boolean;
     category: { id: number; name: string; slug: string } | null;
     primary_image: { id: number; image_path: string; alt_text: string } | null;
+    brand: string | null;
+    brand_setting: { id: number; brand_name: string } | null;
     colors: Array<{ id: number; name: string; hex_code: string }>;
+}
+
+interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    icon: string | null;
+    image: string | null;
 }
 
 interface PageProps {
@@ -41,11 +51,14 @@ interface PageProps {
             active: boolean;
         }>;
     };
+    categories: Category[];
+    brands: Array<{ id: number; name: string }>;
+    priceRanges: any[];
     [key: string]: unknown;
 }
 
 export default function ProductCatalogPage() {
-    const { products: paginatedProducts } = usePage<PageProps>().props;
+    const { products: paginatedProducts, categories, brands, filters: serverFilters, selectedCurrency, priceRanges } = usePage<PageProps>().props;
 
     // Ensure currency parameter is in URL
     useEffect(() => {
@@ -83,6 +96,7 @@ export default function ProductCatalogPage() {
         isNew: p.is_new,
         is_featured: p.is_featured,
         is_bestseller: p.is_bestseller,
+        brand: p.brand_setting?.brand_name || p.brand || 'No Brand',
         currency: p.currency || 'USD',
     })) || [];
 
@@ -100,6 +114,11 @@ export default function ProductCatalogPage() {
             <ProductCatalogInteractive 
                 initialProducts={products} 
                 pagination={paginationData}
+                categories={categories}
+                brands={brands}
+                initialFilters={serverFilters as any}
+                selectedCurrency={selectedCurrency as string}
+                priceRanges={priceRanges as any}
             />
         </>
     );

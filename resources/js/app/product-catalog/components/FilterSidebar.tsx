@@ -1,6 +1,7 @@
 import Icon from '@/components/ui/AppIcon';
 import { FilterSidebarProps } from '@/types';
 import { useState } from 'react';
+import { convertPrice, formatPrice } from '@/utils/currency';
 
 export default function FilterSidebar({
     filters,
@@ -8,6 +9,11 @@ export default function FilterSidebar({
     onClearFilters,
     isMobileOpen,
     onMobileClose,
+    categories,
+    brands,
+    currencySymbol,
+    priceRanges,
+    selectedCurrency,
 }: FilterSidebarProps) {
     const [expandedSections, setExpandedSections] = useState({
         category: true,
@@ -23,10 +29,10 @@ export default function FilterSidebar({
         }));
     };
 
-    const handleCategoryChange = (category: string) => {
-        const newCategories = filters.categories.includes(category)
-            ? filters.categories.filter((c) => c !== category)
-            : [...filters.categories, category];
+    const handleCategoryChange = (slug: string) => {
+        const newCategories = filters.categories.includes(slug)
+            ? filters.categories.filter((c) => c !== slug)
+            : [...filters.categories, slug];
         onFilterChange({ ...filters, categories: newCategories });
     };
 
@@ -48,18 +54,43 @@ export default function FilterSidebar({
         onFilterChange({ ...filters, brands: newBrands });
     };
 
-    const categories = [
-        { id: 'apparel', label: 'Apparel', count: 45 },
-        { id: 'accessories', label: 'Accessories', count: 32 },
-        { id: 'tech-wear', label: 'Tech Wear', count: 28 },
-    ];
+    const priceRangesList = (priceRanges && priceRanges.length > 0) 
+        ? priceRanges.map(pr => {
+            const minConverted = convertPrice(Number(pr.min_price), 'NGN', selectedCurrency as any);
+            const maxConverted = pr.max_price ? convertPrice(Number(pr.max_price), 'NGN', selectedCurrency as any) : null;
+            
+            let label = pr.label;
+            
+            // If no label is set, generate a dynamic one like "₦0 - ₦50"
+            if (!label || label.trim() === '') {
+                if (maxConverted === null) {
+                    label = `Above ${formatPrice(minConverted, selectedCurrency as any)}`;
+                } else {
+                    label = `${formatPrice(minConverted, selectedCurrency as any)} - ${formatPrice(maxConverted, selectedCurrency as any)}`;
+                }
+            } else if (label.includes('{min}') || label.includes('{max}')) {
+                // Support placeholders {min} and {max}
+                label = label
+                    .replace('{min}', formatPrice(minConverted, selectedCurrency as any))
+                    .replace('{max}', maxConverted ? formatPrice(maxConverted, selectedCurrency as any) : 'Any');
+            } else {
+                // Fallback: simple symbol replacement
+                label = label.replace(/\$/g, currencySymbol).replace(/\₦/g, currencySymbol);
+            }
 
-    const priceRanges = [
-        { id: 'under-50', label: 'Under $50', min: 0, max: 50 },
-        { id: '50-100', label: '$50 - $100', min: 50, max: 100 },
-        { id: '100-200', label: '$100 - $200', min: 100, max: 200 },
-        { id: 'over-200', label: 'Over $200', min: 200, max: Infinity },
-    ];
+            return {
+                id: pr.id.toString(),
+                label: label,
+                min: pr.min_price,
+                max: pr.max_price ?? Infinity
+            };
+        })
+        : [
+            { id: 'under-50', label: `Under ${currencySymbol}50`, min: 0, max: 50 },
+            { id: '50-100', label: `${currencySymbol}50 - ${currencySymbol}100`, min: 50, max: 100 },
+            { id: '100-200', label: `${currencySymbol}100 - ${currencySymbol}200`, min: 100, max: 200 },
+            { id: 'over-200', label: `Over ${currencySymbol}200`, min: 200, max: Infinity },
+        ];
 
     const colors = [
         { name: 'Black', hex: '#000000' },
@@ -68,13 +99,6 @@ export default function FilterSidebar({
         { name: 'Silver', hex: '#C0C0C0' },
         { name: 'Navy', hex: '#001F3F' },
         { name: 'Red', hex: '#E74C3C' },
-    ];
-
-    const brands = [
-        { id: 'techfabric', label: 'TechFabric', count: 18 },
-        { id: 'smartwear', label: 'SmartWear', count: 15 },
-        { id: 'futurefit', label: 'FutureFit', count: 12 },
-        { id: 'nexgen', label: 'NexGen', count: 10 },
     ];
 
     const sidebarContent = (
@@ -114,29 +138,26 @@ export default function FilterSidebar({
                         <div className="space-y-2">
                             {categories?.map((category) => (
                                 <label
-                                    key={category?.id}
+                                    key={category?.slug}
                                     className="group flex cursor-pointer items-center justify-between"
                                 >
                                     <div className="flex items-center gap-3">
                                         <input
                                             type="checkbox"
                                             checked={filters?.categories?.includes(
-                                                category?.id,
+                                                category?.slug,
                                             )}
                                             onChange={() =>
                                                 handleCategoryChange(
-                                                    category?.id,
+                                                    category?.slug,
                                                 )
                                             }
                                             className="border-border text-primary focus:ring-primary h-5 w-5 rounded focus:ring-2 focus:ring-offset-2"
                                         />
                                         <span className="text-foreground group-hover:text-primary transition-smooth text-sm md:text-base">
-                                            {category?.label}
+                                            {category?.name}
                                         </span>
                                     </div>
-                                    <span className="text-muted-foreground text-xs md:text-sm">
-                                        {category?.count}
-                                    </span>
                                 </label>
                             ))}
                         </div>
@@ -160,7 +181,7 @@ export default function FilterSidebar({
                     </button>
                     {expandedSections?.price && (
                         <div className="space-y-2">
-                            {priceRanges?.map((range) => (
+                            {priceRangesList?.map((range: any) => (
                                 <label
                                     key={range?.id}
                                     className="group flex cursor-pointer items-center"
@@ -169,10 +190,10 @@ export default function FilterSidebar({
                                         type="radio"
                                         name="priceRange"
                                         checked={
-                                            filters?.priceRange === range?.id
+                                            String(filters?.priceRange) === String(range?.id)
                                         }
                                         onChange={() =>
-                                            handlePriceChange(range?.id)
+                                            handlePriceChange(String(range?.id))
                                         }
                                         className="border-border text-primary focus:ring-primary h-5 w-5 focus:ring-2 focus:ring-offset-2"
                                     />
@@ -254,20 +275,17 @@ export default function FilterSidebar({
                                         <input
                                             type="checkbox"
                                             checked={filters?.brands?.includes(
-                                                brand?.id,
+                                                brand?.name.toLowerCase(),
                                             )}
                                             onChange={() =>
-                                                handleBrandChange(brand?.id)
+                                                handleBrandChange(brand?.name.toLowerCase())
                                             }
                                             className="border-border text-primary focus:ring-primary h-5 w-5 rounded focus:ring-2 focus:ring-offset-2"
                                         />
                                         <span className="text-foreground group-hover:text-primary transition-smooth text-sm md:text-base">
-                                            {brand?.label}
+                                            {brand?.name}
                                         </span>
                                     </div>
-                                    <span className="text-muted-foreground text-xs md:text-sm">
-                                        {brand?.count}
-                                    </span>
                                 </label>
                             ))}
                         </div>

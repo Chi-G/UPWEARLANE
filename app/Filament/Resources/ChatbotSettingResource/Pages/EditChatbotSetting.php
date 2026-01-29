@@ -8,5 +8,10 @@ use Filament\Resources\Pages\EditRecord;
 class EditChatbotSetting extends EditRecord
 {
     protected static string $resource = ChatbotSettingResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
  

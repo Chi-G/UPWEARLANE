@@ -20,6 +20,8 @@ class UserResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'User Management';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
@@ -40,6 +42,17 @@ class UserResource extends Resource
                 TextColumn::make('phone_number'),
                 TextColumn::make('email_verified_at')->label('Verified'),
             ]);
+    }
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()?->email !== 'superadmin@upwearlane.com') {
+            $query->where('email', '!=', 'superadmin@upwearlane.com');
+        }
+
+        return $query;
     }
 
     public static function getPages(): array

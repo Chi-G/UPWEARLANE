@@ -13,6 +13,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('Admin Panel')
+            ->databaseNotifications()
             ->login()
             ->authGuard('admin')
             ->middleware([
@@ -32,9 +34,12 @@ class AdminPanelProvider extends PanelProvider
                 for: 'App\Filament\Widgets'
             )
             ->navigationGroups([
-                'Shop Management',
-                'Customer Support',
                 'User Management',
+                'Catalog Management',
+                'Order Management',
+                'Shopping Experience',
+                'Frontend Settings',
+                'Customer Support',
             ]);
     }
 }

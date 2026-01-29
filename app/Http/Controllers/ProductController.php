@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\BrandSetting;
+use App\Models\PriceRange;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +15,7 @@ class ProductController extends Controller {
      */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'primaryImage', 'colors'])
+        $query = Product::with(['category', 'primaryImage', 'colors', 'brandSetting'])
             ->active()
             ->inStock();
 
@@ -24,6 +26,38 @@ class ProductController extends Controller {
         if ($request->has('category')) {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
+            });
+        }
+
+        // Brand filter
+        if ($request->has('brands')) {
+            $brands = is_array($request->brands) ? $request->brands : explode(',', $request->brands);
+            $query->whereHas('brandSetting', function ($q) use ($brands) {
+                $q->whereIn('brand_name', $brands);
+            });
+        }
+
+        // Price Range filter
+        if ($request->has('priceRange')) {
+            $range = PriceRange::where('id', $request->priceRange)
+                ->orWhere('label', $request->priceRange)
+                ->first();
+            
+            if ($range) {
+                if ($range->min_price !== null) {
+                    $query->where('base_price', '>=', $range->min_price);
+                }
+                if ($range->max_price !== null) {
+                    $query->where('base_price', '<=', $range->max_price);
+                }
+            }
+        }
+
+        // Color filter
+        if ($request->has('colors')) {
+            $colors = is_array($request->colors) ? $request->colors : explode(',', $request->colors);
+            $query->whereHas('colors', function ($q) use ($colors) {
+                $q->whereIn('name', $colors);
             });
         }
 
@@ -59,7 +93,9 @@ class ProductController extends Controller {
         return Inertia::render('product-catalog/page', [
             'products' => $products,
             'categories' => Category::active()->orderBy('sort_order')->get(),
-            'filters' => $request->only(['category', 'filter', 'search', 'sort', 'currency']),
+            'brands' => BrandSetting::where('is_active', true)->get(['id', 'brand_name as name']), // Normalized for frontend
+            'priceRanges' => PriceRange::active()->get(['id', 'label', 'min_price', 'max_price']),
+            'filters' => (object)$request->only(['category', 'filter', 'search', 'sort', 'currency', 'brands', 'colors', 'priceRange']),
             'selectedCurrency' => $currency,
         ]);
     }
@@ -80,12 +116,7 @@ class ProductController extends Controller {
 
         $currency = request()->get('currency', 'NGN');
         // Example rates array (replace with your actual rates source)
-        $rates = [
-            'NGN' => 1650,
-            'USD' => 1,
-            'GBP' => 0.79,
-            'CAD' => 1.36,
-        ];
+        $rates = CurrencyRate::getConversionRates();
 
         // Convert main product
         $convertedProduct = $this->convertProductToCurrency($product, $currency, $rates);
@@ -114,6 +145,7 @@ class ProductController extends Controller {
     protected function convertProductToCurrency($product, $currency, $rates)
     {
         $baseCurrency = $product->currency ?? 'NGN';
+        $rates = $rates ?? CurrencyRate::getConversionRates();
         $rate = $rates[$baseCurrency] ?? 1;
         $targetRate = $rates[$currency] ?? 1;
 

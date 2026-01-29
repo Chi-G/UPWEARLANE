@@ -26,28 +26,104 @@ class OrderResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Shop Management';
+    protected static \UnitEnum|string|null $navigationGroup = 'Order Management';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Select::make('user_id')->relationship('user', 'name')->required(),
-            TextInput::make('order_number')->disabled(),
-            Select::make('status')->options([
-                'pending' => 'Pending',
-                'processing' => 'Processing',
-                'completed' => 'Completed',
-                'cancelled' => 'Cancelled',
-            ])->required(),
-            TextInput::make('currency')->maxLength(10),
-            TextInput::make('subtotal')->numeric(),
-            TextInput::make('shipping_cost')->numeric(),
-            TextInput::make('tax')->numeric(),
-            TextInput::make('discount')->numeric(),
-            TextInput::make('total')->numeric(),
-            TextInput::make('shipping_method')->maxLength(100),
-            TextInput::make('tracking_number')->maxLength(100),
-            Textarea::make('notes'),
+            \Filament\Schemas\Components\Section::make('Order Details')
+                ->schema([
+                    Select::make('user_id')
+                        ->relationship('user', 'name')
+                        ->required()
+                        ->searchable()
+                        ->label('Customer'),
+                    TextInput::make('order_number')
+                        ->disabled()
+                        ->dehydrated(false), // Don't save if disabled and not generated here, though typically it's auto-generated
+                    Select::make('status')->options([
+                        'pending' => 'Pending',
+                        'processing' => 'Processing',
+                        'shipped' => 'Shipped',
+                        'delivered' => 'Delivered',
+                        'cancelled' => 'Cancelled',
+                        'refunded' => 'Refunded',
+                    ])->required(),
+                    Select::make('currency')
+                        ->options([
+                            'NGN' => 'Naira (₦)',
+                            'USD' => 'US Dollar ($)',
+                            'GBP' => 'Pound (£)',
+                            'CAD' => 'Canadian Dollar ($)',
+                        ])
+                        ->default('NGN')
+                        ->required(),
+                    Select::make('shipping_method')
+                         ->options([
+                             'standard' => 'Standard Shipping',
+                             'express' => 'Express Shipping',
+                         ]),
+                    TextInput::make('tracking_number'),
+                ])->columns(2),
+
+            \Filament\Schemas\Components\Section::make('Order Items')
+                ->schema([
+                    \Filament\Forms\Components\Repeater::make('items')
+                        ->relationship('items')
+                        ->schema([
+                            \Filament\Schemas\Components\Grid::make(12)->schema([
+                                Select::make('product_id')
+                                    ->relationship('product', 'name')
+                                    ->searchable()
+                                    ->required()
+                                    ->label('Product')
+                                    ->reactive()
+                                    ->columnSpan(12) // Full width
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        $product = \App\Models\Product::find($state);
+                                        if ($product) {
+                                            $set('unit_price', $product->base_price);
+                                            $set('product_name', $product->name);
+                                            $set('product_sku', $product->sku);
+                                        }
+                                    }),
+                                TextInput::make('product_name')->required()->columnSpan(6), // Half width
+                                TextInput::make('product_sku')->label('SKU')->columnSpan(6),
+                            ]),
+                            \Filament\Schemas\Components\Grid::make(12)->schema([
+                                TextInput::make('quantity')
+                                    ->numeric()
+                                    ->default(1)
+                                    ->required()
+                                    ->reactive()
+                                    ->columnSpan(4)
+                                    ->afterStateUpdated(fn ($state, callable $get, callable $set) => $set('total_price', $state * $get('unit_price'))),
+                                TextInput::make('unit_price')
+                                    ->numeric()
+                                    ->required()
+                                    ->reactive()
+                                    ->columnSpan(4)
+                                    ->afterStateUpdated(fn ($state, callable $get, callable $set) => $set('total_price', $state * $get('quantity'))),
+                                TextInput::make('total_price')
+                                    ->numeric()
+                                    ->required()
+                                    ->dehydrated()
+                                    ->columnSpan(4), // Editable now
+                            ]),
+                        ])
+                        ->columns(1) // Repeater itself is 1 column, internal Grid handles layout
+                        ->itemLabel(fn (array $state): ?string => $state['product_name'] ?? null),
+                ]),
+
+            \Filament\Schemas\Components\Section::make('Financials')
+                ->schema([
+                    TextInput::make('subtotal')->numeric(),
+                    TextInput::make('shipping_cost')->numeric(),
+                    TextInput::make('tax')->numeric(),
+                    TextInput::make('discount')->numeric(),
+                    TextInput::make('total')->numeric()->required(),
+                    Textarea::make('notes')->columnSpanFull(),
+                ])->columns(2),
         ]);
     }
 
@@ -55,12 +131,39 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->sortable(),
                 TextColumn::make('order_number')->searchable()->sortable(),
-                TextColumn::make('user.name')->label('Customer'),
-                TextColumn::make('status')->badge(),
-                TextColumn::make('total')->money(),
-                TextColumn::make('created_at')->dateTime(),
+                TextColumn::make('user.name')->label('Customer')->searchable()->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'processing' => 'warning',
+                        'shipped' => 'primary',
+                        'delivered' => 'success',
+                        'cancelled', 'refunded' => 'danger',
+                        default => 'primary',
+                    }),
+                TextColumn::make('items_count')->counts('items')->label('Items'),
+                TextColumn::make('total')->money(fn ($record) => $record->currency),
+                TextColumn::make('created_at')->dateTime()->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'processing' => 'Processing',
+                        'shipped' => 'Shipped',
+                        'delivered' => 'Delivered',
+                        'cancelled' => 'Cancelled',
+                        'refunded' => 'Refunded',
+                    ]),
+                Tables\Filters\SelectFilter::make('currency')
+                    ->options([
+                        'NGN' => 'Naira (₦)',
+                        'USD' => 'US Dollar ($)',
+                        'GBP' => 'Pound (£)',
+                        'CAD' => 'Canadian Dollar ($)',
+                    ]),
             ]);
     }
 

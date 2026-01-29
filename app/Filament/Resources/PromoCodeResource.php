@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Models\PromoCode;
+use App\Models\Product;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -24,7 +25,7 @@ class PromoCodeResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-ticket';
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Shop Management';
+    protected static \UnitEnum|string|null $navigationGroup = 'Catalog Management';
 
 
     public static function form(Schema $schema): Schema
@@ -34,10 +35,18 @@ class PromoCodeResource extends Resource
             Textarea::make('description'),
             Select::make('type')->options([
                 'fixed' => 'Fixed',
-                'percent' => 'Percent',
+                'percentage' => 'Percent',
+                'shipping' => 'Shipping',
             ])->required(),
             TextInput::make('value')->numeric()->required(),
             TextInput::make('min_order')->numeric(),
+            Select::make('product_ids')
+                ->label('Applicable Products')
+                ->multiple()
+                ->options(Product::all()->pluck('name', 'id'))
+                ->searchable()
+                ->placeholder('Leave empty to apply to all products')
+                ->columnSpanFull(),
             Toggle::make('is_active'),
         ]);
     }
@@ -50,6 +59,13 @@ class PromoCodeResource extends Resource
             TextColumn::make('type'),
             TextColumn::make('value'),
             BooleanColumn::make('is_active'),
+        ])
+        ->actions([
+            \Filament\Actions\DeleteAction::make(),
+            \Filament\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            \Filament\Actions\DeleteBulkAction::make(),
         ]);
     }
 

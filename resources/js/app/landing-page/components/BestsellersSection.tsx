@@ -10,8 +10,12 @@ import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/c
 
 export default function BestsellersSection({
     bestsellers,
+    sectionTitle,
+    sectionDescription,
 }: {
     bestsellers: Product[];
+    sectionTitle?: string;
+    sectionDescription?: string;
 }) {
     const [cartItems, setCartItems] = useState<number[]>([]);
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
@@ -79,11 +83,10 @@ export default function BestsellersSection({
                 {/* Section Header */}
                 <div className="mb-12 text-center lg:mb-16">
                     <h2 className="font-heading text-foreground mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
-                        Bestsellers
+                        {sectionTitle || 'Bestsellers'}
                     </h2>
                     <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-                        Our most popular tech-infused fashion items loved by
-                        customers worldwide
+                        {sectionDescription || 'Our most popular wearable technology and tech-fashion items loved by customers worldwide'}
                     </p>
                 </div>
 

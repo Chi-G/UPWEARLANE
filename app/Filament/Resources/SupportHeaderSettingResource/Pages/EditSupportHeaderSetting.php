@@ -8,5 +8,10 @@ use Filament\Resources\Pages\EditRecord;
 class EditSupportHeaderSetting extends EditRecord
 {
     protected static string $resource = SupportHeaderSettingResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
  

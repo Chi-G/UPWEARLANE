@@ -6,15 +6,22 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Event;
+use App\Listeners\AdminLoginListener;
+use App\Models\User;
+use App\Models\Order;
+use App\Observers\UserObserver;
+use App\Observers\OrderObserver;
 
-class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider 
 {
     /**
      * Register any application services.
      */
     public function register(): void
     {
-        //
+        // 
     }
 
     /**
@@ -32,5 +39,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Model::preventLazyLoading(! app()->isProduction());
+
+        Event::listen(
+            Login::class,
+            AdminLoginListener::class,
+        );
+
+        User::observe(UserObserver::class);
+        Order::observe(OrderObserver::class);
     }
 }

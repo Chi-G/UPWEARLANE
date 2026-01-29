@@ -10,8 +10,12 @@ import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/c
 
 export default function FeaturedProducts({
     products,
+    sectionTitle,
+    sectionDescription,
 }: {
     products: Product[];
+    sectionTitle?: string;
+    sectionDescription?: string;
 }) {
     const [selectedCategory] = useState<string>('All');
     const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>('NGN');
@@ -49,11 +53,10 @@ export default function FeaturedProducts({
                 {/* Section Header */}
                 <div className="mb-12 text-center lg:mb-16">
                     <h2 className="font-heading text-foreground mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
-                        Featured Products
+                        {sectionTitle || 'Featured Products'}
                     </h2>
                     <p className="text-muted-foreground mx-auto max-w-3xl text-lg md:text-xl">
-                        Discover our handpicked selection of cutting-edge
-                        wearable technology and high-tech fashion essentials
+                        {sectionDescription || 'Discover our handpicked selection of cutting-edge wearable technology and high-tech fashion essentials'}
                     </p>
                 </div>
 

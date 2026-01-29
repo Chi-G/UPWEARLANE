@@ -12,8 +12,12 @@ import { convertPrice, getSelectedCurrency, getCurrencySymbols } from '@/utils/c
 
 export default function NewArrivalsCarousel({
     newArrivals,
+    sectionTitle,
+    sectionDescription,
 }: {
     newArrivals: Product[];
+    sectionTitle?: string;
+    sectionDescription?: string;
 }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -82,11 +86,10 @@ export default function NewArrivalsCarousel({
                 <div className="mb-12 flex items-center justify-between lg:mb-16">
                     <div>
                         <h2 className="font-heading text-foreground mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
-                            New Arrivals
+                            {sectionTitle || 'New Arrivals'}
                         </h2>
                         <p className="text-muted-foreground text-lg md:text-xl">
-                            Latest innovations in wearable technology and smart
-                            fashion
+                            {sectionDescription || 'Be the first to explore our latest collection of smart clothing and innovative tech accessories'}
                         </p>
                     </div>
 

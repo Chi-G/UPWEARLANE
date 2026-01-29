@@ -14,7 +14,7 @@ interface Category {
     name: string;
     slug: string;
     icon: string | null;
-    image: string | null;
+    image: string | null; 
 }
 
 interface HeroSettings {
@@ -23,8 +23,13 @@ interface HeroSettings {
     subtitle: string | null;
     badge: string | null;
     background_image: string | null;
-    hero_image: string | null;
-    stats: Array<{ value: string; label: string }> | null;
+    search_placeholder: string | null;
+    featured_title: string;
+    featured_description: string | null;
+    bestsellers_title: string;
+    bestsellers_description: string | null;
+    new_arrivals_title: string;
+    new_arrivals_description: string | null;
     is_active: boolean;
 }
 
@@ -69,63 +74,103 @@ export default function LandingPage() {
             });
         }
     }, []);
-
+ 
     const pageData = {
         hero: {
             title: heroSettings?.title || 'The Future of Fashion is Here',
             subtitle: heroSettings?.subtitle || 'Discover cutting-edge wearable technology and smart fabrics that seamlessly blend style with innovation',
             backgroundImage: heroSettings?.background_image || '/images/products/hero/hero-bg.png',
             backgroundImageAlt: 'Modern tech fashion store interior with futuristic lighting and digital displays',
-            heroImage: heroSettings?.hero_image || '/images/products/hero/hero-image.png',
-            heroImageAlt: 'Professional woman wearing smart fitness tracker and tech-enabled athletic wear in modern urban setting',
             badge: heroSettings?.badge || '',
-            stats: heroSettings?.stats || [
-                { value: '50K+', label: 'Happy Customers' },
-                { value: '200+', label: 'Tech Products' },
-                { value: '25+', label: 'Countries' },
-            ],
+            searchPlaceholder: heroSettings?.search_placeholder || undefined,
         },
 
         // Use products from database
-        featuredProducts: featuredProducts || [],
-        bestsellers: bestsellers || [],
-        newArrivals: newArrivals || [],
+        featuredProducts: {
+            title: heroSettings?.featured_title || 'Featured Products',
+            description: heroSettings?.featured_description || 'Discover our handpicked selection of cutting-edge wearable technology and high-tech fashion essentials',
+            items: featuredProducts || [],
+        },
+        bestsellers: {
+            title: heroSettings?.bestsellers_title || 'Bestsellers',
+            description: heroSettings?.bestsellers_description || 'Our most popular wearable technology and tech-fashion items loved by customers worldwide',
+            items: bestsellers || [],
+        },
+        newArrivals: {
+            title: heroSettings?.new_arrivals_title || 'New Arrivals',
+            description: heroSettings?.new_arrivals_description || 'Be the first to explore our latest collection of smart clothing and innovative tech accessories',
+            items: newArrivals || [],
+        },
         
         // Pass categories from database
         categories: categories || [],
 
-        footer: footerData || {
-            companyDescription: 'UpWearLane is the premier destination for cutting-edge wearable technology and smart fashion. We blend innovation with style to create the future of fashion.',
-            socialLinks: [
-                { name: 'Facebook', url: 'https://facebook.com/upwearlane', icon: 'Facebook' },
-                { name: 'Twitter', url: 'https://twitter.com/upwearlane', icon: 'Twitter' },
-                { name: 'Instagram', url: 'https://instagram.com/upwearlane', icon: 'Instagram' },
-                { name: 'LinkedIn', url: 'https://linkedin.com/company/upwearlane', icon: 'Linkedin' },
-            ],
-            quickLinks: [
-                { name: 'About Us', url: '/about' },
-                { name: 'Product Catalog', url: '/product-catalog' },
-                { name: 'Size Guide', url: '/size-guide' },
-                { name: 'Shipping Info', url: '/shipping' },
-                { name: 'Returns', url: '/returns' },
-                { name: 'Support', url: '/support' },
-            ],
-            categories: categories?.map(cat => ({
-                name: cat.name,
-                url: `/product-catalog?category=${cat.slug}`,
-            })) || [],
-            contact: {
-                address: 'Abuja, Nigeria',
-                phone: '+234 7065910449',
-                email: 'info@upwearlane.com',
-            },
-            trustBadges: ['SSL Secure', 'PCI Compliant', '30-Day Returns', 'Global Shipping'],
-            legalLinks: [
-                { name: 'Privacy Policy', url: '/privacy' },
-                { name: 'Terms of Service', url: '/terms' },
-                { name: 'Cookie Policy', url: '/cookies' },
-            ],
-        },
+        footer: footerData
+            ? {
+                  ...footerData,
+                  categories:
+                      footerData.categories && footerData.categories.length > 0
+                          ? footerData.categories
+                          : categories?.map((cat) => ({
+                                name: cat.name,
+                                url: `/product-catalog?category=${cat.slug}`,
+                            })) || [],
+              }
+            : {
+                  companyDescription:
+                      'UpWearLane is the premier destination for cutting-edge wearable technology and smart fashion. We blend innovation with style to create the future of fashion.',
+                  socialLinks: [
+                      {
+                          name: 'Facebook',
+                          url: 'https://facebook.com/upwearlane',
+                          icon: 'Facebook',
+                      },
+                      {
+                          name: 'Twitter',
+                          url: 'https://twitter.com/upwearlane',
+                          icon: 'Twitter',
+                      },
+                      {
+                          name: 'Instagram',
+                          url: 'https://instagram.com/upwearlane',
+                          icon: 'Instagram',
+                      },
+                      {
+                          name: 'LinkedIn',
+                          url: 'https://linkedin.com/company/upwearlane',
+                          icon: 'Linkedin',
+                      },
+                  ],
+                  quickLinks: [
+                      { name: 'About Us', url: '/about' },
+                      { name: 'Product Catalog', url: '/product-catalog' },
+                      { name: 'Size Guide', url: '/size-guide' },
+                      { name: 'Shipping Info', url: '/shipping' },
+                      { name: 'Returns', url: '/returns' },
+                      { name: 'Support', url: '/support' },
+                  ],
+                  categories:
+                      categories?.map((cat) => ({
+                          name: cat.name,
+                          url: `/product-catalog?category=${cat.slug}`,
+                      })) || [],
+                  contact: {
+                      address: 'Abuja, Nigeria',
+                      phone: '+234 7065910449',
+                      email: 'info@upwearlane.com',
+                  },
+                  trustBadges: [
+                      'SSL Secure',
+                      'PCI Compliant',
+                      '30-Day Returns',
+                      'Global Shipping',
+                  ],
+                  legalLinks: [
+                      { name: 'Privacy Policy', url: '/privacy' },
+                      { name: 'Terms of Service', url: '/terms' },
+                      { name: 'Cookie Policy', url: '/cookies' },
+                  ],
+              },
     };
 
     return <LandingPageInteractive pageData={pageData} />;

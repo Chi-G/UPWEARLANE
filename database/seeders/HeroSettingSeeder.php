@@ -12,7 +12,7 @@ class HeroSettingSeeder extends Seeder
      */ 
     public function run(): void 
     {
-        HeroSetting::updateOrCreate(
+        HeroSetting::updateOrCreate( 
             ['id' => 1],
             [
                 'title' => 'The Future of Fashion is Here',

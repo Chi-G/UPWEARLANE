@@ -15,6 +15,11 @@ import ProductCard from './ProductCard';
 export default function ProductCatalogInteractive({
     initialProducts,
     pagination,
+    categories,
+    brands,
+    initialFilters,
+    selectedCurrency,
+    priceRanges,
 }: ProductCatalogInteractiveProps) {
     const { addToCart } = useCart();
     const [viewMode, setViewMode] = useState(() => {
@@ -23,35 +28,41 @@ export default function ProductCatalogInteractive({
         }
         return 'grid';
     });
-    const [sortBy, setSortBy] = useState('relevance');
+    const [sortBy, setSortBy] = useState(initialFilters?.sort || 'relevance');
 
     const [filters, setFilters] = useState<CatalogFilters>(() => {
-        let initialCategories: string[] = [];
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            const categoryParam = params.get('category');
-            if (categoryParam) {
-                initialCategories = [categoryParam];
-            }
-        }
+        // Safe access to avoid TypeError if initialFilters has properties that are functions (like sort on an array)
+        const getVal = (obj: any, key: string) => {
+            if (obj && typeof obj[key] !== 'function') return obj[key];
+            return undefined;
+        };
+
         return {
-            categories: initialCategories,
-            priceRange: null,
-            colors: [],
-            brands: [],
+            categories: getVal(initialFilters, 'category') ? [initialFilters!.category!] : [],
+            priceRange: getVal(initialFilters, 'priceRange') || null,
+            colors: getVal(initialFilters, 'colors') ? (initialFilters!.colors as string).split(',') : [],
+            brands: getVal(initialFilters, 'brands') ? (initialFilters!.brands as string).split(',') : [],
         };
     });
 
     const [productFilter] = useState<string | null>(() => {
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('filter');
-        }
-        return null;
+        const filter = initialFilters && typeof initialFilters.filter !== 'function' ? initialFilters.filter : null;
+        return filter || null;
     });
 
+    const currencySymbol = (() => {
+        const code = selectedCurrency || (initialFilters as any)?.currency || 'NGN';
+        const symbols: Record<string, string> = {
+            'NGN': '₦',
+            'USD': '$',
+            'GBP': '£',
+            'CAD': 'C$'
+        };
+        return symbols[code] || '₦';
+    })();
+
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(initialFilters?.search || '');
     const [products, setProducts] = useState(initialProducts);
 
     // Show loading animation on initial mount for seconds
@@ -68,115 +79,65 @@ export default function ProductCatalogInteractive({
     };
 
     useEffect(() => {
+        setProducts(initialProducts);
+        setIsLoading(false);
+    }, [initialProducts]);
+
+    useEffect(() => {
         const timer = setTimeout(() => {
-            let filtered = [...initialProducts];
-
-            // Apply search query filter
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
-                filtered = filtered.filter((product) =>
-                    product.name.toLowerCase().includes(query),
-                );
+            const params = new URLSearchParams(window.location.search);
+            
+            // Category
+            if (filters?.categories?.length === 1) {
+                params.set('category', filters.categories[0]);
+            } else {
+                params.delete('category');
             }
 
-            // Apply category filter
-            if (filters?.categories?.length > 0) {
-                filtered = filtered?.filter((product) =>
-                    filters?.categories?.some((cat) =>
-                        product?.category
-                            ?.toLowerCase()
-                            ?.includes(cat?.replace(/-/g, ' ')),
-                    ),
-                );
-            }
-
-            // Apply price range filter
-            if (filters?.priceRange) {
-                const priceRanges: {
-                    [key: string]: { min: number; max: number };
-                } = {
-                    'under-50': { min: 0, max: 50 },
-                    '50-100': { min: 50, max: 100 },
-                    '100-200': { min: 100, max: 200 },
-                    'over-200': { min: 200, max: Infinity },
-                };
-                const range = priceRanges[filters.priceRange];
-                if (range) {
-                    filtered = filtered?.filter((product) => {
-                        const priceStr = String(product?.price ?? '0').replace(
-                            /[^0-9.]/g,
-                            '',
-                        );
-                        const price = parseFloat(priceStr);
-                        return price >= range?.min && price < range?.max;
-                    });
-                }
-            }
-
-            // Apply color filter
-            if (filters?.colors?.length > 0) {
-                filtered = filtered?.filter(
-                    (product) =>
-                        product?.colors &&
-                        product?.colors?.some((color) => {
-                            const colorName =
-                                typeof color === 'string' ? color : color?.name;
-                            return filters?.colors?.includes(colorName);
-                        }),
-                );
-            }
-
-            // Apply brand filter
+            // Brands
             if (filters?.brands?.length > 0) {
-                filtered = filtered?.filter((product) =>
-                    filters?.brands?.some(
-                        (brand) =>
-                            product?.brand &&
-                            product?.brand?.toLowerCase() === brand,
-                    ),
-                );
+                params.set('brands', filters.brands.join(','));
+            } else {
+                params.delete('brands');
             }
 
-            // Apply sorting
-            switch (sortBy) {
-                case 'price-low':
-                    filtered?.sort((a, b) => {
-                        const priceA = parseFloat(
-                            String(a?.price ?? '0').replace(/[^0-9.]/g, ''),
-                        );
-                        const priceB = parseFloat(
-                            String(b?.price ?? '0').replace(/[^0-9.]/g, ''),
-                        );
-                        return priceA - priceB;
-                    });
-                    break;
-                case 'price-high':
-                    filtered?.sort((a, b) => {
-                        const priceA = parseFloat(
-                            String(a?.price ?? '0').replace(/[^0-9.]/g, ''),
-                        );
-                        const priceB = parseFloat(
-                            String(b?.price ?? '0').replace(/[^0-9.]/g, ''),
-                        );
-                        return priceB - priceA;
-                    });
-                    break;
-                case 'rating':
-                    filtered?.sort((a, b) => b?.rating - a?.rating);
-                    break;
-                case 'newest':
-                    filtered?.sort((a, b) => b?.id - a?.id);
-                    break;
-                default:
-                    break;
+            // Colors
+            if (filters?.colors?.length > 0) {
+                params.set('colors', filters.colors.join(','));
+            } else {
+                params.delete('colors');
             }
 
-            setProducts(filtered);
-            setIsLoading(false);
-        }, 4000); // 4s skeleton always on first load
+            // Price Range
+            if (filters?.priceRange) {
+                params.set('priceRange', filters.priceRange);
+            } else {
+                params.delete('priceRange');
+            }
+
+            // Sorting
+            params.set('sort', sortBy);
+
+            // Search
+            if (searchQuery) {
+                params.set('search', searchQuery);
+            } else {
+                params.delete('search');
+            }
+
+            // Keep currency
+            const currentCurrency = params.get('currency') || localStorage.getItem('selected_currency') || 'NGN';
+            params.set('currency', currentCurrency);
+
+            router.get('/product-catalog', Object.fromEntries(params), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['products'],
+            });
+        }, 600);
 
         return () => clearTimeout(timer);
-    }, [filters, sortBy, initialProducts, searchQuery, productFilter]);
+    }, [filters, sortBy, searchQuery]);
 
     const clearProductFilter = () => {
         // Navigate to the product catalog without filter to reload from backend
@@ -384,6 +345,11 @@ export default function ProductCatalogInteractive({
                         onClearFilters={handleClearFilters}
                         isMobileOpen={isFilterOpen}
                         onMobileClose={() => setIsFilterOpen(false)}
+                        categories={categories}
+                        brands={brands}
+                        currencySymbol={currencySymbol}
+                        priceRanges={priceRanges || []}
+                        selectedCurrency={selectedCurrency || 'NGN'}
                     />
 
                     {/* Products Grid/List */}
