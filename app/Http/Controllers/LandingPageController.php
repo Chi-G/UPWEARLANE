@@ -64,17 +64,17 @@ class LandingPageController extends Controller
         }
 
         if ($heroSettings) {
-            if ($heroSettings->background_image && !str_starts_with($heroSettings->background_image, 'http')) {
+            if ($heroSettings->background_image && !str_starts_with($heroSettings->background_image, 'http') && !str_starts_with($heroSettings->background_image, '/images/')) {
                 $heroSettings->background_image = '/storage/' . $heroSettings->background_image;
             }
 
             // Format Ads Images
             if (!empty($heroSettings->advertisements)) {
                 $heroSettings->advertisements = array_map(function ($ad) {
-                    if (isset($ad['backgroundImage']) && !str_starts_with($ad['backgroundImage'], 'http')) {
+                    if (isset($ad['backgroundImage']) && !str_starts_with($ad['backgroundImage'], 'http') && !str_starts_with($ad['backgroundImage'], '/images/')) {
                         $ad['backgroundImage'] = '/storage/' . $ad['backgroundImage'];
                     }
-                    if (isset($ad['productImage']) && !str_starts_with($ad['productImage'], 'http')) {
+                    if (isset($ad['productImage']) && !str_starts_with($ad['productImage'], 'http') && !str_starts_with($ad['productImage'], '/images/')) {
                         $ad['productImage'] = '/storage/' . $ad['productImage'];
                     }
                     return $ad;
