@@ -26,6 +26,9 @@ class SupportHeaderSettingResource extends Resource
         return $schema->schema([
             TextInput::make('title')->required(),
             Textarea::make('subtitle'),
+            Textarea::make('description')
+                ->rows(3)
+                ->columnSpanFull(),
             Toggle::make('is_active'),
         ]);
     }
@@ -35,7 +38,12 @@ class SupportHeaderSettingResource extends Resource
         return $table->columns([
             TextColumn::make('id')->sortable(),
             TextColumn::make('title')->searchable(),
+            TextColumn::make('description')->limit(50),
             TextColumn::make('is_active'),
+        ])
+        ->actions([
+            \Filament\Actions\EditAction::make(),
+            \Filament\Actions\DeleteAction::make(),
         ]);
     }
 
