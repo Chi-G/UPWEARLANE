@@ -196,7 +196,7 @@ jobs:
         continue-on-error: true
         run: |
           if [ -d "${{ github.workspace }}/public/build" ]; then
-            rsync -r -e "ssh -p ${{ secrets.HOSTINGER_SSH_PORT }}" ${{ github.workspace }}/public/build/ ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:~/domains/upwearlane.com/public/build
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.HOSTINGER_SSH_PORT }}" ${{ github.workspace }}/public/build/ ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:~/domains/upwearlane.com/public/build
           else
             echo "ℹ️ No build directory found, skipping asset copy"
           fi
@@ -209,7 +209,8 @@ jobs:
           port: ${{ secrets.HOSTINGER_SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           timeout: 60s
-          command_timeout: 15m
+          command_timeout: 30m
+          debug: true
           script: |
             set -e
 
