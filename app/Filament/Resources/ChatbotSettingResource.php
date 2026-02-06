@@ -18,25 +18,71 @@ class ChatbotSettingResource extends Resource
 {
     protected static ?string $model = ChatbotSetting::class;
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cpu-chip';
+    protected static ?string $navigationLabel = 'Chatbot Settings';
+
+    protected static ?string $modelLabel = 'Chatbot Global Settings';
+
+    protected static ?string $pluralModelLabel = 'Chatbot Global Settings';
 
     protected static \UnitEnum|string|null $navigationGroup = 'Customer Support';
 
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            TextInput::make('name')->required(),
-            Textarea::make('value'),
-            Toggle::make('is_active'),
+            \Filament\Schemas\Components\Section::make()
+                ->maxWidth(\Filament\Support\Enums\Width::Full)
+                ->columnSpanFull()
+                ->schema([
+                    \Filament\Schemas\Components\Tabs::make('Chatbot Configuration')
+                        ->tabs([
+                            \Filament\Schemas\Components\Tabs\Tab::make('Landing Page Info')
+                                ->schema([
+                                    TextInput::make('header')
+                                        ->placeholder('e.g. Interactive AI Assistant')
+                                        ->columnSpanFull(),
+                                    Textarea::make('description')
+                                        ->placeholder('e.g. Quick answers for order status, returns, and tech setups.')
+                                        ->columnSpanFull(),
+                                ]),
+                            \Filament\Schemas\Components\Tabs\Tab::make('Assistant Appearance')
+                                ->schema([
+                                    \Filament\Schemas\Components\Grid::make(2)
+                                        ->schema([
+                                            TextInput::make('bot_name')
+                                                ->placeholder('e.g. AI Support Bot')
+                                                ->required(),
+                                            TextInput::make('bot_subtitle')
+                                                ->placeholder('e.g. Powered by UpWearLane Intelligence')
+                                                ->required(),
+                                            TextInput::make('header_icon')
+                                                ->placeholder('e.g. heroicon-o-cpu-chip')
+                                                ->default('heroicon-o-cpu-chip'),
+                                            Toggle::make('is_active')
+                                                ->default(true),
+                                        ]),
+                                ]),
+                            \Filament\Schemas\Components\Tabs\Tab::make('Default Messages')
+                                ->schema([
+                                    Textarea::make('welcome_message')
+                                        ->required()
+                                        ->columnSpanFull(),
+                                    Textarea::make('default_response')
+                                        ->required()
+                                        ->columnSpanFull()
+                                        ->placeholder('Fallback response when no intent is matched...'),
+                                ]),
+                        ])
+                ])
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('id')->sortable(),
-            TextColumn::make('name')->searchable(),
+            TextColumn::make('bot_name')->searchable(),
+            TextColumn::make('header')->searchable(),
             BooleanColumn::make('is_active'),
+            TextColumn::make('updated_at')->dateTime()->sortable(),
         ])
         ->actions([
             \Filament\Actions\EditAction::make(),

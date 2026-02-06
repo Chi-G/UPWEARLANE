@@ -10,6 +10,8 @@ class ChatbotSetting extends Model
     use HasFactory;
 
     protected $fillable = [
+        'header',
+        'description',
         'bot_name',
         'bot_subtitle',
         'welcome_message',
