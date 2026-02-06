@@ -8,16 +8,17 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-interface WhatsAppChatData {
+interface SupportSettingData {
     title: string;
     description: string;
-    phone_number: string;
-    features: string[];
-    button_text: string;
+    phone_number?: string;
+    email?: string;
+    features?: string[];
+    button_text?: string;
 }
 
 interface WhatsAppChatProps {
-    data?: WhatsAppChatData;
+    data?: SupportSettingData;
 }
 
 export default function WhatsAppChat({ data }: WhatsAppChatProps) {

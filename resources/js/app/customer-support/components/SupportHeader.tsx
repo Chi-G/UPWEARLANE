@@ -17,8 +17,8 @@ export default function SupportHeader({ data }: SupportHeaderProps) {
     // Default values if no data provided
     const badgeIcon = data?.badge_icon || 'InformationCircleIcon';
     const badgeText = data?.badge_text || 'Help Center';
-    const title = data?.title || 'Customer Support &';
-    const subtitle = data?.subtitle || 'Troubleshooting';
+    const title = data ? data.title : 'Customer Support &';
+    const subtitle = data ? data.subtitle : 'Troubleshooting';
     const description =
         data?.description ||
         "Need help with your smart gear? Our dedicated support team and AI assistant are available 24/7 to ensure your experience with UpWearLane is seamless.";
@@ -37,14 +37,13 @@ export default function SupportHeader({ data }: SupportHeaderProps) {
             </div>
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="max-w-3xl">
+                <div className="max-w-4xl">
                     <div className="bg-primary/10 text-primary mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium">
                         <Icon name={badgeIcon} size={16} />
                         {badgeText}
                     </div>
                     <h1 className="mb-6 text-4xl font-bold tracking-tight lg:text-5xl">
-                        {title} <br />
-                        <span className="text-primary">{subtitle}</span>
+                        {title} <span className="text-primary">{subtitle}</span>
                     </h1>
                     <p className="text-muted-foreground text-xl leading-relaxed">
                         {description}

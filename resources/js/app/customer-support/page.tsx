@@ -15,12 +15,13 @@ interface SupportHeaderData {
     background_pattern_icon: string;
 }
 
-interface WhatsAppChatData {
+interface SupportSettingData {
     title: string;
     description: string;
-    phone_number: string;
-    features: string[];
-    button_text: string;
+    phone_number?: string;
+    email?: string;
+    features?: string[];
+    button_text?: string;
 }
 
 interface FaqData {
@@ -30,6 +31,8 @@ interface FaqData {
 }
 
 interface ChatbotSettingData {
+    header: string;
+    description: string;
     bot_name: string;
     bot_subtitle: string;
     welcome_message: string;
@@ -44,7 +47,9 @@ interface ChatbotResponseData {
 
 interface CustomerSupportPageProps {
     supportHeader?: SupportHeaderData;
-    whatsappChat?: WhatsAppChatData;
+    whatsappChat?: SupportSettingData;
+    phoneSupport?: SupportSettingData;
+    emailSupport?: SupportSettingData;
     faqs?: FaqData[];
     chatbotSetting?: ChatbotSettingData;
     chatbotResponses?: ChatbotResponseData[];
@@ -62,6 +67,8 @@ interface CustomerSupportPageProps {
 export default function CustomerSupportPage({
     supportHeader,
     whatsappChat,
+    phoneSupport,
+    emailSupport,
     faqs,
     chatbotSetting,
     chatbotResponses,
@@ -85,18 +92,17 @@ export default function CustomerSupportPage({
                                         name="PhoneIcon"
                                         className="text-primary h-5 w-5"
                                     />
-                                    Direct Phone Support
+                                    {phoneSupport?.title || 'Direct Phone Support'}
                                 </h3>
                                 <p className="text-muted-foreground mb-4 text-sm">
-                                    Prefer a traditional phone call? Our
-                                    specialists are available during business
-                                    hours.
+                                    {phoneSupport?.description ||
+                                        'Prefer a traditional phone call? Our specialists are available during business hours.'}
                                 </p>
                                 <a
-                                    href="tel:+1555123TECH"
+                                    href={`tel:${phoneSupport?.phone_number || '+1555123TECH'}`}
                                     className="text-primary flex items-center gap-1 font-semibold hover:underline"
                                 >
-                                    +1 (555) 123-TECH
+                                    {phoneSupport?.phone_number || '+1 (555) 123-TECH'}
                                 </a>
                             </div>
 
@@ -106,17 +112,17 @@ export default function CustomerSupportPage({
                                         name="EnvelopeIcon"
                                         className="text-primary h-5 w-5"
                                     />
-                                    Email Support
+                                    {emailSupport?.title || 'Email Support'}
                                 </h3>
                                 <p className="text-muted-foreground mb-4 text-sm">
-                                    For complex technical queries or business
-                                    inquiries.
+                                    {emailSupport?.description ||
+                                        'For complex technical queries or business inquiries.'}
                                 </p>
                                 <a
-                                    href="mailto:support@upwearlane.com"
+                                    href={`mailto:${emailSupport?.email || 'support@upwearlane.com'}`}
                                     className="text-primary flex items-center gap-1 font-semibold hover:underline"
                                 >
-                                    support@upwearlane.com
+                                    {emailSupport?.email || 'support@upwearlane.com'}
                                 </a>
                             </div>
                         </div>
@@ -124,11 +130,10 @@ export default function CustomerSupportPage({
                         <div className="lg:col-span-2">
                             <div className="mb-8">
                                 <h2 className="mb-2 text-2xl font-bold">
-                                    Interactive AI Assistant
+                                    {chatbotSetting?.header || 'Interactive AI Assistant'}
                                 </h2>
                                 <p className="text-muted-foreground">
-                                    Quick answers for order status, returns, and
-                                    tech setups.
+                                    {chatbotSetting?.description || 'Quick answers for order status, returns, and tech setups.'}
                                 </p>
                             </div>
                             <ChatBot
