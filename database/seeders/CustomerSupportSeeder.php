@@ -16,28 +16,53 @@ class CustomerSupportSeeder extends Seeder
      */
     public function run(): void
     {
-        SupportHeaderSetting::create([
-            'badge_icon' => 'InformationCircleIcon',
-            'badge_text' => 'Help Center',
-            'title' => 'Customer Support & Troubleshooting',
-            'subtitle' => 'Troubleshooting',
-            'description' => "Need help with your smart gear? Our dedicated support team and AI assistant are available 24/7 to ensure your experience with UpWearLane is seamless.",
-            'background_pattern_icon' => 'LifebuoyIcon',
-            'is_active' => true,
-        ]);
+        SupportHeaderSetting::updateOrCreate(
+            ['title' => 'Customer Support & Troubleshooting'],
+            [
+                'badge_icon' => 'InformationCircleIcon',
+                'badge_text' => 'Help Center',
+                'subtitle' => 'Troubleshooting',
+                'description' => "Need help with your smart gear? Our dedicated support team and AI assistant are available 24/7 to ensure your experience with UpWearLane is seamless.",
+                'background_pattern_icon' => 'LifebuoyIcon',
+                'is_active' => true,
+            ]
+        );
 
-        WhatsAppChatSetting::create([
-            'title' => 'WhatsApp Support',
-            'description' => 'Connect directly with our support team for immediate assistance.',
-            'phone_number' => '+2347065910449',
-            'features' => [
-                'Average response time: < 5 minutes',
-                'Available 24/7 for premium members',
-                'Real-time troubleshooting',
-            ],
-            'button_text' => 'Chat on WhatsApp',
-            'is_active' => true,
-        ]);
+        WhatsAppChatSetting::updateOrCreate(
+            ['type' => 'whatsapp'],
+            [
+                'title' => 'WhatsApp Support',
+                'description' => 'Connect directly with our support team for immediate assistance.',
+                'phone_number' => '+2347065910449',
+                'features' => [
+                    'Average response time: < 5 minutes',
+                    'Available 24/7 for premium members',
+                    'Real-time troubleshooting',
+                ],
+                'button_text' => 'Chat on WhatsApp',
+                'is_active' => true,
+            ]
+        );
+
+        WhatsAppChatSetting::updateOrCreate(
+            ['type' => 'phone'],
+            [
+                'title' => 'Direct Phone Support',
+                'description' => 'Prefer a traditional phone call? Our specialists are available during business hours.',
+                'phone_number' => '+234 706 591 0449',
+                'is_active' => true,
+            ]
+        );
+
+        WhatsAppChatSetting::updateOrCreate(
+            ['type' => 'email'],
+            [
+                'title' => 'Email Support',
+                'description' => 'For complex technical queries or business inquiries, reach out via email.',
+                'email' => 'support@upwearlane.com',
+                'is_active' => true,
+            ]
+        );
 
         $faqs = [
             [
@@ -68,17 +93,22 @@ class CustomerSupportSeeder extends Seeder
         ];
 
         foreach ($faqs as $faq) {
-            Faq::create($faq);
+            Faq::updateOrCreate(
+                ['question' => $faq['question']],
+                $faq
+            );
         }
 
-        ChatbotSetting::create([
-            'bot_name' => 'AI Support Bot',
-            'bot_subtitle' => 'Powered by UpWearLane Intelligence',
-            'welcome_message' => "Hello! I'm your UpWearLane assistant. How can I help you today?",
-            'default_response' => "I'm processing your request. For more specific help, you can try asking about 'order status', 'returns', or 'sizing'.",
-            'header_icon' => 'CpuChipIcon',
-            'is_active' => true,
-        ]);
+        ChatbotSetting::updateOrCreate(
+            ['bot_name' => 'AI Support Bot'],
+            [
+                'bot_subtitle' => 'Powered by UpWearLane Intelligence',
+                'welcome_message' => "Hello! I'm your UpWearLane assistant. How can I help you today?",
+                'default_response' => "I'm processing your request. For more specific help, you can try asking about 'order status', 'returns', or 'sizing'.",
+                'header_icon' => 'CpuChipIcon',
+                'is_active' => true,
+            ]
+        );
 
         $responses = [
             [
@@ -114,7 +144,10 @@ class CustomerSupportSeeder extends Seeder
         ];
 
         foreach ($responses as $response) {
-            ChatbotResponse::create($response);
+            ChatbotResponse::updateOrCreate(
+                ['keyword' => $response['keyword']],
+                $response
+            );
         }
     }
 }
