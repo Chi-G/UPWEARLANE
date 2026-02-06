@@ -65,7 +65,7 @@ class CategorySeeder extends Seeder
 
         foreach ($categories as $category) {
             Category::updateOrCreate(
-                ['slug' => $category['slug']],
+                ['name' => $category['name']],
                 $category
             );
         }

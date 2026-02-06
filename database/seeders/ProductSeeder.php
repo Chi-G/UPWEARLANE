@@ -29,7 +29,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($categories as $cat) {
-            Category::firstOrCreate(['slug' => $cat['slug']], $cat);
+            Category::firstOrCreate(['name' => $cat['name']], $cat);
         }
 
         // Products using actual images from public/images/products/
@@ -849,7 +849,7 @@ class ProductSeeder extends Seeder
             }
 
             $product = Product::updateOrCreate(
-                ['slug' => $productData['slug']],
+                ['name' => $productData['name']],
                 [
                     'name' => $productData['name'],
                     'slug' => $productData['slug'],
