@@ -37,6 +37,10 @@ class ChatbotResponseResource extends Resource
             TextColumn::make('id')->sortable(),
             TextColumn::make('intent')->searchable(),
             BooleanColumn::make('is_active'),
+        ])
+        ->actions([
+            \Filament\Actions\EditAction::make(),
+            \Filament\Actions\DeleteAction::make(),
         ]);
     }
 
