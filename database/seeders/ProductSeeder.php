@@ -15,16 +15,9 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing products to avoid duplicates
-        $this->command->info('Clearing existing products...');
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        ProductFeature::truncate();
-        ProductVariant::truncate();
-        ProductColor::truncate();
-        ProductImage::truncate();
-        Product::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
+        // Category creation already uses firstOrCreate, so we keep that logic.
+        $this->command->info('Seeding products... (Idempotent mode)');
+        
         // Create categories
         $categories = [
             ['name' => 'Smart Watches', 'slug' => 'smart-watches', 'sort_order' => 1],
