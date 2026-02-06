@@ -208,6 +208,8 @@ jobs:
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           port: ${{ secrets.HOSTINGER_SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 60s
+          command_timeout: 15m
           script: |
             set -e
 
