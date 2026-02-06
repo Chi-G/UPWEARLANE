@@ -168,6 +168,9 @@ export default function Footer({ footerData }: { footerData: FooterData }) {
                                 <span>Multi-Currency</span>
                             </div>
                             <div className="flex items-center space-x-2">
+                                <span><a href="https://forahia.org.ng" target="_blank" rel="noopener noreferrer">built with ❤️ by FORAHIA</a></span>
+                            </div>
+                            <div className="flex items-center space-x-2">
                                 <Icon name="TruckIcon" size={16} />
                                 <span>Global Shipping</span>
                             </div>
