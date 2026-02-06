@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\BrandSetting;
 use App\Models\PriceRange;
+use App\Models\CurrencyRate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
