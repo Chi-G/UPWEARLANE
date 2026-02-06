@@ -2,7 +2,9 @@ name: Hostinger Deploy Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging ]
   workflow_dispatch:
 
 jobs:
@@ -138,7 +140,8 @@ jobs:
     name: Deploy to Hostinger
     runs-on: ubuntu-latest
     needs: [tests, build-assets]
-    if: success() || failure() # Deploy even if tests fail
+    # Deploy only on push to main branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
