@@ -10,7 +10,7 @@ class Dashboard extends Page
     // protected static string|\UnitEnum|null $navigationGroup = 'Shop Management';
     protected static ?string $slug = 'dashboard';
     protected static ?int $navigationSort = 1;
-    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?string $navigationLabel = 'Overview';
     protected string $view = 'filament.pages.dashboard';
 
     public function getHeading(): string
