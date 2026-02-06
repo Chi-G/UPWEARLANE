@@ -18,6 +18,8 @@ class WhatsAppChatSettingResource extends Resource
 {
     protected static ?string $model = WhatsAppChatSetting::class;
 
+    protected static ?string $slug = 'whatsapp-chat-settings';
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $navigationLabel = 'WhatsApp, Email & Phone';
@@ -102,6 +104,10 @@ class WhatsAppChatSettingResource extends Resource
             TextColumn::make('email')->placeholder('-'),
             Tables\Columns\IconColumn::make('is_active')
                 ->boolean(),
+        ])
+        ->actions([
+            \Filament\Actions\EditAction::make(),
+            \Filament\Actions\DeleteAction::make(),
         ]);
     }
 
