@@ -37,6 +37,10 @@ class FaqResource extends Resource
             TextColumn::make('id')->sortable(),
             TextColumn::make('question')->searchable(),
             BooleanColumn::make('is_active'),
+        ])
+        ->actions([
+            \Filament\Actions\EditAction::make(),
+            \Filament\Actions\DeleteAction::make(),
         ]);
     }
 
