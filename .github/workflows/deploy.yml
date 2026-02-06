@@ -140,8 +140,8 @@ jobs:
     name: Deploy to Hostinger
     runs-on: ubuntu-latest
     needs: [tests, build-assets]
-    # Deploy only on push to main branch
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Deploy only on push or manual trigger for the main branch
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
