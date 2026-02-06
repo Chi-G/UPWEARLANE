@@ -17,7 +17,21 @@ class ListNotifications extends ListRecords
                 ->label('Mark all as read') 
                 ->color('gray')
                 ->icon('heroicon-o-check-circle')
-                ->action(fn () => auth()->user()->unreadNotifications->markAsRead()),
+                ->action(function () {
+                    $user = auth('admin')->user();
+                    if ($user->unreadNotifications()->count() > 0) {
+                        $user->unreadNotifications->markAsRead();
+                        \Filament\Notifications\Notification::make()
+                            ->title('All notifications marked as read')
+                            ->success()
+                            ->send();
+                    } else {
+                        \Filament\Notifications\Notification::make()
+                            ->title('No notifications at the moment')
+                            ->warning()
+                            ->send();
+                    }
+                }),
         ];
     }
 }
