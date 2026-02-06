@@ -201,14 +201,19 @@ jobs:
             echo "ℹ️ No build directory found, skipping asset copy"
           fi
 
+      - name: Check SSH Connectivity
+        run: |
+          echo "Testing connectivity to ${{ secrets.HOSTINGER_SSH_HOST }} on port ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}..."
+          nc -zv -w 5 ${{ secrets.HOSTINGER_SSH_HOST }} ${{ secrets.HOSTINGER_SSH_PORT || '65002' }} || echo "⚠️ Warning: Cannot reach host. Deployment may fail."
+
       - name: Deploy to Hostinger Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOSTINGER_SSH_HOST }}
           username: ${{ secrets.HOSTINGER_SSH_USER }}
-          port: ${{ secrets.HOSTINGER_SSH_PORT }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60s
+          timeout: 120s
           command_timeout: 30m
           debug: true
           script: |

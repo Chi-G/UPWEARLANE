@@ -17,7 +17,7 @@ class ProductImagesTable
         return $table
             ->columns([
                 ImageColumn::make('image_path')
-                    ->label('Thumbnail')
+                    ->label('Thumbnail') 
                     ->disk('public_dir'),
                 TextColumn::make('product.name')
                     ->label('Product')
