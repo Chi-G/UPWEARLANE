@@ -12,9 +12,11 @@ class WhatsAppChatSetting extends Model
     protected $table = 'whatsapp_chat_settings';
 
     protected $fillable = [
+        'type',
         'title',
         'description',
         'phone_number',
+        'email',
         'features',
         'button_text',
         'is_active',
