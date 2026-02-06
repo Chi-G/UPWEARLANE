@@ -70,6 +70,7 @@ class NotificationResource extends Resource
             ])
             ->actions([
                 \Filament\Actions\ViewAction::make(),
+                \Filament\Actions\DeleteAction::make(),
                 \Filament\Actions\Action::make('markAsRead')
                     ->icon('heroicon-o-check')
                     ->action(fn ($record) => $record->markAsRead())

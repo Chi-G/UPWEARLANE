@@ -152,6 +152,10 @@ class ProductResource extends Resource
                             ->when($data['min_price'], fn($q) => $q->where('base_price', '>=', $data['min_price']))
                             ->when($data['max_price'], fn($q) => $q->where('base_price', '<=', $data['max_price']));
                     }),
+            ])
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ]);
     }
 

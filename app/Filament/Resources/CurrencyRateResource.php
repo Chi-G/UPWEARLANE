@@ -69,6 +69,10 @@ class CurrencyRateResource extends Resource
                 TextColumn::make('last_updated')
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ]);
     }
 

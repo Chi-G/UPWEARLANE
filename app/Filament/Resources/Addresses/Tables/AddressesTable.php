@@ -53,8 +53,9 @@ class AddressesTable
                     ->searchable()
                     ->preload(),
             ])
-            ->recordActions([
+            ->actions([
                 EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -143,9 +143,21 @@ class OrderResource extends Resource
                         'cancelled', 'refunded' => 'danger',
                         default => 'primary',
                     }),
-                TextColumn::make('items_count')->counts('items')->label('Items'),
+                TextColumn::make('shipping_method')
+                    ->badge()
+                    ->color('info')
+                    ->placeholder('-'),
+                TextColumn::make('items.product_name')
+                    ->label('Products')
+                    ->listWithLineBreaks()
+                    ->bulleted()
+                    ->searchable(),
                 TextColumn::make('total')->money(fn ($record) => $record->currency),
                 TextColumn::make('created_at')->dateTime()->sortable(),
+            ])
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

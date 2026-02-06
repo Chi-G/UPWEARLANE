@@ -38,11 +38,16 @@ class CartSettingResource extends Resource
 
     public static function table(Tables\Table $table): Tables\Table
     {
-        return $table->columns([
-            TextColumn::make('page_title')->searchable(),
-            TextColumn::make('free_shipping_threshold')->money('NGN'),
-            BooleanColumn::make('is_active'),
-        ]);
+        return $table
+            ->columns([
+                TextColumn::make('page_title')->searchable(),
+                TextColumn::make('free_shipping_threshold')->money('NGN'),
+                BooleanColumn::make('is_active'),
+            ])
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
+            ]);
     }
 
     public static function getPages(): array
