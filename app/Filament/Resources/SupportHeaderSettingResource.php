@@ -38,6 +38,7 @@ class SupportHeaderSettingResource extends Resource
         return $table->columns([
             TextColumn::make('id')->sortable(),
             TextColumn::make('title')->searchable(),
+            TextColumn::make('subtitle')->limit(50),
             TextColumn::make('description')->limit(50),
             TextColumn::make('is_active'),
         ])

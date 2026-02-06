@@ -16,7 +16,9 @@ class CustomerSupportController extends Controller
     {
         $supportHeader = SupportHeaderSetting::where('is_active', true)->first();
 
-        $whatsappChat = WhatsAppChatSetting::where('is_active', true)->first();
+        $whatsappChat = WhatsAppChatSetting::where('type', 'whatsapp')->where('is_active', true)->first();
+        $phoneSupport = WhatsAppChatSetting::where('type', 'phone')->where('is_active', true)->first();
+        $emailSupport = WhatsAppChatSetting::where('type', 'email')->where('is_active', true)->first();
 
         $faqs = Faq::active()->get();
 
@@ -26,6 +28,8 @@ class CustomerSupportController extends Controller
         return Inertia::render('customer-support/page', [
             'supportHeader' => $supportHeader,
             'whatsappChat' => $whatsappChat,
+            'phoneSupport' => $phoneSupport,
+            'emailSupport' => $emailSupport,
             'faqs' => $faqs,
             'chatbotSetting' => $chatbotSetting,
             'chatbotResponses' => $chatbotResponses,
