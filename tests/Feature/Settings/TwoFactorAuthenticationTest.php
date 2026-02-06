@@ -9,10 +9,12 @@ test('two factor settings page can be rendered', function () {
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
-    Features::twoFactorAuthentication([
-        'confirm' => true,
-        'confirmPassword' => true,
-    ]);
+    config(['fortify.features' => [
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
+        ]),
+    ]]);
 
     $user = User::factory()->withoutTwoFactor()->create();
 
@@ -32,10 +34,12 @@ test('two factor settings page requires password confirmation when enabled', fun
 
     $user = User::factory()->create();
 
-    Features::twoFactorAuthentication([
-        'confirm' => true,
-        'confirmPassword' => true,
-    ]);
+    config(['fortify.features' => [
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
+        ]),
+    ]]);
 
     $response = $this->actingAs($user)
         ->get(route('two-factor.show'));
@@ -50,10 +54,12 @@ test('two factor settings page does not requires password confirmation when disa
 
     $user = User::factory()->create();
 
-    Features::twoFactorAuthentication([
-        'confirm' => true,
-        'confirmPassword' => false,
-    ]);
+    config(['fortify.features' => [
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => false,
+        ]),
+    ]]);
 
     $this->actingAs($user)
         ->get(route('two-factor.show'))

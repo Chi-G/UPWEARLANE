@@ -36,16 +36,26 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Frontend Assets (Vite Manifest)
+        run: |
+          npm install
+          npm run build
+
       - name: Generate Application Key
         run: php artisan key:generate --ansi
 
-      - name: Run PHPUnit Tests
+      - name: Run Pest Tests
         continue-on-error: true
         run: |
-          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
-            php artisan test || php vendor/bin/phpunit
+          if [ -f vendor/bin/pest ]; then
+            ./vendor/bin/pest
           else
-            echo "⚠️ No PHPUnit configuration found, skipping tests"
+            php artisan test
           fi
 
       - name: Run Static Analysis (PHPStan/Pint)
