@@ -17,8 +17,13 @@ class LandingPageSettingsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('hero_image')
-                    ->circular(),
+                ImageColumn::make('background_image')
+                    ->disk(fn ($record) => 
+                        (str_starts_with($record->background_image, '/images') || str_starts_with($record->background_image, 'images')) 
+                        ? 'public_dir' 
+                        : 'public'
+                    )
+                    ->visibility('public'),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
