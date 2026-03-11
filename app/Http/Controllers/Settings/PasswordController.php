@@ -8,11 +8,18 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use OpenApi\Attributes as OA;
 
 class PasswordController extends Controller
 {
     /**
-     * Show the user's password settings page.
+     * @OA\Get(
+     *     path="/api/settings/password",
+     *     summary="Show password settings data",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Success")
+     * )
      */
     public function edit(): Response
     {
@@ -20,7 +27,14 @@ class PasswordController extends Controller
     }
 
     /**
-     * Update the user's password.
+     * @OA\Put(
+     *     path="/api/settings/password",
+     *     summary="Update the user's password",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Password updated"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function update(Request $request): RedirectResponse
     {

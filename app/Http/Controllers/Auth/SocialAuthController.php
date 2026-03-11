@@ -8,20 +8,31 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use OpenApi\Attributes as OA;
 
 class SocialAuthController extends Controller
 {
-    /**
-     * Redirect to Google OAuth
-     */
+    #[OA\Get(
+        path: "/api/auth/google",
+        summary: "Redirect to Google OAuth",
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(response: 302, description: "Redirect to Google")
+        ]
+    )]
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
-    /**
-     * Handle Google OAuth callback
-     */
+    #[OA\Get(
+        path: "/api/auth/google/callback",
+        summary: "Handle Google OAuth callback",
+        tags: ["Auth"],
+        responses: [
+            new OA\Response(response: 302, description: "Redirect to home on success or failure")
+        ]
+    )]
     public function handleGoogleCallback()
     {
         try {

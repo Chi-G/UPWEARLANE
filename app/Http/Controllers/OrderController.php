@@ -10,12 +10,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use OpenApi\Attributes as OA;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the user's orders.
-     */
+    #[OA\Get(
+        path: "/api/orders",
+        summary: "Display a listing of the user's orders",
+        tags: ["Orders"],
+        security: [["sanctum" => []]],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "List of orders",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(ref: "#/components/schemas/OrderSchema")
+                )
+            )
+        ]
+    )]
     public function index()
     {
         $orders = Order::with(['items', 'payment']) 
@@ -28,9 +42,28 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified order.
-     */
+    #[OA\Get(
+        path: "/api/orders/{id}",
+        summary: "Get order details",
+        tags: ["Orders"],
+        security: [["sanctum" => []]],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Order details",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "order", ref: "#/components/schemas/OrderSchema")
+                    ]
+                )
+            ),
+            new OA\Response(response: 403, description: "Forbidden"),
+            new OA\Response(response: 404, description: "Order not found")
+        ]
+    )]
     public function show(Order $order)
     {
         // specific user check
@@ -45,10 +78,6 @@ class OrderController extends Controller
             'order' => $order
         ]);
     }
-
-    /**
-     * Create new order from cart
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([

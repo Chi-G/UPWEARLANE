@@ -6,12 +6,20 @@ use App\Models\Review;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 
 class ReviewController extends Controller
 {
-    /**
-     * Store a new review
-     */
+    #[OA\Post(
+        path: "/api/reviews",
+        summary: "Store a new review",
+        tags: ["Reviews"],
+        security: [["sanctum" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Review submitted"),
+            new OA\Response(response: 422, description: "Validation error")
+        ]
+    )]
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -58,7 +66,18 @@ class ReviewController extends Controller
     }
 
     /**
-     * Mark a review as helpful
+     * @OA\Post(
+     *     path="/api/reviews/{review}/helpful",
+     *     summary="Mark a review as helpful",
+     *     tags={"Reviews"},
+     *     @OA\Parameter(
+     *         name="review",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Helpful count updated")
+     * )
      */
     public function markHelpful(Review $review)
     {
