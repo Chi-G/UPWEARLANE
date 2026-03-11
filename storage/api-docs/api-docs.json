@@ -1,0 +1,814 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "UpWearLane API Documentation",
+        "description": "API documentation for UpWearLane - Premium Fashion & Apparel",
+        "contact": {
+            "email": "admin@upwearlane.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Server"
+        }
+    ],
+    "paths": {
+        "/api/auth/google": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Redirect to Google OAuth",
+                "operationId": "588c97c54cea606cf3b7e2d412813260",
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google"
+                    }
+                }
+            }
+        },
+        "/api/auth/google/callback": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Handle Google OAuth callback",
+                "operationId": "02074cf3896aaaa62d46235cf15947e4",
+                "responses": {
+                    "302": {
+                        "description": "Redirect to home on success or failure"
+                    }
+                }
+            }
+        },
+        "/api/support": {
+            "get": {
+                "tags": [
+                    "Support"
+                ],
+                "summary": "Display customer support data",
+                "operationId": "be402d0ade6c38a584e27cedbc62499f",
+                "responses": {
+                    "200": {
+                        "description": "Support settings, FAQs, and chatbot data"
+                    }
+                }
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Landing Page"
+                ],
+                "summary": "Get all product categories",
+                "operationId": "79bdf7dade4606b02bb00ca71a936b8b",
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Display a listing of the user's orders",
+                "operationId": "2cd7e03021e72d9d799c12dfe179c865",
+                "responses": {
+                    "200": {
+                        "description": "List of orders",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrderSchema"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get order details",
+                "operationId": "c29621029e70f65247909d3e09031118",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "order": {
+                                            "$ref": "#/components/schemas/OrderSchema"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/payments/create-intent": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create order and payment intent from checkout flow",
+                "operationId": "17909e81b7d33da03866b52db9f9312a",
+                "responses": {
+                    "200": {
+                        "description": "Payment Intent created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "clientSecret": {
+                                            "type": "string"
+                                        },
+                                        "order_id": {
+                                            "type": "integer"
+                                        },
+                                        "order_number": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/api/payments/confirm": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Confirm payment and update order status",
+                "operationId": "d90d7734e40adef5b58b3cf0f3f8c3c7",
+                "responses": {
+                    "200": {
+                        "description": "Payment confirmed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Payment verification failed"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/api/product-catalog": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Display product catalog with filters",
+                "operationId": "79b95de8a53a8d06a69aa6be53c53a96",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "brands",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priceRange",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        },
+                                        "categories": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Category"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews": {
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Store a new review",
+                "operationId": "154c71f5f72b459d998f5ea451bd4c96",
+                "responses": {
+                    "200": {
+                        "description": "Review submitted"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/sitemap.xml": {
+            "get": {
+                "tags": [
+                    "SEO"
+                ],
+                "summary": "Generate sitemap.xml",
+                "operationId": "e25c684dc5d0cba15509773e53b0a30f",
+                "responses": {
+                    "200": {
+                        "description": "XML Sitemap returned"
+                    }
+                }
+            }
+        },
+        "/api/shopping-cart": {
+            "get": {
+                "tags": [
+                    "Shopping Cart"
+                ],
+                "summary": "Display the shopping cart page data",
+                "operationId": "06704e6ecc8ce3bc46e3e00d23ae8f35",
+                "responses": {
+                    "200": {
+                        "description": "Cart data, promo codes, and settings"
+                    }
+                }
+            }
+        },
+        "/api/webhooks/stripe": {
+            "post": {
+                "tags": [
+                    "Webhooks"
+                ],
+                "summary": "Handle incoming Stripe webhooks",
+                "operationId": "b1966c25f2fd6b035577c63a95e0f019",
+                "responses": {
+                    "200": {
+                        "description": "Webhook processed"
+                    }
+                }
+            }
+        },
+        "/api/webhooks/paystack": {
+            "post": {
+                "tags": [
+                    "Webhooks"
+                ],
+                "summary": "Handle incoming Paystack webhooks",
+                "operationId": "754d0069853337dccb23b8b663912db1",
+                "responses": {
+                    "200": {
+                        "description": "Webhook processed"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login with email and password",
+                "operationId": "94776839c9c0810eaeab357e490c7bc3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "remember": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "cd2b1daf2dfeb168e4cbaddcfbe059b9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout the current user",
+                "operationId": "b5ac9bebefe7f4f75046a6231f2feb93",
+                "responses": {
+                    "204": {
+                        "description": "Logout successful"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request a password reset link",
+                "operationId": "fe6391e5f581fc6f5dd3de23cbb8f928",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reset link sent"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset the user's password",
+                "operationId": "5d8b5b7158686456528ae97369ac401e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/email/verification-notification": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Resend the verification email",
+                "operationId": "8498572c4a9980b0184fc3b1ec187fcd",
+                "responses": {
+                    "222": {
+                        "description": "Verification email sent"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/user/two-factor-authentication": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Enable two-factor authentication",
+                "operationId": "3c27d33e3b839671d4013465ace977a7",
+                "responses": {
+                    "200": {
+                        "description": "2FA enabled"
+                    },
+                    "403": {
+                        "description": "Password confirmation required"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Product": {
+                "title": "Product",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "title": "Category",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Review": {
+                "title": "Review",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "comment": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderSchema": {
+                "title": "Order",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "order_number": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "total": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentIntentRequest": {
+                "title": "Payment Intent Request",
+                "required": [
+                    "items",
+                    "shipping_address",
+                    "shipping_method",
+                    "currency",
+                    "subtotal",
+                    "shipping_cost",
+                    "total"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "shipping_address": {
+                        "type": "object"
+                    },
+                    "shipping_method": {
+                        "type": "object"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "USD",
+                            "NGN",
+                            "GBP",
+                            "CAD"
+                        ]
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "shipping_cost": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "tax": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "total": {
+                        "type": "number",
+                        "format": "float"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication and Registration endpoints"
+        },
+        {
+            "name": "Support",
+            "description": "Support"
+        },
+        {
+            "name": "Landing Page",
+            "description": "Landing Page"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
+        },
+        {
+            "name": "Products",
+            "description": "Products"
+        },
+        {
+            "name": "Reviews",
+            "description": "Reviews"
+        },
+        {
+            "name": "SEO",
+            "description": "SEO"
+        },
+        {
+            "name": "Shopping Cart",
+            "description": "Shopping Cart"
+        },
+        {
+            "name": "Webhooks",
+            "description": "Webhooks"
+        }
+    ]
+}

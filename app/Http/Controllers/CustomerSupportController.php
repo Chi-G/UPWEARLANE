@@ -9,9 +9,18 @@ use App\Models\SupportHeaderSetting;
 use App\Models\WhatsAppChatSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use OpenApi\Attributes as OA;
 
 class CustomerSupportController extends Controller
 {
+    #[OA\Get(
+        path: "/api/support",
+        summary: "Display customer support data",
+        tags: ["Support"],
+        responses: [
+            new OA\Response(response: 200, description: "Support settings, FAQs, and chatbot data")
+        ]
+    )]
     public function index()
     {
         $supportHeader = SupportHeaderSetting::where('is_active', true)->first();

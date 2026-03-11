@@ -6,9 +6,18 @@ use App\Models\CartSetting;
 use App\Models\PromoCode;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use OpenApi\Attributes as OA;
 
 class ShoppingCartController extends Controller
 {
+    #[OA\Get(
+        path: "/api/shopping-cart",
+        summary: "Display the shopping cart page data",
+        tags: ["Shopping Cart"],
+        responses: [
+            new OA\Response(response: 200, description: "Cart data, promo codes, and settings")
+        ]
+    )]
     public function index()
     {
         // Get active cart settings
@@ -36,7 +45,17 @@ class ShoppingCartController extends Controller
     }
 
     /**
-     * Validate a promo code
+     * @OA\Post(
+     *     path="/api/shopping-cart/validate-promo",
+     *     summary="Validate a promo code",
+     *     tags={"Shopping Cart"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Promo code details if valid"
+     *     ),
+     *     @OA\Response(response=404, description="Invalid promo code"),
+     *     @OA\Response(response=400, description="Promo code not applicable")
+     * )
      */
     public function validatePromoCode(Request $request)
     {

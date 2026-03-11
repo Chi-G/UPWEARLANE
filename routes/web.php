@@ -70,6 +70,13 @@ Route::middleware([HandleInertiaRequests::class])->group(function () {
         Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])->name('reviews.helpful');
     });
 
+    // Webhooks
+    Route::post('/webhooks/stripe', [App\Http\Controllers\WebhookController::class, 'handleStripe'])->name('webhooks.stripe');
+    Route::post('/webhooks/paystack', [App\Http\Controllers\WebhookController::class, 'handlePaystack'])->name('webhooks.paystack');
+
+    // SEO
+    Route::get('/sitemap.xml', [App\Http\Controllers\SEOController::class, 'sitemap'])->name('seo.sitemap');
+
     require __DIR__.'/settings.php';
 });
 

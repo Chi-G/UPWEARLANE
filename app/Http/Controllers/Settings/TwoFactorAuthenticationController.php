@@ -9,6 +9,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
+use OpenApi\Attributes as OA;
 
 class TwoFactorAuthenticationController extends Controller implements HasMiddleware
 {
@@ -23,7 +24,13 @@ class TwoFactorAuthenticationController extends Controller implements HasMiddlew
     }
 
     /**
-     * Show the user's two-factor authentication settings page.
+     * @OA\Get(
+     *     path="/api/settings/two-factor",
+     *     summary="Show 2FA settings data",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Success")
+     * )
      */
     public function show(TwoFactorAuthenticationRequest $request): Response
     {

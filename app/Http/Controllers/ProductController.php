@@ -9,11 +9,33 @@ use App\Models\PriceRange;
 use App\Models\CurrencyRate;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use OpenApi\Attributes as OA;
 
 class ProductController extends Controller {
-    /**
-     * Display product catalog with filters
-     */
+    #[OA\Get(
+        path: "/api/product-catalog",
+        summary: "Display product catalog with filters",
+        tags: ["Products"],
+        parameters: [
+            new OA\Parameter(name: "category", in: "query", schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "brands", in: "query", schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "priceRange", in: "query", schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "sort", in: "query", schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "currency", in: "query", schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "List of products",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "products", type: "array", items: new OA\Items(ref: "#/components/schemas/Product")),
+                        new OA\Property(property: "categories", type: "array", items: new OA\Items(ref: "#/components/schemas/Category"))
+                    ]
+                )
+            )
+        ]
+    )]
     public function index(Request $request)
     {
         $query = Product::with(['category', 'primaryImage', 'colors', 'brandSetting'])
@@ -102,7 +124,23 @@ class ProductController extends Controller {
     }
 
     /**
-     * Display single product details
+     * @OA\Get(
+     *     path="/api/product-detail/{product}",
+     *     summary="Display single product details",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="product",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product details",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(response=404, description="Product not found")
+     * )
      */
     public function show(Product $product)
     {

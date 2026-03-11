@@ -13,9 +13,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmation;
+use Illuminate\Support\Facades\Cache;
+use App\Models\Transaction;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Stripe\Checkout\Session as StripeSession;
+use OpenApi\Attributes as OA;
 
 class PaymentController extends Controller
 {
@@ -59,9 +62,27 @@ class PaymentController extends Controller
         ];
     }
 
-    /**
-     * Create order and payment intent from checkout flow
-     */
+    #[OA\Post(
+        path: "/api/payments/create-intent",
+        summary: "Create order and payment intent from checkout flow",
+        tags: ["Payments"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Payment Intent created successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "clientSecret", type: "string"),
+                        new OA\Property(property: "order_id", type: "integer"),
+                        new OA\Property(property: "order_number", type: "string")
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: "Validation error"),
+            new OA\Response(response: 500, description: "Server error")
+        ]
+    )]
     public function createPaymentIntent(Request $request)
     {
         $validated = $request->validate([
@@ -230,9 +251,25 @@ class PaymentController extends Controller
         }
     }
 
-    /**
-     * Confirm payment and update order status
-     */
+    #[OA\Post(
+        path: "/api/payments/confirm",
+        summary: "Confirm payment and update order status",
+        tags: ["Payments"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Payment confirmed successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string")
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: "Payment verification failed"),
+            new OA\Response(response: 500, description: "Server error")
+        ]
+    )]
     public function confirmPayment(Request $request)
     {
         $validated = $request->validate([
@@ -248,48 +285,73 @@ class PaymentController extends Controller
             Stripe::setApiKey(config('services.stripe.secret'));
             $paymentIntent = PaymentIntent::retrieve($validated['payment_intent_id']);
 
-            if ($paymentIntent->status === 'succeeded') {
-                // Check if payment record already exists
-                $existingPayment = Payment::where('transaction_id', $validated['payment_intent_id'])->first();
+            // Implement Concurrency Control using Atomic Locks
+            return Cache::lock('payment_processing_' . $order->id, 10)->get(function () use ($paymentIntent, $order, $validated) {
+                if ($paymentIntent->status === 'succeeded') {
+                    // Check if payment record already exists
+                    $existingPayment = Payment::where('transaction_id', $validated['payment_intent_id'])->first();
 
-                if (!$existingPayment) {
-                    // Create payment record
-                    $payment = Payment::create([
-                        'order_id' => $order->id,
-                        'transaction_id' => $validated['payment_intent_id'],
-                        'payment_provider' => 'stripe',
-                        'payment_method' => $validated['payment_method'],
-                        'amount' => $order->total,
-                        'currency' => $order->currency,
-                        'status' => 'completed',
-                    ]);
+                    if (!$existingPayment) {
+                        return DB::transaction(function () use ($order, $paymentIntent, $validated) {
+                            // Create payment record
+                            $payment = Payment::create([
+                                'order_id' => $order->id,
+                                'transaction_id' => $validated['payment_intent_id'],
+                                'payment_provider' => 'stripe',
+                                'payment_method' => $validated['payment_method'],
+                                'amount' => $order->total,
+                                'currency' => $order->currency,
+                                'status' => 'completed',
+                            ]);
 
-                    // Update order status
-                    $order->update(['status' => 'processing']);
+                            // Record in Ledger (Transactions Table)
+                            \App\Models\Transaction::create([
+                                'user_id' => $order->user_id,
+                                'order_id' => $order->id,
+                                'amount' => $order->total,
+                                'currency' => $order->currency,
+                                'type' => 'credit',
+                                'status' => 'completed',
+                                'reference' => $validated['payment_intent_id'],
+                                'description' => 'Payment for order ' . $order->order_number,
+                                'metadata' => [
+                                    'provider' => 'stripe',
+                                    'method' => $validated['payment_method'],
+                                ],
+                            ]);
 
-                    // Send order confirmation email
-                    try {
-                        Mail::to($order->shippingAddress->email)
-                            ->send(new OrderConfirmation($order, $payment));
-                    } catch (\Exception $e) {
-                        // Log error but don't fail the response
-                        Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+                            // Update order status
+                            $order->update(['status' => 'processing']);
+
+                            // Send order confirmation email
+                            try {
+                                Mail::to($order->shippingAddress->email)
+                                    ->send(new OrderConfirmation($order, $payment));
+                            } catch (\Exception $e) {
+                                // Log error but don't fail the response
+                                Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+                            }
+
+                            return response()->json([
+                                'success' => true,
+                                'message' => 'Payment confirmed successfully',
+                                'order' => $order->load('items', 'shippingAddress'),
+                            ]);
+                        });
+                    } else {
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Payment already processed',
+                            'order' => $order->load('items', 'shippingAddress'),
+                        ]);
                     }
-                } else {
-                    $payment = $existingPayment;
                 }
 
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Payment confirmed successfully',
-                    'order' => $order->load('items', 'shippingAddress'),
-                ]);
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Payment verification failed',
-            ], 422);
+                    'success' => false,
+                    'message' => 'Payment verification failed',
+                ], 422);
+            });
 
         } catch (\Exception $e) {
             return response()->json([
@@ -536,7 +598,24 @@ class PaymentController extends Controller
     }
 
     /**
-     * Handle successful checkout session
+     * @OA\Get(
+     *     path="/api/checkout/success",
+     *     summary="Handle successful checkout session",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="session_id",
+     *         in="query",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="order_id",
+     *         in="query",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Success page rendered")
+     * )
      */
     public function checkoutSuccess(Request $request)
     {

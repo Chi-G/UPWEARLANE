@@ -137,6 +137,9 @@ jobs:
             echo "⚠️ No build script found in package.json"
           fi
 
+          echo "🚀 Generating Wayfinder Actions..."
+          php artisan wayfinder:generate --with-form
+
       - name: Upload Built Assets
         if: steps.check_package.outputs.exists == 'true'
         uses: actions/upload-artifact@v4
@@ -263,6 +266,9 @@ jobs:
             # Clear and cache views
             php artisan view:clear
             php artisan view:cache
+
+            echo "📖 Generating API Documentation..."
+            php artisan l5-swagger:generate
 
             echo "✅ Deployment completed successfully!"
 

@@ -31,6 +31,25 @@
         </style>
 
         <title inertia>{{ config('app.name', 'UpWearLane') }}</title>
+        
+        <meta name="description" content="UpWearLane - Your premium destination for fashion and style. Explore the best forafix solutions for modern apparel. Shop now for exclusive collections.">
+        <meta name="keywords" content="forafix, UpWearLane, fashion, premium apparel, luxury style, clothing, accessories">
+        <meta name="author" content="UpWearLane Team">
+        <meta name="robots" content="index, follow">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ config('app.name', 'UpWearLane') }} - Premium Fashion">
+        <meta property="og:description" content="Discover premium fashion and forafix style solutions at UpWearLane.">
+        <meta property="og:image" content="{{ url('/og-image.jpg') }}">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="{{ url()->current() }}">
+        <meta property="twitter:title" content="{{ config('app.name', 'UpWearLane') }} - Premium Fashion">
+        <meta property="twitter:description" content="Discover premium fashion and forafix style solutions at UpWearLane.">
+        <meta property="twitter:image" content="{{ url('/og-image.jpg') }}">
 
         <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1.3">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1.3">

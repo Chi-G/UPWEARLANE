@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use OpenApi\Attributes as OA;
 
 class ProfileController extends Controller
 {
     /**
-     * Show the user's profile settings page.
+     * @OA\Get(
+     *     path="/api/profile",
+     *     summary="Show the user's profile settings data",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Profile data returned")
+     * )
      */
     public function edit(Request $request): Response
     {
@@ -25,7 +32,14 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile settings.
+     * @OA\Patch(
+     *     path="/api/profile",
+     *     summary="Update the user's profile settings",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Profile updated"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
@@ -41,7 +55,14 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's account.
+     * @OA\Delete(
+     *     path="/api/profile",
+     *     summary="Delete the user's account",
+     *     tags={"Profile"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(response=200, description="Account deleted"),
+     *     @OA\Response(response=422, description="Password verification failed")
+     * )
      */
     public function destroy(Request $request): RedirectResponse
     {

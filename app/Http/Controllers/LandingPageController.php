@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\HeroSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use OpenApi\Attributes as OA;
 
 class LandingPageController extends Controller
 {
@@ -91,9 +92,21 @@ class LandingPageController extends Controller
         ]);
     }
 
-    /**
-     * API endpoint to fetch categories dynamically
-     */
+    #[OA\Get(
+        path: "/api/categories",
+        summary: "Get all product categories",
+        tags: ["Landing Page"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "List of categories",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(ref: "#/components/schemas/Category")
+                )
+            )
+        ]
+    )]
     public function getCategories()
     {
         return response()->json(
