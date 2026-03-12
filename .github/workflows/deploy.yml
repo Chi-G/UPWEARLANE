@@ -206,13 +206,13 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Auto-detect host and port with fallback to port 22
-          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT || '22' }} -H ${{ secrets.HOSTINGER_SSH_HOST }} >> ~/.ssh/known_hosts || echo "⚠️ Warning: ssh-keyscan failed. Ensure HOSTINGER_SSH_HOST is a valid domain/IP and port is reachable."
+          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT || '65002' }} -H ${{ secrets.HOSTINGER_SSH_HOST }} >> ~/.ssh/known_hosts || echo "⚠️ Warning: ssh-keyscan failed. Ensure HOSTINGER_SSH_HOST is a valid domain/IP and port is reachable."
 
       - name: Copy Build Files to Target Server
         continue-on-error: true
         run: |
           if [ -d "${{ github.workspace }}/public/build" ]; then
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.HOSTINGER_SSH_PORT }}" ${{ github.workspace }}/public/build/ ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:~/domains/upwearlane.com/public/build
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.HOSTINGER_SSH_PORT || '65002' }}" ${{ github.workspace }}/public/build/ ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:~/domains/upwearlane.com/public/build
           else
             echo "ℹ️ No build directory found, skipping asset copy"
           fi
