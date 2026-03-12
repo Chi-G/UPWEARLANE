@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
     description: "API documentation for UpWearLane - Premium Fashion & Apparel",
     contact: new OA\Contact(email: "admin@upwearlane.com")
 )]
-#[OA\Server(url: "http://localhost:8000", description: "Local Server")]
+#[OA\Server(url: L5_SWAGGER_CONST_HOST, description: "API Server")]
 abstract class Controller
 {
     //
