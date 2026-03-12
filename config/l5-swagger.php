@@ -47,6 +47,9 @@ return [
                     base_path('app'),
                 ],
             ],
+            'constants' => [
+                'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'https://upwearlane.com'),
+            ],
         ],
     ],
     'defaults' => [
@@ -307,12 +310,6 @@ return [
                     'use_pkce_with_authorization_code_grant' => false,
                 ],
             ],
-        ],
-        /*
-         * Constants which can be used in annotations
-         */
-        'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
         ],
     ],
 ];
